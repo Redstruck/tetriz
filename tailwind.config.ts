@@ -61,6 +61,23 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				tetris: {
+					i: 'hsl(var(--tetris-i))',
+					o: 'hsl(var(--tetris-o))',
+					t: 'hsl(var(--tetris-t))',
+					s: 'hsl(var(--tetris-s))',
+					z: 'hsl(var(--tetris-z))',
+					j: 'hsl(var(--tetris-j))',
+					l: 'hsl(var(--tetris-l))'
+				},
+				game: {
+					board: 'hsl(var(--game-board))',
+					border: 'hsl(var(--game-border))',
+					grid: 'hsl(var(--game-grid))',
+					text: 'hsl(var(--game-text))',
+					accent: 'hsl(var(--game-accent))',
+					score: 'hsl(var(--game-score))'
 				}
 			},
 			borderRadius: {
@@ -84,11 +101,47 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'line-clear': {
+					'0%': {
+						opacity: '1',
+						transform: 'scale(1)'
+					},
+					'50%': {
+						opacity: '0.5',
+						transform: 'scale(1.1)'
+					},
+					'100%': {
+						opacity: '0',
+						transform: 'scale(0.8)'
+					}
+				},
+				'piece-land': {
+					'0%': {
+						transform: 'scale(1)'
+					},
+					'50%': {
+						transform: 'scale(1.05)'
+					},
+					'100%': {
+						transform: 'scale(1)'
+					}
+				},
+				'glow-pulse': {
+					'0%, 100%': {
+						boxShadow: '0 0 5px hsl(var(--glow-primary)), 0 0 10px hsl(var(--glow-primary)), 0 0 15px hsl(var(--glow-primary))'
+					},
+					'50%': {
+						boxShadow: '0 0 10px hsl(var(--glow-primary)), 0 0 20px hsl(var(--glow-primary)), 0 0 30px hsl(var(--glow-primary))'
+					}
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'line-clear': 'line-clear 0.5s ease-out',
+				'piece-land': 'piece-land 0.2s ease-out',
+				'glow-pulse': 'glow-pulse 2s ease-in-out infinite'
 			}
 		}
 	},
