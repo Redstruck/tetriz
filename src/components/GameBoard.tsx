@@ -5,12 +5,29 @@ import { cn } from '../lib/utils';
 interface GameBoardProps {
   board: Board;
   currentPiece: Piece | null;
+  ghostPiece: Piece | null;
   clearedRows: number[];
 }
 
-export const GameBoard = memo(({ board, currentPiece, clearedRows }: GameBoardProps) => {
-  // Create a display board that includes the current piece
+export const GameBoard = memo(({ board, currentPiece, ghostPiece, clearedRows }: GameBoardProps) => {
+  // Create a display board that includes the ghost piece and current piece
   const displayBoard = board.map(row => [...row]);
+  const ghostBoard = board.map(row => [...row]);
+  
+  // Add ghost piece to ghost board (only if not overlapping with current piece)
+  if (ghostPiece && currentPiece && ghostPiece.y !== currentPiece.y) {
+    ghostPiece.shape.forEach((row, y) => {
+      row.forEach((cell, x) => {
+        if (cell) {
+          const boardY = ghostPiece.y + y;
+          const boardX = ghostPiece.x + x;
+          if (boardY >= 0 && boardY < 20 && boardX >= 0 && boardX < 10 && !displayBoard[boardY][boardX]) {
+            ghostBoard[boardY][boardX] = `ghost-${ghostPiece.type}`;
+          }
+        }
+      });
+    });
+  }
   
   // Add current piece to display board
   if (currentPiece) {
@@ -27,8 +44,12 @@ export const GameBoard = memo(({ board, currentPiece, clearedRows }: GameBoardPr
     });
   }
 
-  const getCellClasses = (cellType: string) => {
+  const getCellClasses = (cellType: string, isGhost: boolean = false) => {
     const baseClasses = "aspect-square rounded-sm transition-all duration-100 relative overflow-hidden";
+    
+    if (isGhost) {
+      return `${baseClasses} bg-transparent border-2 border-dashed border-gray-400/40`;
+    }
     
     switch (cellType) {
       case 'I': return `${baseClasses} bg-gradient-to-br from-tetris-i via-tetris-i to-cyan-600 shadow-[inset_2px_2px_4px_rgba(255,255,255,0.3),inset_-2px_-2px_4px_rgba(0,0,0,0.3)] border border-cyan-400/20`;
@@ -49,24 +70,30 @@ export const GameBoard = memo(({ board, currentPiece, clearedRows }: GameBoardPr
         {/* Board grid */}
         <div className="grid grid-cols-10 gap-[2px] bg-game-grid/50 p-2 rounded">
           {displayBoard.map((row, y) =>
-            row.map((cell, x) => (
-              <div
-                key={`${y}-${x}`}
-                className={cn(
-                  getCellClasses(cell),
-                  clearedRows.includes(y) && "animate-line-clear"
-                )}
-                style={{
-                  width: 'clamp(22px, 4vw, 34px)',
-                  height: 'clamp(22px, 4vw, 34px)'
-                }}
-              >
-                {/* Inner highlight for 3D effect */}
-                {cell && (
-                  <div className="absolute inset-[1px] rounded-sm bg-gradient-to-br from-white/20 to-transparent" />
-                )}
-              </div>
-            ))
+            row.map((cell, x) => {
+              const ghostCell = ghostBoard[y][x];
+              const isGhost = ghostCell && ghostCell.startsWith('ghost-');
+              const displayCell = cell || (isGhost ? ghostCell.replace('ghost-', '') : '');
+              
+              return (
+                <div
+                  key={`${y}-${x}`}
+                  className={cn(
+                    getCellClasses(displayCell, isGhost),
+                    clearedRows.includes(y) && "animate-line-clear"
+                  )}
+                  style={{
+                    width: 'clamp(22px, 4vw, 34px)',
+                    height: 'clamp(22px, 4vw, 34px)'
+                  }}
+                >
+                  {/* Inner highlight for 3D effect */}
+                  {cell && !isGhost && (
+                    <div className="absolute inset-[1px] rounded-sm bg-gradient-to-br from-white/20 to-transparent" />
+                  )}
+                </div>
+              );
+            })
           )}
         </div>
       </div>

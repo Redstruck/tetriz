@@ -294,10 +294,25 @@ export const useTetrisLogic = () => {
     }
   }, [gameState.clearedRows]);
 
+  const getGhostPiece = useCallback((): Piece | null => {
+    if (!gameState.currentPiece) return null;
+    
+    let dropDistance = 0;
+    while (isValidPosition(gameState.currentPiece, gameState.board, 0, dropDistance + 1)) {
+      dropDistance++;
+    }
+    
+    return {
+      ...gameState.currentPiece,
+      y: gameState.currentPiece.y + dropDistance
+    };
+  }, [gameState.currentPiece, gameState.board, isValidPosition]);
+
   return {
     board: gameState.board,
     currentPiece: gameState.currentPiece,
     nextPiece: gameState.nextPiece,
+    ghostPiece: getGhostPiece(),
     score: gameState.score,
     level: gameState.level,
     linesCleared: gameState.linesCleared,
