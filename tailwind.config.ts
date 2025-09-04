@@ -107,17 +107,25 @@ export default {
 					}
 				},
 				'line-clear': {
-					'0%': {
-						opacity: '1',
-						transform: 'scale(1)'
+					'0%': { 
+						opacity: '1', 
+						transform: 'scale(1)',
+						backgroundColor: 'currentColor'
 					},
-					'50%': {
-						opacity: '0.5',
-						transform: 'scale(1.1)'
+					'30%': { 
+						opacity: '1', 
+						transform: 'scale(1.02)',
+						backgroundColor: 'rgba(255, 255, 255, 0.9)'
 					},
-					'100%': {
-						opacity: '0',
-						transform: 'scale(0.8)'
+					'70%': { 
+						opacity: '0.6', 
+						transform: 'scale(1)',
+						backgroundColor: 'rgba(255, 255, 255, 0.7)'
+					},
+					'100%': { 
+						opacity: '0', 
+						transform: 'scale(0.95)',
+						backgroundColor: 'rgba(255, 255, 255, 0)'
 					}
 				},
 				'piece-land': {
@@ -143,7 +151,7 @@ export default {
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
-				'line-clear': 'line-clear 0.5s ease-out',
+				'line-clear': 'line-clear 0.8s ease-in-out',
 				'piece-land': 'piece-land 0.2s ease-out',
 				'glow-pulse': 'glow-pulse 2s ease-in-out infinite'
 			}

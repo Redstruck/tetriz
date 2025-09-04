@@ -44,11 +44,15 @@ export const GameBoard = memo(({ board, currentPiece, ghostPiece, clearedRows }:
     });
   }
 
-  const getCellClasses = (cellType: string, isGhost: boolean = false) => {
+  const getCellClasses = (cellType: string, isGhost: boolean = false, isClearing: boolean = false) => {
     const baseClasses = "aspect-square rounded-sm transition-all duration-100 relative overflow-hidden";
     
     if (isGhost) {
       return `${baseClasses} bg-transparent border-2 border-dashed border-gray-400/40`;
+    }
+    
+    if (isClearing) {
+      return `${baseClasses} animate-line-clear`;
     }
     
     switch (cellType) {
@@ -74,21 +78,19 @@ export const GameBoard = memo(({ board, currentPiece, ghostPiece, clearedRows }:
               const ghostCell = ghostBoard[y][x];
               const isGhost = ghostCell && ghostCell.startsWith('ghost-');
               const displayCell = cell || (isGhost ? ghostCell.replace('ghost-', '') : '');
+              const isClearing = clearedRows.includes(y) && !!cell;
               
               return (
                 <div
                   key={`${y}-${x}`}
-                  className={cn(
-                    getCellClasses(displayCell, isGhost),
-                    clearedRows.includes(y) && "animate-line-clear"
-                  )}
+                  className={getCellClasses(displayCell, isGhost, isClearing)}
                   style={{
                     width: 'clamp(22px, 4vw, 34px)',
                     height: 'clamp(22px, 4vw, 34px)'
                   }}
                 >
                   {/* Inner highlight for 3D effect */}
-                  {cell && !isGhost && (
+                  {cell && !isGhost && !isClearing && (
                     <div className="absolute inset-[1px] rounded-sm bg-gradient-to-br from-white/20 to-transparent" />
                   )}
                 </div>

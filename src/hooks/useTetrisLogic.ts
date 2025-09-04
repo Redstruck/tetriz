@@ -289,7 +289,7 @@ export const useTetrisLogic = () => {
     if (gameState.clearedRows.length > 0) {
       const timer = setTimeout(() => {
         setGameState(prev => ({ ...prev, clearedRows: [] }));
-      }, 500);
+      }, 800);
       return () => clearTimeout(timer);
     }
   }, [gameState.clearedRows]);
