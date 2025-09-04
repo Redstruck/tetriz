@@ -21,11 +21,15 @@
     
     /* Game UI */
     --game-board: 220 25% 12%;
-    --game-border: 180 100% 50%;
-    --game-grid: 220 25% 15%;
+    --game-border: 220 25% 20%;
+    --game-grid: 220 25% 18%;
     --game-text: 210 40% 98%;
     --game-accent: 180 100% 50%;
     --game-score: 54 100% 60%;
+    
+    /* 3D Block Shadows */
+    --block-shadow-light: 220 25% 25%;
+    --block-shadow-dark: 220 25% 5%;
     
     /* Animations */
     --glow-primary: 180 100% 50%;

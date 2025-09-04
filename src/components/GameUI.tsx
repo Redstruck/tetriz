@@ -25,16 +25,22 @@ export const GameUI = memo(({
   onStart,
   onReset 
 }: GameUIProps) => {
-  const getCellColor = (cellType: string) => {
+  const getCellClasses = (cellType: string, hasBlock: boolean) => {
+    const baseClasses = "w-4 h-4 rounded-[2px] transition-all duration-100 relative overflow-hidden";
+    
+    if (!hasBlock) {
+      return `${baseClasses} bg-game-grid border border-game-border/20`;
+    }
+    
     switch (cellType) {
-      case 'I': return 'bg-tetris-i';
-      case 'O': return 'bg-tetris-o';
-      case 'T': return 'bg-tetris-t';
-      case 'S': return 'bg-tetris-s';
-      case 'Z': return 'bg-tetris-z';
-      case 'J': return 'bg-tetris-j';
-      case 'L': return 'bg-tetris-l';
-      default: return 'bg-game-grid';
+      case 'I': return `${baseClasses} bg-gradient-to-br from-tetris-i via-tetris-i to-cyan-600 shadow-[inset_1px_1px_2px_rgba(255,255,255,0.3),inset_-1px_-1px_2px_rgba(0,0,0,0.3)] border border-cyan-400/30`;
+      case 'O': return `${baseClasses} bg-gradient-to-br from-tetris-o via-tetris-o to-yellow-600 shadow-[inset_1px_1px_2px_rgba(255,255,255,0.3),inset_-1px_-1px_2px_rgba(0,0,0,0.3)] border border-yellow-400/30`;
+      case 'T': return `${baseClasses} bg-gradient-to-br from-tetris-t via-tetris-t to-purple-700 shadow-[inset_1px_1px_2px_rgba(255,255,255,0.3),inset_-1px_-1px_2px_rgba(0,0,0,0.3)] border border-purple-400/30`;
+      case 'S': return `${baseClasses} bg-gradient-to-br from-tetris-s via-tetris-s to-green-600 shadow-[inset_1px_1px_2px_rgba(255,255,255,0.3),inset_-1px_-1px_2px_rgba(0,0,0,0.3)] border border-green-400/30`;
+      case 'Z': return `${baseClasses} bg-gradient-to-br from-tetris-z via-tetris-z to-red-700 shadow-[inset_1px_1px_2px_rgba(255,255,255,0.3),inset_-1px_-1px_2px_rgba(0,0,0,0.3)] border border-red-400/30`;
+      case 'J': return `${baseClasses} bg-gradient-to-br from-tetris-j via-tetris-j to-blue-700 shadow-[inset_1px_1px_2px_rgba(255,255,255,0.3),inset_-1px_-1px_2px_rgba(0,0,0,0.3)] border border-blue-400/30`;
+      case 'L': return `${baseClasses} bg-gradient-to-br from-tetris-l via-tetris-l to-orange-600 shadow-[inset_1px_1px_2px_rgba(255,255,255,0.3),inset_-1px_-1px_2px_rgba(0,0,0,0.3)] border border-orange-400/30`;
+      default: return `${baseClasses} bg-game-grid border border-game-border/20`;
     }
   };
 
@@ -64,7 +70,7 @@ export const GameUI = memo(({
         <div className="bg-game-board border border-game-border rounded-lg p-4">
           <h3 className="text-sm font-bold text-game-accent mb-2">NEXT</h3>
           <div className="flex justify-center">
-            <div className="grid gap-[1px] bg-background p-2 rounded" 
+            <div className="grid gap-[1px] bg-game-grid/50 p-2 rounded" 
                  style={{ gridTemplateColumns: `repeat(4, 1fr)` }}>
               {Array.from({ length: 16 }, (_, i) => {
                 const y = Math.floor(i / 4);
@@ -75,11 +81,12 @@ export const GameUI = memo(({
                 return (
                   <div
                     key={i}
-                    className={cn(
-                      "w-4 h-4 border border-game-grid/20 rounded-[1px]",
-                      hasBlock ? getCellColor(nextPiece.type) : "bg-game-grid"
+                    className={cn(getCellClasses(nextPiece.type, !!hasBlock))}
+                  >
+                    {hasBlock && (
+                      <div className="absolute inset-[1px] rounded-[1px] bg-gradient-to-br from-white/20 to-transparent" />
                     )}
-                  />
+                  </div>
                 );
               })}
             </div>

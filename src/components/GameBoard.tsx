@@ -27,48 +27,48 @@ export const GameBoard = memo(({ board, currentPiece, clearedRows }: GameBoardPr
     });
   }
 
-  const getCellColor = (cellType: string) => {
+  const getCellClasses = (cellType: string) => {
+    const baseClasses = "aspect-square rounded-sm transition-all duration-100 relative overflow-hidden";
+    
     switch (cellType) {
-      case 'I': return 'bg-tetris-i';
-      case 'O': return 'bg-tetris-o';
-      case 'T': return 'bg-tetris-t';
-      case 'S': return 'bg-tetris-s';
-      case 'Z': return 'bg-tetris-z';
-      case 'J': return 'bg-tetris-j';
-      case 'L': return 'bg-tetris-l';
-      default: return 'bg-game-grid';
+      case 'I': return `${baseClasses} bg-gradient-to-br from-tetris-i via-tetris-i to-cyan-600 shadow-[inset_2px_2px_4px_rgba(255,255,255,0.3),inset_-2px_-2px_4px_rgba(0,0,0,0.3)] border border-cyan-400/20`;
+      case 'O': return `${baseClasses} bg-gradient-to-br from-tetris-o via-tetris-o to-yellow-600 shadow-[inset_2px_2px_4px_rgba(255,255,255,0.3),inset_-2px_-2px_4px_rgba(0,0,0,0.3)] border border-yellow-400/20`;
+      case 'T': return `${baseClasses} bg-gradient-to-br from-tetris-t via-tetris-t to-purple-700 shadow-[inset_2px_2px_4px_rgba(255,255,255,0.3),inset_-2px_-2px_4px_rgba(0,0,0,0.3)] border border-purple-400/20`;
+      case 'S': return `${baseClasses} bg-gradient-to-br from-tetris-s via-tetris-s to-green-600 shadow-[inset_2px_2px_4px_rgba(255,255,255,0.3),inset_-2px_-2px_4px_rgba(0,0,0,0.3)] border border-green-400/20`;
+      case 'Z': return `${baseClasses} bg-gradient-to-br from-tetris-z via-tetris-z to-red-700 shadow-[inset_2px_2px_4px_rgba(255,255,255,0.3),inset_-2px_-2px_4px_rgba(0,0,0,0.3)] border border-red-400/20`;
+      case 'J': return `${baseClasses} bg-gradient-to-br from-tetris-j via-tetris-j to-blue-700 shadow-[inset_2px_2px_4px_rgba(255,255,255,0.3),inset_-2px_-2px_4px_rgba(0,0,0,0.3)] border border-blue-400/20`;
+      case 'L': return `${baseClasses} bg-gradient-to-br from-tetris-l via-tetris-l to-orange-600 shadow-[inset_2px_2px_4px_rgba(255,255,255,0.3),inset_-2px_-2px_4px_rgba(0,0,0,0.3)] border border-orange-400/20`;
+      default: return `${baseClasses} bg-game-grid border border-game-border/30`;
     }
   };
 
   return (
     <div className="relative">
-      {/* Game board border */}
-      <div className="p-2 bg-game-board border-2 border-game-border rounded-lg shadow-2xl animate-glow-pulse">
+      {/* Game board */}
+      <div className="p-3 bg-game-board rounded-lg shadow-2xl">
         {/* Board grid */}
-        <div className="grid grid-cols-10 gap-[1px] bg-background p-1 rounded">
+        <div className="grid grid-cols-10 gap-[2px] bg-game-grid/50 p-2 rounded">
           {displayBoard.map((row, y) =>
             row.map((cell, x) => (
               <div
                 key={`${y}-${x}`}
                 className={cn(
-                  "aspect-square border border-game-grid/20 rounded-[1px] transition-all duration-100",
-                  getCellColor(cell),
-                  cell && "shadow-sm",
+                  getCellClasses(cell),
                   clearedRows.includes(y) && "animate-line-clear"
                 )}
                 style={{
-                  width: 'clamp(20px, 4vw, 32px)',
-                  height: 'clamp(20px, 4vw, 32px)'
+                  width: 'clamp(22px, 4vw, 34px)',
+                  height: 'clamp(22px, 4vw, 34px)'
                 }}
-              />
+              >
+                {/* Inner highlight for 3D effect */}
+                {cell && (
+                  <div className="absolute inset-[1px] rounded-sm bg-gradient-to-br from-white/20 to-transparent" />
+                )}
+              </div>
             ))
           )}
         </div>
-      </div>
-      
-      {/* Grid overlay for retro feel */}
-      <div className="absolute inset-2 pointer-events-none">
-        <div className="w-full h-full opacity-10 bg-gradient-to-b from-transparent via-game-accent/5 to-transparent" />
       </div>
     </div>
   );

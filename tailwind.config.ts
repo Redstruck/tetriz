@@ -78,6 +78,10 @@ export default {
 					text: 'hsl(var(--game-text))',
 					accent: 'hsl(var(--game-accent))',
 					score: 'hsl(var(--game-score))'
+				},
+				'block-shadow': {
+					light: 'hsl(var(--block-shadow-light))',
+					dark: 'hsl(var(--block-shadow-dark))'
 				}
 			},
 			borderRadius: {
