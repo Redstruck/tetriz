@@ -109,23 +109,27 @@ export default {
 				'line-clear': {
 					'0%': { 
 						opacity: '1', 
-						transform: 'scale(1)',
-						backgroundColor: 'currentColor'
+						transform: 'scale(1)'
 					},
-					'30%': { 
+					'25%': { 
 						opacity: '1', 
-						transform: 'scale(1.02)',
-						backgroundColor: 'rgba(255, 255, 255, 0.9)'
+						transform: 'scale(1.05)',
+						filter: 'brightness(2) saturate(0)'
 					},
-					'70%': { 
-						opacity: '0.6', 
+					'50%': { 
+						opacity: '1', 
 						transform: 'scale(1)',
-						backgroundColor: 'rgba(255, 255, 255, 0.7)'
+						filter: 'brightness(3) saturate(0)'
+					},
+					'75%': { 
+						opacity: '0.7', 
+						transform: 'scale(0.98)',
+						filter: 'brightness(3) saturate(0)'
 					},
 					'100%': { 
 						opacity: '0', 
-						transform: 'scale(0.95)',
-						backgroundColor: 'rgba(255, 255, 255, 0)'
+						transform: 'scale(0.8)',
+						filter: 'brightness(0) saturate(0)'
 					}
 				},
 				'piece-land': {

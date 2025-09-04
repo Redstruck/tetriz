@@ -45,24 +45,22 @@ export const GameBoard = memo(({ board, currentPiece, ghostPiece, clearedRows }:
   }
 
   const getCellClasses = (cellType: string, isGhost: boolean = false, isClearing: boolean = false) => {
-    const baseClasses = "aspect-square rounded-sm transition-all duration-100 relative overflow-hidden";
+    const baseClasses = "aspect-square rounded-sm transition-all duration-75 relative overflow-hidden";
     
     if (isGhost) {
       return `${baseClasses} bg-transparent border-2 border-dashed border-gray-400/40`;
     }
     
-    if (isClearing) {
-      return `${baseClasses} animate-line-clear`;
-    }
+    const clearingClass = isClearing ? " animate-line-clear" : "";
     
     switch (cellType) {
-      case 'I': return `${baseClasses} bg-gradient-to-br from-tetris-i via-tetris-i to-cyan-600 shadow-[inset_2px_2px_4px_rgba(255,255,255,0.3),inset_-2px_-2px_4px_rgba(0,0,0,0.3)] border border-cyan-400/20`;
-      case 'O': return `${baseClasses} bg-gradient-to-br from-tetris-o via-tetris-o to-yellow-600 shadow-[inset_2px_2px_4px_rgba(255,255,255,0.3),inset_-2px_-2px_4px_rgba(0,0,0,0.3)] border border-yellow-400/20`;
-      case 'T': return `${baseClasses} bg-gradient-to-br from-tetris-t via-tetris-t to-purple-700 shadow-[inset_2px_2px_4px_rgba(255,255,255,0.3),inset_-2px_-2px_4px_rgba(0,0,0,0.3)] border border-purple-400/20`;
-      case 'S': return `${baseClasses} bg-gradient-to-br from-tetris-s via-tetris-s to-green-600 shadow-[inset_2px_2px_4px_rgba(255,255,255,0.3),inset_-2px_-2px_4px_rgba(0,0,0,0.3)] border border-green-400/20`;
-      case 'Z': return `${baseClasses} bg-gradient-to-br from-tetris-z via-tetris-z to-red-700 shadow-[inset_2px_2px_4px_rgba(255,255,255,0.3),inset_-2px_-2px_4px_rgba(0,0,0,0.3)] border border-red-400/20`;
-      case 'J': return `${baseClasses} bg-gradient-to-br from-tetris-j via-tetris-j to-blue-700 shadow-[inset_2px_2px_4px_rgba(255,255,255,0.3),inset_-2px_-2px_4px_rgba(0,0,0,0.3)] border border-blue-400/20`;
-      case 'L': return `${baseClasses} bg-gradient-to-br from-tetris-l via-tetris-l to-orange-600 shadow-[inset_2px_2px_4px_rgba(255,255,255,0.3),inset_-2px_-2px_4px_rgba(0,0,0,0.3)] border border-orange-400/20`;
+      case 'I': return `${baseClasses} bg-gradient-to-br from-tetris-i via-tetris-i to-cyan-600 shadow-[inset_2px_2px_4px_rgba(255,255,255,0.3),inset_-2px_-2px_4px_rgba(0,0,0,0.3)] border border-cyan-400/20${clearingClass}`;
+      case 'O': return `${baseClasses} bg-gradient-to-br from-tetris-o via-tetris-o to-yellow-600 shadow-[inset_2px_2px_4px_rgba(255,255,255,0.3),inset_-2px_-2px_4px_rgba(0,0,0,0.3)] border border-yellow-400/20${clearingClass}`;
+      case 'T': return `${baseClasses} bg-gradient-to-br from-tetris-t via-tetris-t to-purple-700 shadow-[inset_2px_2px_4px_rgba(255,255,255,0.3),inset_-2px_-2px_4px_rgba(0,0,0,0.3)] border border-purple-400/20${clearingClass}`;
+      case 'S': return `${baseClasses} bg-gradient-to-br from-tetris-s via-tetris-s to-green-600 shadow-[inset_2px_2px_4px_rgba(255,255,255,0.3),inset_-2px_-2px_4px_rgba(0,0,0,0.3)] border border-green-400/20${clearingClass}`;
+      case 'Z': return `${baseClasses} bg-gradient-to-br from-tetris-z via-tetris-z to-red-700 shadow-[inset_2px_2px_4px_rgba(255,255,255,0.3),inset_-2px_-2px_4px_rgba(0,0,0,0.3)] border border-red-400/20${clearingClass}`;
+      case 'J': return `${baseClasses} bg-gradient-to-br from-tetris-j via-tetris-j to-blue-700 shadow-[inset_2px_2px_4px_rgba(255,255,255,0.3),inset_-2px_-2px_4px_rgba(0,0,0,0.3)] border border-blue-400/20${clearingClass}`;
+      case 'L': return `${baseClasses} bg-gradient-to-br from-tetris-l via-tetris-l to-orange-600 shadow-[inset_2px_2px_4px_rgba(255,255,255,0.3),inset_-2px_-2px_4px_rgba(0,0,0,0.3)] border border-orange-400/20${clearingClass}`;
       default: return `${baseClasses} bg-game-grid border border-game-border/30`;
     }
   };
@@ -89,6 +87,10 @@ export const GameBoard = memo(({ board, currentPiece, ghostPiece, clearedRows }:
                     height: 'clamp(22px, 4vw, 34px)'
                   }}
                 >
+                  {/* White flash overlay for clearing animation */}
+                  {isClearing && (
+                    <div className="absolute inset-0 bg-white rounded-sm animate-line-clear" />
+                  )}
                   {/* Inner highlight for 3D effect */}
                   {cell && !isGhost && !isClearing && (
                     <div className="absolute inset-[1px] rounded-sm bg-gradient-to-br from-white/20 to-transparent" />
