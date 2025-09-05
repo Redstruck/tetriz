@@ -152,23 +152,24 @@ export const useTetrisLogic = () => {
           }
         };
       } else {
-        // Piece has landed
+        // Piece has landed - use the next piece in queue
         const newBoard = placePiece(prev.currentPiece, prev.board);
         const { newBoard: clearedBoard, clearedLines, clearedRows } = clearLines(newBoard);
         const scoreIncrease = calculateScore(clearedLines, prev.level);
         const newLinesCleared = prev.linesCleared + clearedLines;
         const newLevel = Math.floor(newLinesCleared / 10) + 1;
         
-        const nextPiece = createPiece(getRandomPieceType());
+        // Current next piece becomes the current piece, generate new next piece  
+        const newCurrentPiece = prev.nextPiece || createPiece(getRandomPieceType());
         const newNextPiece = createPiece(getRandomPieceType());
         
         // Check game over
-        const gameOver = !isValidPosition(nextPiece, clearedBoard);
+        const gameOver = !isValidPosition(newCurrentPiece, clearedBoard);
 
         return {
           ...prev,
           board: clearedBoard,
-          currentPiece: gameOver ? null : nextPiece,
+          currentPiece: gameOver ? null : newCurrentPiece,
           nextPiece: gameOver ? prev.nextPiece : newNextPiece,
           score: prev.score + scoreIncrease,
           level: newLevel,
@@ -201,15 +202,16 @@ export const useTetrisLogic = () => {
       const newLinesCleared = prev.linesCleared + clearedLines;
       const newLevel = Math.floor(newLinesCleared / 10) + 1;
       
-      const nextPiece = createPiece(getRandomPieceType());
+      // Current next piece becomes the current piece, generate new next piece
+      const newCurrentPiece = prev.nextPiece || createPiece(getRandomPieceType());
       const newNextPiece = createPiece(getRandomPieceType());
       
-      const gameOver = !isValidPosition(nextPiece, clearedBoard);
+      const gameOver = !isValidPosition(newCurrentPiece, clearedBoard);
 
       return {
         ...prev,
         board: clearedBoard,
-        currentPiece: gameOver ? null : nextPiece,
+        currentPiece: gameOver ? null : newCurrentPiece,
         nextPiece: gameOver ? prev.nextPiece : newNextPiece,
         score: prev.score + scoreIncrease,
         level: newLevel,

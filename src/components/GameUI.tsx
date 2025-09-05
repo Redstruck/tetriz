@@ -76,12 +76,12 @@ export const GameUI = memo(({
                 const y = Math.floor(i / 4);
                 const x = i % 4;
                 const shape = PIECES[nextPiece.type].shape;
-                const hasBlock = shape[y] && shape[y][x];
+                const hasBlock = shape[y] && shape[y][x] === 1;
                 
                 return (
                   <div
                     key={i}
-                    className={cn(getCellClasses(nextPiece.type, !!hasBlock))}
+                    className={cn(getCellClasses(nextPiece.type, hasBlock))}
                   >
                     {hasBlock && (
                       <div className="absolute inset-[1px] rounded-[1px] bg-gradient-to-br from-white/20 to-transparent" />
