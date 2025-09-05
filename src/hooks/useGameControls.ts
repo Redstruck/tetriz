@@ -20,16 +20,24 @@ export const useGameControls = ({
   const keysPressed = useRef<Set<string>>(new Set());
   const repeatTimers = useRef<Map<string, NodeJS.Timeout>>(new Map());
 
-  const startRepeating = useCallback((key: string, action: () => void, delay = 150) => {
+  const startRepeating = useCallback((key: string, action: () => void, initialDelay = 150, repeatDelay = 50) => {
     if (repeatTimers.current.has(key)) return;
     
-    const timer = setInterval(action, delay);
-    repeatTimers.current.set(key, timer);
+    // Start auto-repeat after initial delay (DAS behavior)
+    const initialTimer = setTimeout(() => {
+      // Clear the initial timer and start the repeat timer
+      repeatTimers.current.delete(key);
+      const repeatTimer = setInterval(action, repeatDelay);
+      repeatTimers.current.set(key, repeatTimer);
+    }, initialDelay);
+    
+    repeatTimers.current.set(key, initialTimer);
   }, []);
 
   const stopRepeating = useCallback((key: string) => {
     const timer = repeatTimers.current.get(key);
     if (timer) {
+      clearTimeout(timer); // Clear both setTimeout and setInterval
       clearInterval(timer);
       repeatTimers.current.delete(key);
     }
@@ -53,15 +61,15 @@ export const useGameControls = ({
     switch (key) {
       case 'ArrowLeft':
         onMoveLeft();
-        startRepeating(key, onMoveLeft, 100);
+        startRepeating(key, onMoveLeft, 180, 80); // 180ms initial delay, 80ms repeat
         break;
       case 'ArrowRight':
         onMoveRight();
-        startRepeating(key, onMoveRight, 100);
+        startRepeating(key, onMoveRight, 180, 80); // 180ms initial delay, 80ms repeat
         break;
       case 'ArrowDown':
         onMoveDown();
-        startRepeating(key, onMoveDown, 50);
+        startRepeating(key, onMoveDown, 0, 50); // No initial delay for soft drop
         break;
       case 'ArrowUp':
         onRotate();
@@ -88,7 +96,10 @@ export const useGameControls = ({
       window.removeEventListener('keyup', handleKeyUp);
       
       // Clean up all repeat timers
-      repeatTimers.current.forEach(timer => clearInterval(timer));
+      repeatTimers.current.forEach(timer => {
+        clearTimeout(timer);
+        clearInterval(timer);
+      });
       repeatTimers.current.clear();
     };
   }, [handleKeyDown, handleKeyUp]);
@@ -97,7 +108,10 @@ export const useGameControls = ({
   useEffect(() => {
     if (!gameStarted) {
       keysPressed.current.clear();
-      repeatTimers.current.forEach(timer => clearInterval(timer));
+      repeatTimers.current.forEach(timer => {
+        clearTimeout(timer);
+        clearInterval(timer);
+      });
       repeatTimers.current.clear();
     }
   }, [gameStarted]);
