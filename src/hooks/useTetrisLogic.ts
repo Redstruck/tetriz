@@ -10,7 +10,7 @@ const createPiece = (type: string): Piece => {
   return {
     type: type as any,
     x: 3,
-    y: 0,
+    y: -2, // Start above visible board to create falling effect
     shape: PIECES[type as keyof typeof PIECES].shape,
     rotation: 0
   };
