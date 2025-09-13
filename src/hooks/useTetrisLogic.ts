@@ -21,6 +21,8 @@ export const useTetrisLogic = () => {
     board: createEmptyBoard(),
     currentPiece: null,
     nextPiece: null,
+    holdPiece: null,
+    holdUsed: false,
     score: 0,
     level: 1,
     linesCleared: 0,
@@ -176,7 +178,8 @@ export const useTetrisLogic = () => {
           linesCleared: newLinesCleared,
           gameOver,
           clearedRows,
-          dropTime: Math.max(50, 1000 - (newLevel - 1) * 50)
+          dropTime: Math.max(50, 1000 - (newLevel - 1) * 50),
+          holdUsed: false // Reset hold usage after piece lands
         };
       }
     });
@@ -218,7 +221,8 @@ export const useTetrisLogic = () => {
         linesCleared: newLinesCleared,
         gameOver,
         clearedRows,
-        dropTime: Math.max(50, 1000 - (newLevel - 1) * 50)
+        dropTime: Math.max(50, 1000 - (newLevel - 1) * 50),
+        holdUsed: false // Reset hold usage after piece lands
       };
     });
   }, [isValidPosition, placePiece, clearLines, calculateScore]);
@@ -232,6 +236,8 @@ export const useTetrisLogic = () => {
       board: createEmptyBoard(),
       currentPiece: firstPiece,
       nextPiece: secondPiece,
+      holdPiece: null,
+      holdUsed: false,
       score: 0,
       level: 1,
       linesCleared: 0,
@@ -248,6 +254,8 @@ export const useTetrisLogic = () => {
       board: createEmptyBoard(),
       currentPiece: null,
       nextPiece: null,
+      holdPiece: null,
+      holdUsed: false,
       score: 0,
       level: 1,
       linesCleared: 0,
@@ -296,6 +304,49 @@ export const useTetrisLogic = () => {
     }
   }, [gameState.clearedRows]);
 
+  const holdPiece = useCallback(() => {
+    setGameState(prev => {
+      if (!prev.currentPiece || prev.gameOver || !prev.gameStarted || prev.holdUsed) {
+        return prev;
+      }
+
+      const currentPieceToHold = { ...prev.currentPiece };
+      let newCurrentPiece: Piece;
+      let newNextPiece = prev.nextPiece;
+
+      if (prev.holdPiece) {
+        // Swap current piece with hold piece
+        newCurrentPiece = {
+          ...prev.holdPiece,
+          x: 3,
+          y: -2,
+          rotation: 0
+        };
+      } else {
+        // No piece in hold, use next piece as current
+        newCurrentPiece = prev.nextPiece || createPiece(getRandomPieceType());
+        newNextPiece = createPiece(getRandomPieceType());
+      }
+
+      // Check if the new current piece can fit
+      const gameOver = !isValidPosition(newCurrentPiece, prev.board);
+
+      return {
+        ...prev,
+        currentPiece: gameOver ? null : newCurrentPiece,
+        nextPiece: gameOver ? prev.nextPiece : newNextPiece,
+        holdPiece: {
+          ...currentPieceToHold,
+          x: 3,
+          y: -2,
+          rotation: 0
+        },
+        holdUsed: true,
+        gameOver: gameOver || prev.gameOver
+      };
+    });
+  }, [isValidPosition]);
+
   const getGhostPiece = useCallback((): Piece | null => {
     if (!gameState.currentPiece) return null;
     
@@ -314,6 +365,8 @@ export const useTetrisLogic = () => {
     board: gameState.board,
     currentPiece: gameState.currentPiece,
     nextPiece: gameState.nextPiece,
+    holdPiece: gameState.holdPiece,
+    holdUsed: gameState.holdUsed,
     ghostPiece: getGhostPiece(),
     score: gameState.score,
     level: gameState.level,
@@ -326,6 +379,7 @@ export const useTetrisLogic = () => {
     movePiece,
     rotatePiece: rotatePieceHandler,
     dropPiece,
-    hardDrop
+    hardDrop,
+    holdPieceAction: holdPiece
   };
 };

@@ -14,6 +14,8 @@ export interface GameState {
   board: Board;
   currentPiece: Piece | null;
   nextPiece: Piece | null;
+  holdPiece: Piece | null;
+  holdUsed: boolean;
   score: number;
   level: number;
   linesCleared: number;

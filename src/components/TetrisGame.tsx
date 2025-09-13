@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { GameBoard } from './GameBoard';
 import { GameUI } from './GameUI';
+import { HoldUI } from './HoldUI';
 import { useTetrisLogic } from '../hooks/useTetrisLogic';
 import { useGameControls } from '../hooks/useGameControls';
 
@@ -9,6 +10,8 @@ export const TetrisGame = () => {
     board,
     currentPiece,
     nextPiece,
+    holdPiece,
+    holdUsed,
     ghostPiece,
     score,
     level,
@@ -21,7 +24,8 @@ export const TetrisGame = () => {
     movePiece,
     rotatePiece,
     dropPiece,
-    hardDrop
+    hardDrop,
+    holdPieceAction
   } = useTetrisLogic();
 
   useGameControls({
@@ -30,14 +34,23 @@ export const TetrisGame = () => {
     onMoveDown: () => dropPiece(),
     onRotate: rotatePiece,
     onHardDrop: hardDrop,
+    onHold: holdPieceAction,
     gameStarted
   });
 
   return (
     <div className="h-screen w-screen bg-background flex items-center justify-center overflow-hidden">
       <div className="flex flex-col lg:flex-row items-center justify-center gap-4 p-4 max-w-7xl w-full">
+        {/* Hold UI */}
+        <div className="flex-shrink-0 order-1 lg:order-1">
+          <HoldUI 
+            holdPiece={holdPiece}
+            holdUsed={holdUsed}
+          />
+        </div>
+        
         {/* Game Board */}
-        <div className="flex-shrink-0">
+        <div className="flex-shrink-0 order-2 lg:order-2">
         <GameBoard 
           board={board} 
           currentPiece={currentPiece}
@@ -47,7 +60,7 @@ export const TetrisGame = () => {
         </div>
         
         {/* Game UI */}
-        <div className="flex-shrink-0">
+        <div className="flex-shrink-0 order-3 lg:order-3">
           <GameUI
             score={score}
             level={level}

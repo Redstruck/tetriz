@@ -6,6 +6,7 @@ interface GameControlsProps {
   onMoveDown: () => void;
   onRotate: () => void;
   onHardDrop: () => void;
+  onHold: () => void;
   gameStarted: boolean;
 }
 
@@ -15,6 +16,7 @@ export const useGameControls = ({
   onMoveDown,
   onRotate,
   onHardDrop,
+  onHold,
   gameStarted
 }: GameControlsProps) => {
   const keysPressed = useRef<Set<string>>(new Set());
@@ -49,7 +51,7 @@ export const useGameControls = ({
     const key = event.key;
     
     // Prevent default behavior for game keys
-    if (['ArrowLeft', 'ArrowRight', 'ArrowDown', 'ArrowUp', ' '].includes(key)) {
+    if (['ArrowLeft', 'ArrowRight', 'ArrowDown', 'ArrowUp', ' ', 'c', 'C'].includes(key)) {
       event.preventDefault();
     }
 
@@ -77,8 +79,12 @@ export const useGameControls = ({
       case ' ':
         onHardDrop();
         break;
+      case 'c':
+      case 'C':
+        onHold();
+        break;
     }
-  }, [gameStarted, onMoveLeft, onMoveRight, onMoveDown, onRotate, onHardDrop, startRepeating]);
+  }, [gameStarted, onMoveLeft, onMoveRight, onMoveDown, onRotate, onHardDrop, onHold, startRepeating]);
 
   const handleKeyUp = useCallback((event: KeyboardEvent) => {
     const key = event.key;
