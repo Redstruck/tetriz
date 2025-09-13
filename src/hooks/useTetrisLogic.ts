@@ -178,7 +178,7 @@ export const useTetrisLogic = () => {
           linesCleared: newLinesCleared,
           gameOver,
           clearedRows,
-          dropTime: Math.max(50, 1000 - (newLevel - 1) * 50),
+          dropTime: Math.max(100, 1000 - (newLevel - 1) * 100),
           holdUsed: false // Reset hold usage after piece lands
         };
       }
@@ -221,7 +221,7 @@ export const useTetrisLogic = () => {
         linesCleared: newLinesCleared,
         gameOver,
         clearedRows,
-        dropTime: Math.max(50, 1000 - (newLevel - 1) * 50),
+        dropTime: Math.max(100, 1000 - (newLevel - 1) * 100),
         holdUsed: false // Reset hold usage after piece lands
       };
     });
