@@ -1,11 +1,16 @@
 import { useEffect, useState, useCallback } from 'react';
-import { GameBoard } from './GameBoard';
-import { GameUI } from './GameUI';
-import { HoldUI } from './HoldUI';
+import { RetroGameBoard } from './RetroGameBoard';
+import { RetroHoldUI } from './RetroHoldUI';
+import { RetroNextUI } from './RetroNextUI';
+import { LeftStatsPanel } from './LeftStatsPanel';
+import { RightStatsPanel } from './RightStatsPanel';
+import { GameOverlay } from './GameOverlay';
 import { useTetrisLogic } from '../hooks/useTetrisLogic';
 import { useGameControls } from '../hooks/useGameControls';
 
 export const TetrisGame = () => {
+  const [gameTime, setGameTime] = useState(0);
+  
   const {
     board,
     currentPiece,
@@ -38,40 +43,68 @@ export const TetrisGame = () => {
     gameStarted
   });
 
+  // Game timer
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (gameStarted && !gameOver) {
+      interval = setInterval(() => {
+        setGameTime(prev => prev + 100);
+      }, 100);
+    }
+    return () => clearInterval(interval);
+  }, [gameStarted, gameOver]);
+
+  // Reset timer when game starts
+  useEffect(() => {
+    if (gameStarted) {
+      setGameTime(0);
+    }
+  }, [gameStarted]);
+
   return (
-    <div className="h-screen w-screen bg-background flex items-center justify-center overflow-hidden">
-      <div className="flex flex-col lg:flex-row items-center justify-center gap-4 p-4 max-w-7xl w-full">
-        {/* Hold UI */}
-        <div className="flex-shrink-0 order-1 lg:order-1">
-          <HoldUI 
+    <div className="h-screen w-screen bg-black flex items-center justify-center overflow-hidden relative">
+      <div className="flex items-start justify-center gap-8 p-4">
+        {/* Left Panel - Hold and Stats */}
+        <div className="flex flex-col items-start gap-8">
+          <RetroHoldUI 
             holdPiece={holdPiece}
             holdUsed={holdUsed}
+          />
+          <LeftStatsPanel 
+            linesCleared={linesCleared}
+            gameTime={gameTime}
           />
         </div>
         
         {/* Game Board */}
-        <div className="flex-shrink-0 order-2 lg:order-2">
-        <GameBoard 
-          board={board} 
-          currentPiece={currentPiece}
-          ghostPiece={ghostPiece}
-          clearedRows={clearedRows}
-        />
-        </div>
-        
-        {/* Game UI */}
-        <div className="flex-shrink-0 order-3 lg:order-3">
-          <GameUI
-            score={score}
-            level={level}
-            linesCleared={linesCleared}
-            nextPiece={nextPiece}
-            gameOver={gameOver}
+        <div className="relative">
+          <RetroGameBoard 
+            board={board} 
+            currentPiece={currentPiece}
+            ghostPiece={ghostPiece}
+            clearedRows={clearedRows}
+          />
+          <GameOverlay 
             gameStarted={gameStarted}
+            gameOver={gameOver}
             onStart={startGame}
             onReset={resetGame}
           />
         </div>
+        
+        {/* Right Panel - Next and Stats */}
+        <div className="flex flex-col items-start gap-8">
+          <RetroNextUI nextPiece={nextPiece} />
+          <RightStatsPanel 
+            level={level}
+            score={score}
+          />
+        </div>
+      </div>
+      
+      {/* Bottom controls text */}
+      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-white font-mono text-sm">
+        NULLNUMBERING || C
       </div>
     </div>
   );
