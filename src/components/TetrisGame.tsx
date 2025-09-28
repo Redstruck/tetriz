@@ -39,7 +39,7 @@ export const TetrisGame = () => {
   });
 
   return (
-    <div className="h-screen w-screen bg-background flex items-center justify-center overflow-hidden">
+    <div className="h-screen w-screen bg-black flex items-center justify-center overflow-hidden">
       <div className="flex flex-col lg:flex-row items-center justify-center gap-4 p-4 max-w-7xl w-full">
         {/* Hold UI */}
         <div className="flex-shrink-0 order-1 lg:order-1">
