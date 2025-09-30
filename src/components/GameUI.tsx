@@ -74,10 +74,10 @@ export const GameUI = memo(({
         <h2 className="text-lg font-bold text-game-accent mb-3">SPEED</h2>
         <div className="grid grid-cols-3 gap-2">
           {[
-            { label: 'Slow', value: 1500, emoji: '🐢' },
-            { label: 'Normal', value: 1000, emoji: '⚡' },
-            { label: 'Fast', value: 500, emoji: '🚀' }
-          ].map(({ label, value, emoji }) => (
+            { label: 'Slow', value: 1500 },
+            { label: 'Normal', value: 1000 },
+            { label: 'Fast', value: 500 }
+          ].map(({ label, value }) => (
             <Button
               key={label}
               variant={baseDropSpeed === value ? "default" : "outline"}
@@ -90,7 +90,6 @@ export const GameUI = memo(({
                   : 'border-game-border/50 text-game-text hover:bg-game-grid/50'
               }`}
             >
-              <span className="mr-1">{emoji}</span>
               {label}
             </Button>
           ))}
