@@ -7,6 +7,9 @@ interface GameControlsProps {
   onRotate: () => void;
   onHardDrop: () => void;
   onHold: () => void;
+  onSpeedUp?: () => void;
+  onSpeedDown?: () => void;
+  onSpeedReset?: () => void;
   gameStarted: boolean;
 }
 
@@ -17,6 +20,9 @@ export const useGameControls = ({
   onRotate,
   onHardDrop,
   onHold,
+  onSpeedUp,
+  onSpeedDown,
+  onSpeedReset,
   gameStarted
 }: GameControlsProps) => {
   const keysPressed = useRef<Set<string>>(new Set());
@@ -46,12 +52,30 @@ export const useGameControls = ({
   }, []);
 
   const handleKeyDown = useCallback((event: KeyboardEvent) => {
-    if (!gameStarted) return;
-
     const key = event.key;
     
+    // Speed controls work even when game is not started
+    if (!gameStarted) {
+      if (key === '=' || key === '+') {
+        event.preventDefault();
+        onSpeedUp?.();
+        return;
+      }
+      if (key === '-' || key === '_') {
+        event.preventDefault();
+        onSpeedDown?.();
+        return;
+      }
+      if (key === '0') {
+        event.preventDefault();
+        onSpeedReset?.();
+        return;
+      }
+      return;
+    }
+    
     // Prevent default behavior for game keys
-    if (['ArrowLeft', 'ArrowRight', 'ArrowDown', 'ArrowUp', ' ', 'c', 'C'].includes(key)) {
+    if (['ArrowLeft', 'ArrowRight', 'ArrowDown', 'ArrowUp', ' ', 'c', 'C', '=', '+', '-', '_', '0'].includes(key)) {
       event.preventDefault();
     }
 
@@ -83,8 +107,26 @@ export const useGameControls = ({
       case 'C':
         onHold();
         break;
+      case '=':
+      case '+':
+        // Speed controls only work when game is not active
+        if (!gameStarted) {
+          onSpeedUp?.();
+        }
+        break;
+      case '-':
+      case '_':
+        if (!gameStarted) {
+          onSpeedDown?.();
+        }
+        break;
+      case '0':
+        if (!gameStarted) {
+          onSpeedReset?.();
+        }
+        break;
     }
-  }, [gameStarted, onMoveLeft, onMoveRight, onMoveDown, onRotate, onHardDrop, onHold, startRepeating]);
+  }, [gameStarted, onMoveLeft, onMoveRight, onMoveDown, onRotate, onHardDrop, onHold, onSpeedUp, onSpeedDown, onSpeedReset, startRepeating]);
 
   const handleKeyUp = useCallback((event: KeyboardEvent) => {
     const key = event.key;

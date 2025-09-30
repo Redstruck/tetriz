@@ -33,6 +33,8 @@ export const useTetrisLogic = () => {
     lastDrop: 0
   });
 
+  const [baseDropSpeed, setBaseDropSpeed] = useState(1000); // User-defined base speed
+
   const gameLoopRef = useRef<number>();
 
   const isValidPosition = useCallback((piece: Piece, board: Board, dx = 0, dy = 0, newShape?: number[][]): boolean => {
@@ -221,7 +223,7 @@ export const useTetrisLogic = () => {
         linesCleared: newLinesCleared,
         gameOver,
         clearedRows,
-        dropTime: Math.max(100, 1000 - (newLevel - 1) * 100),
+        dropTime: Math.max(100, baseDropSpeed - (newLevel - 1) * 100),
         holdUsed: false // Reset hold usage after piece lands
       };
     });
@@ -244,7 +246,7 @@ export const useTetrisLogic = () => {
       gameOver: false,
       gameStarted: true,
       clearedRows: [],
-      dropTime: 1000,
+      dropTime: baseDropSpeed,
       lastDrop: Date.now()
     }));
   }, []);
@@ -262,10 +264,10 @@ export const useTetrisLogic = () => {
       gameOver: false,
       gameStarted: false,
       clearedRows: [],
-      dropTime: 1000,
+      dropTime: baseDropSpeed,
       lastDrop: 0
     });
-  }, []);
+  }, [baseDropSpeed]);
 
   // Game loop
   useEffect(() => {
@@ -361,6 +363,17 @@ export const useTetrisLogic = () => {
     };
   }, [gameState.currentPiece, gameState.board, isValidPosition]);
 
+  const setDropSpeed = useCallback((speed: number) => {
+    setBaseDropSpeed(speed);
+    // Update current drop time if game is running
+    if (gameState.gameStarted) {
+      setGameState(prev => ({
+        ...prev,
+        dropTime: Math.max(100, speed - (prev.level - 1) * 100)
+      }));
+    }
+  }, [gameState.gameStarted, gameState.level]);
+
   return {
     board: gameState.board,
     currentPiece: gameState.currentPiece,
@@ -374,6 +387,8 @@ export const useTetrisLogic = () => {
     gameOver: gameState.gameOver,
     gameStarted: gameState.gameStarted,
     clearedRows: gameState.clearedRows,
+    baseDropSpeed,
+    setDropSpeed,
     startGame,
     resetGame,
     movePiece,

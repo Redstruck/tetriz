@@ -19,6 +19,8 @@ export const TetrisGame = () => {
     gameOver,
     gameStarted,
     clearedRows,
+    baseDropSpeed,
+    setDropSpeed,
     startGame,
     resetGame,
     movePiece,
@@ -35,6 +37,9 @@ export const TetrisGame = () => {
     onRotate: rotatePiece,
     onHardDrop: hardDrop,
     onHold: holdPieceAction,
+    onSpeedUp: () => setDropSpeed(Math.max(200, baseDropSpeed - 100)),
+    onSpeedDown: () => setDropSpeed(Math.min(2000, baseDropSpeed + 100)),
+    onSpeedReset: () => setDropSpeed(1000),
     gameStarted
   });
 
@@ -68,8 +73,10 @@ export const TetrisGame = () => {
             nextPiece={nextPiece}
             gameOver={gameOver}
             gameStarted={gameStarted}
+            baseDropSpeed={baseDropSpeed}
             onStart={startGame}
             onReset={resetGame}
+            onSpeedChange={setDropSpeed}
           />
         </div>
       </div>
