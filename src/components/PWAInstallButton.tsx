@@ -58,12 +58,15 @@ const PWAInstallButton = () => {
   return (
     <Button
       onClick={handleInstallClick}
-      variant="outline"
+      variant="gameOutline"
       size="sm"
-      className="fixed top-4 right-4 z-50 bg-background/90 backdrop-blur-sm"
+      className="fixed top-4 right-4 z-50 bg-background/90 backdrop-blur-sm border-game-accent/30 hover:border-game-accent/70 button-ripple hover-lift focus-ring-enhanced relative overflow-hidden group"
     >
-      <Download className="w-4 h-4 mr-2" />
-      Install App
+      <span className="relative z-10 flex items-center gap-2">
+        <Download className="w-4 h-4" />
+        Install App
+      </span>
+      <div className="absolute inset-0 bg-gradient-to-r from-game-accent/5 via-game-accent/10 to-game-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
     </Button>
   );
 };

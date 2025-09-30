@@ -84,17 +84,20 @@ export const GameUI = memo(({
           ].map(({ label, value }) => (
             <Button
               key={label}
-              variant={baseDropSpeed === value ? "default" : "outline"}
+              variant={baseDropSpeed === value ? "gameSelected" : "gameOutline"}
               size="sm"
               onClick={() => onSpeedChange(value)}
               disabled={gameStarted && !gameOver && !paused}
-              className={`text-xs h-8 ${
+              className={`text-xs h-8 font-medium button-ripple hover-lift focus-ring-enhanced relative overflow-hidden ${
                 baseDropSpeed === value 
-                  ? 'bg-game-accent text-background' 
-                  : 'border-game-border/50 text-game-text hover:bg-game-grid/50'
+                  ? 'speed-button-active' 
+                  : ''
               }`}
             >
-              {label}
+              <span className="relative z-10">{label}</span>
+              {baseDropSpeed === value && (
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-pulse" />
+              )}
             </Button>
           ))}
         </div>
@@ -143,31 +146,43 @@ export const GameUI = memo(({
       </div>
 
       {/* Game Controls */}
-      <div className="space-y-2">
+      <div className="space-y-3">
         {!gameStarted ? (
           <Button 
             onClick={onStart}
-            className="w-full bg-game-accent text-background hover:bg-game-accent/80 font-bold"
+            variant="gameAccent"
+            size="lg"
+            className="w-full game-button-glow button-pulse button-ripple hover-lift focus-ring-enhanced relative overflow-hidden group"
           >
-            START GAME
+            <span className="relative z-10 flex items-center gap-2">
+              🎮 START GAME
+            </span>
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 group-hover:translate-x-full transition-transform duration-700 ease-out" />
           </Button>
         ) : (
-          <div className="space-y-2">
+          <div className="space-y-3">
             {gameStarted && !gameOver && (
               <Button 
                 onClick={onPause}
-                variant="outline"
-                className="w-full border-game-border text-game-text hover:bg-game-grid font-bold"
+                variant="gameOutline"
+                size="lg"
+                className="w-full font-bold button-ripple hover-lift focus-ring-enhanced relative overflow-hidden group"
               >
-                {paused ? '▶️ RESUME' : '⏸️ PAUSE'}
+                <span className="relative z-10 flex items-center gap-2">
+                  {paused ? '▶️ RESUME' : '⏸️ PAUSE'}
+                </span>
+                <div className="absolute inset-0 bg-gradient-to-r from-game-accent/10 via-game-accent/20 to-game-accent/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               </Button>
             )}
             <Button 
               onClick={onReset}
-              variant="outline"
-              className="w-full border-game-border text-game-text hover:bg-game-grid"
+              variant="gameOutline"
+              className="w-full button-ripple hover-lift focus-ring-enhanced relative overflow-hidden group"
             >
-              RESET
+              <span className="relative z-10 flex items-center gap-2">
+                🔄 RESET
+              </span>
+              <div className="absolute inset-0 bg-gradient-to-r from-destructive/10 via-destructive/20 to-destructive/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             </Button>
           </div>
         )}
@@ -175,14 +190,19 @@ export const GameUI = memo(({
 
       {/* Game Over */}
       {gameOver && (
-        <div className="bg-destructive/20 border border-destructive rounded-lg p-4 text-center">
+        <div className="bg-destructive/20 border border-destructive rounded-lg p-4 text-center animate-pulse">
           <h3 className="text-lg font-bold text-destructive mb-2">GAME OVER</h3>
-          <p className="text-sm text-game-text mb-3">Final Score: {score.toLocaleString()}</p>
+          <p className="text-sm text-game-text mb-4">Final Score: {score.toLocaleString()}</p>
           <Button 
             onClick={onReset}
-            className="w-full bg-game-accent text-background hover:bg-game-accent/80 font-bold"
+            variant="gameAccent"
+            size="lg"
+            className="w-full game-button-glow button-ripple hover-lift focus-ring-enhanced relative overflow-hidden group"
           >
-            PLAY AGAIN
+            <span className="relative z-10 flex items-center gap-2">
+              🎯 PLAY AGAIN
+            </span>
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 group-hover:translate-x-full transition-transform duration-700 ease-out" />
           </Button>
         </div>
       )}
