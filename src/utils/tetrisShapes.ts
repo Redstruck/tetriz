@@ -81,6 +81,38 @@ export const rotatePiece = (shape: number[][]): number[][] => {
   return rotated;
 };
 
+// 7-bag random piece generator for better distribution
+class PieceBag {
+  private bag: PieceType[] = [];
+  
+  private shuffleBag(): void {
+    this.bag = [...PIECE_TYPES];
+    // Fisher-Yates shuffle algorithm
+    for (let i = this.bag.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [this.bag[i], this.bag[j]] = [this.bag[j], this.bag[i]];
+    }
+  }
+  
+  getNextPiece(): PieceType {
+    if (this.bag.length === 0) {
+      this.shuffleBag();
+    }
+    return this.bag.pop()!;
+  }
+  
+  reset(): void {
+    this.bag = [];
+  }
+}
+
+// Global piece bag instance
+const pieceBag = new PieceBag();
+
 export const getRandomPieceType = (): PieceType => {
-  return PIECE_TYPES[Math.floor(Math.random() * PIECE_TYPES.length)];
+  return pieceBag.getNextPiece();
+};
+
+export const resetPieceBag = (): void => {
+  pieceBag.reset();
 };

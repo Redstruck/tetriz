@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { GameState, Piece, Board } from '../types/tetris';
-import { PIECES, rotatePiece, getRandomPieceType } from '../utils/tetrisShapes';
+import { PIECES, rotatePiece, getRandomPieceType, resetPieceBag } from '../utils/tetrisShapes';
 
 const createEmptyBoard = (): Board => {
   return Array(20).fill(null).map(() => Array(10).fill(''));
@@ -231,6 +231,7 @@ export const useTetrisLogic = () => {
   }, [isValidPosition, placePiece, clearLines, calculateScore]);
 
   const startGame = useCallback(() => {
+    resetPieceBag(); // Reset the piece bag to ensure fair distribution
     const firstPiece = createPiece(getRandomPieceType());
     const secondPiece = createPiece(getRandomPieceType());
     
@@ -254,6 +255,7 @@ export const useTetrisLogic = () => {
   }, []);
 
   const resetGame = useCallback(() => {
+    resetPieceBag(); // Reset the piece bag for fresh distribution
     setGameState({
       board: createEmptyBoard(),
       currentPiece: null,
