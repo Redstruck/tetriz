@@ -140,19 +140,6 @@ export const GameUI = memo(({
           <div>C Hold Piece</div>
           <div>P Pause/Resume</div>
         </div>
-        <div className="mt-3 pt-2 border-t border-game-border/30">
-          <div className="text-xs text-game-text/70 space-y-1 font-mono">
-            <div className="text-game-accent font-bold">Speed Controls:</div>
-            <div>+ Speed Up</div>
-            <div>- Speed Down</div>
-            <div>0 Reset Speed</div>
-          </div>
-        </div>
-        <div className="mt-2 pt-2 border-t border-game-border/30">
-          <div className="text-xs text-game-text/60 italic">
-            Speed controls work when game is paused
-          </div>
-        </div>
       </div>
 
       {/* Game Controls */}
