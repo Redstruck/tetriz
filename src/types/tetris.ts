@@ -21,6 +21,7 @@ export interface GameState {
   linesCleared: number;
   gameOver: boolean;
   gameStarted: boolean;
+  paused: boolean;
   clearedRows: number[];
   dropTime: number;
   lastDrop: number;

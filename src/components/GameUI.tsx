@@ -11,9 +11,11 @@ interface GameUIProps {
   nextPiece: Piece | null;
   gameOver: boolean;
   gameStarted: boolean;
+  paused: boolean;
   baseDropSpeed: number;
   onStart: () => void;
   onReset: () => void;
+  onPause: () => void;
   onSpeedChange: (speed: number) => void;
 }
 
@@ -24,9 +26,11 @@ export const GameUI = memo(({
   nextPiece, 
   gameOver, 
   gameStarted,
+  paused,
   baseDropSpeed,
   onStart,
   onReset,
+  onPause,
   onSpeedChange
 }: GameUIProps) => {
   const getCellClasses = (cellType: string, hasBlock: boolean) => {
@@ -83,7 +87,7 @@ export const GameUI = memo(({
               variant={baseDropSpeed === value ? "default" : "outline"}
               size="sm"
               onClick={() => onSpeedChange(value)}
-              disabled={gameStarted && !gameOver}
+              disabled={gameStarted && !gameOver && !paused}
               className={`text-xs h-8 ${
                 baseDropSpeed === value 
                   ? 'bg-game-accent text-background' 
@@ -134,6 +138,7 @@ export const GameUI = memo(({
           <div>↓ Soft Drop</div>
           <div>SPACE Hard Drop</div>
           <div>C Hold Piece</div>
+          <div>P Pause/Resume</div>
         </div>
         <div className="mt-3 pt-2 border-t border-game-border/30">
           <div className="text-xs text-game-text/70 space-y-1 font-mono">
@@ -160,13 +165,24 @@ export const GameUI = memo(({
             START GAME
           </Button>
         ) : (
-          <Button 
-            onClick={onReset}
-            variant="outline"
-            className="w-full border-game-border text-game-text hover:bg-game-grid"
-          >
-            RESET
-          </Button>
+          <div className="space-y-2">
+            {gameStarted && !gameOver && (
+              <Button 
+                onClick={onPause}
+                variant="outline"
+                className="w-full border-game-border text-game-text hover:bg-game-grid font-bold"
+              >
+                {paused ? '▶️ RESUME' : '⏸️ PAUSE'}
+              </Button>
+            )}
+            <Button 
+              onClick={onReset}
+              variant="outline"
+              className="w-full border-game-border text-game-text hover:bg-game-grid"
+            >
+              RESET
+            </Button>
+          </div>
         )}
       </div>
 

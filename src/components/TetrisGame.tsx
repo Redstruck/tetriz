@@ -18,6 +18,7 @@ export const TetrisGame = () => {
     linesCleared,
     gameOver,
     gameStarted,
+    paused,
     clearedRows,
     baseDropSpeed,
     setDropSpeed,
@@ -27,7 +28,8 @@ export const TetrisGame = () => {
     rotatePiece,
     dropPiece,
     hardDrop,
-    holdPieceAction
+    holdPieceAction,
+    togglePause
   } = useTetrisLogic();
 
   useGameControls({
@@ -37,6 +39,7 @@ export const TetrisGame = () => {
     onRotate: rotatePiece,
     onHardDrop: hardDrop,
     onHold: holdPieceAction,
+    onPause: togglePause,
     onSpeedUp: () => setDropSpeed(Math.max(200, baseDropSpeed - 100)),
     onSpeedDown: () => setDropSpeed(Math.min(2000, baseDropSpeed + 100)),
     onSpeedReset: () => setDropSpeed(1000),
@@ -61,6 +64,7 @@ export const TetrisGame = () => {
           currentPiece={currentPiece}
           ghostPiece={ghostPiece}
           clearedRows={clearedRows}
+          paused={paused}
         />
         </div>
         
@@ -73,9 +77,11 @@ export const TetrisGame = () => {
             nextPiece={nextPiece}
             gameOver={gameOver}
             gameStarted={gameStarted}
+            paused={paused}
             baseDropSpeed={baseDropSpeed}
             onStart={startGame}
             onReset={resetGame}
+            onPause={togglePause}
             onSpeedChange={setDropSpeed}
           />
         </div>

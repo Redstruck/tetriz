@@ -7,9 +7,10 @@ interface GameBoardProps {
   currentPiece: Piece | null;
   ghostPiece: Piece | null;
   clearedRows: number[];
+  paused?: boolean;
 }
 
-export const GameBoard = memo(({ board, currentPiece, ghostPiece, clearedRows }: GameBoardProps) => {
+export const GameBoard = memo(({ board, currentPiece, ghostPiece, clearedRows, paused }: GameBoardProps) => {
   // Create a display board that includes the ghost piece and current piece
   const displayBoard = board.map(row => [...row]);
   const ghostBoard = board.map(row => [...row]);
@@ -100,6 +101,17 @@ export const GameBoard = memo(({ board, currentPiece, ghostPiece, clearedRows }:
             })
           )}
         </div>
+        
+        {/* Pause Overlay */}
+        {paused && (
+          <div className="absolute inset-0 bg-black/70 flex items-center justify-center z-10 rounded-lg">
+            <div className="text-center">
+              <div className="text-4xl mb-2">⏸️</div>
+              <div className="text-xl font-bold text-white mb-1">PAUSED</div>
+              <div className="text-sm text-gray-300">Press P to resume</div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

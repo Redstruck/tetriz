@@ -28,6 +28,7 @@ export const useTetrisLogic = () => {
     linesCleared: 0,
     gameOver: false,
     gameStarted: false,
+    paused: false,
     clearedRows: [],
     dropTime: 1000,
     lastDrop: 0
@@ -105,7 +106,7 @@ export const useTetrisLogic = () => {
 
   const movePiece = useCallback((dx: number, dy: number) => {
     setGameState(prev => {
-      if (!prev.currentPiece || prev.gameOver || !prev.gameStarted) return prev;
+      if (!prev.currentPiece || prev.gameOver || !prev.gameStarted || prev.paused) return prev;
 
       if (isValidPosition(prev.currentPiece, prev.board, dx, dy)) {
         return {
@@ -124,7 +125,7 @@ export const useTetrisLogic = () => {
 
   const rotatePieceHandler = useCallback(() => {
     setGameState(prev => {
-      if (!prev.currentPiece || prev.gameOver || !prev.gameStarted) return prev;
+      if (!prev.currentPiece || prev.gameOver || !prev.gameStarted || prev.paused) return prev;
 
       const rotatedShape = rotatePiece(prev.currentPiece.shape);
       
@@ -145,7 +146,7 @@ export const useTetrisLogic = () => {
 
   const dropPiece = useCallback(() => {
     setGameState(prev => {
-      if (!prev.currentPiece || prev.gameOver || !prev.gameStarted) return prev;
+      if (!prev.currentPiece || prev.gameOver || !prev.gameStarted || prev.paused) return prev;
 
       if (isValidPosition(prev.currentPiece, prev.board, 0, 1)) {
         return {
@@ -189,7 +190,7 @@ export const useTetrisLogic = () => {
 
   const hardDrop = useCallback(() => {
     setGameState(prev => {
-      if (!prev.currentPiece || prev.gameOver || !prev.gameStarted) return prev;
+      if (!prev.currentPiece || prev.gameOver || !prev.gameStarted || prev.paused) return prev;
 
       let dropDistance = 0;
       while (isValidPosition(prev.currentPiece, prev.board, 0, dropDistance + 1)) {
@@ -245,6 +246,7 @@ export const useTetrisLogic = () => {
       linesCleared: 0,
       gameOver: false,
       gameStarted: true,
+      paused: false,
       clearedRows: [],
       dropTime: baseDropSpeed,
       lastDrop: Date.now()
@@ -263,6 +265,7 @@ export const useTetrisLogic = () => {
       linesCleared: 0,
       gameOver: false,
       gameStarted: false,
+      paused: false,
       clearedRows: [],
       dropTime: baseDropSpeed,
       lastDrop: 0
@@ -271,7 +274,7 @@ export const useTetrisLogic = () => {
 
   // Game loop
   useEffect(() => {
-    if (!gameState.gameStarted || gameState.gameOver) {
+    if (!gameState.gameStarted || gameState.gameOver || gameState.paused) {
       if (gameLoopRef.current) {
         cancelAnimationFrame(gameLoopRef.current);
       }
@@ -294,7 +297,7 @@ export const useTetrisLogic = () => {
         cancelAnimationFrame(gameLoopRef.current);
       }
     };
-  }, [gameState.gameStarted, gameState.gameOver, gameState.dropTime, gameState.lastDrop, dropPiece]);
+  }, [gameState.gameStarted, gameState.gameOver, gameState.paused, gameState.dropTime, gameState.lastDrop, dropPiece]);
 
   // Clear cleared rows animation
   useEffect(() => {
@@ -308,7 +311,7 @@ export const useTetrisLogic = () => {
 
   const holdPiece = useCallback(() => {
     setGameState(prev => {
-      if (!prev.currentPiece || prev.gameOver || !prev.gameStarted || prev.holdUsed) {
+      if (!prev.currentPiece || prev.gameOver || !prev.gameStarted || prev.holdUsed || prev.paused) {
         return prev;
       }
 
@@ -363,6 +366,20 @@ export const useTetrisLogic = () => {
     };
   }, [gameState.currentPiece, gameState.board, isValidPosition]);
 
+  const togglePause = useCallback(() => {
+    setGameState(prev => {
+      if (!prev.gameStarted || prev.gameOver) {
+        return prev;
+      }
+      
+      return {
+        ...prev,
+        paused: !prev.paused,
+        lastDrop: prev.paused ? Date.now() : prev.lastDrop // Reset drop timer when unpausing
+      };
+    });
+  }, []);
+
   const setDropSpeed = useCallback((speed: number) => {
     setBaseDropSpeed(speed);
     // Update current drop time if game is running
@@ -386,6 +403,7 @@ export const useTetrisLogic = () => {
     linesCleared: gameState.linesCleared,
     gameOver: gameState.gameOver,
     gameStarted: gameState.gameStarted,
+    paused: gameState.paused,
     clearedRows: gameState.clearedRows,
     baseDropSpeed,
     setDropSpeed,
@@ -395,6 +413,7 @@ export const useTetrisLogic = () => {
     rotatePiece: rotatePieceHandler,
     dropPiece,
     hardDrop,
-    holdPieceAction: holdPiece
+    holdPieceAction: holdPiece,
+    togglePause
   };
 };
