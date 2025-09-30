@@ -75,9 +75,13 @@ export const GameBoard = memo(({ board, currentPiece, ghostPiece, clearedRows, p
           {displayBoard.map((row, y) =>
             row.map((cell, x) => {
               const ghostCell = ghostBoard[y][x];
-              const isGhost = ghostCell && ghostCell.startsWith('ghost-');
-              const displayCell = cell || (isGhost ? ghostCell.replace('ghost-', '') : '');
-              const isClearing = clearedRows.includes(y) && !!cell;
+              const hasActualPiece = !!cell;
+              const hasGhostPiece = ghostCell && ghostCell.startsWith('ghost-');
+              
+              // Prioritize actual piece over ghost piece
+              const isGhost = hasGhostPiece && !hasActualPiece;
+              const displayCell = hasActualPiece ? cell : (hasGhostPiece ? ghostCell.replace('ghost-', '') : '');
+              const isClearing = clearedRows.includes(y) && hasActualPiece;
               
               return (
                 <div
@@ -93,7 +97,7 @@ export const GameBoard = memo(({ board, currentPiece, ghostPiece, clearedRows, p
                     <div className="absolute inset-0 bg-white rounded-sm animate-line-clear" />
                   )}
                   {/* Inner highlight for 3D effect */}
-                  {cell && !isGhost && !isClearing && (
+                  {hasActualPiece && !isClearing && (
                     <div className="absolute inset-[1px] rounded-sm bg-gradient-to-br from-white/20 to-transparent" />
                   )}
                 </div>
