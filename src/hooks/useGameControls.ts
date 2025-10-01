@@ -51,11 +51,9 @@ export const useGameControls = ({
           // Perform the action based on the key
           switch (key) {
             case 'ArrowLeft':
-              console.log('Auto-repeat: Moving left');
               onMoveLeft();
               break;
             case 'ArrowRight':
-              console.log('Auto-repeat: Moving right');
               onMoveRight();
               break;
             case 'ArrowDown':
@@ -77,7 +75,6 @@ export const useGameControls = ({
 
   const startKeyRepeat = useCallback((key: string) => {
     const now = Date.now();
-    console.log(`Starting key repeat for ${key}`);
     keyTimers.current.set(key, {
       startTime: now,
       lastAction: now
@@ -85,18 +82,15 @@ export const useGameControls = ({
     
     // Start the game loop if not already running
     if (!animationFrameRef.current) {
-      console.log('Starting animation loop');
       animationFrameRef.current = requestAnimationFrame(gameLoop);
     }
   }, [gameLoop]);
 
   const stopKeyRepeat = useCallback((key: string) => {
-    console.log(`Stopping key repeat for ${key}`);
     keyTimers.current.delete(key);
     
     // Stop the game loop if no keys are pressed
     if (keysPressed.current.size === 0 && animationFrameRef.current) {
-      console.log('Stopping animation loop');
       cancelAnimationFrame(animationFrameRef.current);
       animationFrameRef.current = undefined;
     }
@@ -132,21 +126,17 @@ export const useGameControls = ({
 
     // Ignore if key is already pressed (prevents repeat from OS)
     if (keysPressed.current.has(key)) {
-      console.log(`Key ${key} already pressed, ignoring repeat`);
       return;
     }
     
-    console.log(`Key pressed: ${key}`);
     keysPressed.current.add(key);
 
     switch (key) {
       case 'ArrowLeft':
-        console.log('ArrowLeft pressed - moving left and starting repeat');
         onMoveLeft();
         startKeyRepeat(key);
         break;
       case 'ArrowRight':
-        console.log('ArrowRight pressed - moving right and starting repeat');
         onMoveRight();
         startKeyRepeat(key);
         break;
@@ -191,21 +181,15 @@ export const useGameControls = ({
   const handleKeyUp = useCallback((event: KeyboardEvent) => {
     const key = event.key;
     
-    if (key === 'ArrowLeft' || key === 'ArrowRight' || key === 'ArrowDown') {
-      console.log(`${key} released - stopping repeat`);
-    }
-    
     keysPressed.current.delete(key);
     stopKeyRepeat(key);
   }, [stopKeyRepeat]);
 
   useEffect(() => {
-    console.log('Setting up keyboard event listeners');
     window.addEventListener('keydown', handleKeyDown);
     window.addEventListener('keyup', handleKeyUp);
 
     return () => {
-      console.log('Cleaning up keyboard event listeners');
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
       
@@ -223,7 +207,6 @@ export const useGameControls = ({
   // Clean up on game state change
   useEffect(() => {
     if (!gameStarted) {
-      console.log('Game not started, clearing all key states');
       keysPressed.current.clear();
       keyTimers.current.clear();
       if (animationFrameRef.current) {

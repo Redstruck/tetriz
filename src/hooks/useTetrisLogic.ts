@@ -161,8 +161,9 @@ export const useTetrisLogic = () => {
         const newBoard = placePiece(prev.currentPiece, prev.board);
         const { newBoard: clearedBoard, clearedLines, clearedRows } = clearLines(newBoard);
         const scoreIncrease = calculateScore(clearedLines, prev.level);
-        const newLinesCleared = prev.linesCleared + clearedLines;
+        const newLinesCleared = prev.linesCleared + clearedLines; 
         const newLevel = Math.floor(newLinesCleared / 10) + 1;
+        const newDropTime = Math.max(100, baseDropSpeed - (newLevel - 1) * 100);
         
         // Current next piece becomes the current piece, generate new next piece  
         const newCurrentPiece = prev.nextPiece || createPiece(getRandomPieceType());
@@ -181,7 +182,7 @@ export const useTetrisLogic = () => {
           linesCleared: newLinesCleared,
           gameOver,
           clearedRows,
-          dropTime: Math.max(100, 1000 - (newLevel - 1) * 100),
+          dropTime: newDropTime,
           holdUsed: false // Reset hold usage after piece lands
         };
       }
@@ -231,6 +232,7 @@ export const useTetrisLogic = () => {
   }, [isValidPosition, placePiece, clearLines, calculateScore]);
 
   const startGame = useCallback(() => {
+    console.log(`🚀 Starting game with baseDropSpeed: ${baseDropSpeed}ms`);
     resetPieceBag(); // Reset the piece bag to ensure fair distribution
     const firstPiece = createPiece(getRandomPieceType());
     const secondPiece = createPiece(getRandomPieceType());
@@ -252,7 +254,7 @@ export const useTetrisLogic = () => {
       dropTime: baseDropSpeed,
       lastDrop: Date.now()
     }));
-  }, []);
+  }, [baseDropSpeed]);
 
   const resetGame = useCallback(() => {
     resetPieceBag(); // Reset the piece bag for fresh distribution
@@ -383,15 +385,18 @@ export const useTetrisLogic = () => {
   }, []);
 
   const setDropSpeed = useCallback((speed: number) => {
+    console.log(`🎮 Speed changed to: ${speed}ms (${speed === 1500 ? 'Slow' : speed === 1000 ? 'Normal' : 'Fast'})`);
     setBaseDropSpeed(speed);
-    // Update current drop time if game is running
-    if (gameState.gameStarted) {
-      setGameState(prev => ({
+    // Update current drop time regardless of game state
+    setGameState(prev => {
+      const newDropTime = Math.max(100, speed - (prev.level - 1) * 100);
+      console.log(`🎯 Updated dropTime: ${newDropTime}ms (level: ${prev.level})`);
+      return {
         ...prev,
-        dropTime: Math.max(100, speed - (prev.level - 1) * 100)
-      }));
-    }
-  }, [gameState.gameStarted, gameState.level]);
+        dropTime: newDropTime
+      };
+    });
+  }, []);
 
   return {
     board: gameState.board,
