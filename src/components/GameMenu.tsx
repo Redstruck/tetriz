@@ -96,7 +96,7 @@ export const GameMenu = ({ onGameModeSelect }: GameMenuProps) => {
               {/* Text */}
               <div className="relative z-10 text-center">
                 <div className="text-xl mb-1 text-game-accent group-hover:text-game-accent/90">EXTRA</div>
-                <div className="text-xs opacity-60 font-mono tracking-wide text-game-text/60">Wide Grid (15×20)</div>
+                <div className="text-xs opacity-60 font-mono tracking-wide text-game-text/60">Wide Grid (12×20)</div>
               </div>
               
               {/* Glow effect */}

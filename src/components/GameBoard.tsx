@@ -13,7 +13,7 @@ interface GameBoardProps {
 
 export const GameBoard = memo(({ board, currentPiece, ghostPiece, clearedRows, paused, gameMode = 'regular' }: GameBoardProps) => {
   // Board dimensions based on game mode
-  const boardWidth = gameMode === 'extra' ? 15 : 10;
+  const boardWidth = gameMode === 'extra' ? 12 : 10;
   
   // Create a display board that includes the ghost piece and current piece
   const displayBoard = board.map(row => [...row]);

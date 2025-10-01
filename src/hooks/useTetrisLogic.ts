@@ -18,7 +18,7 @@ const createPiece = (type: string, boardWidth: number = 10): Piece => {
 
 export const useTetrisLogic = (gameMode: 'regular' | 'extra' = 'regular') => {
   // Board dimensions based on game mode
-  const BOARD_WIDTH = gameMode === 'extra' ? 15 : 10;
+  const BOARD_WIDTH = gameMode === 'extra' ? 12 : 10;
   const BOARD_HEIGHT = 20;
 
   const [gameState, setGameState] = useState<GameState>({
