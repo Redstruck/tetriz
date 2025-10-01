@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 
-const GamePage = () => {
+const ExtraGamePage = () => {
   const navigate = useNavigate();
 
   return (
@@ -22,9 +22,16 @@ const GamePage = () => {
         MENU
       </Button>
       
-      <TetrisGame gameMode="regular" />
+      {/* Mode Indicator */}
+      <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50">
+        <div className="bg-game-board/90 border border-game-accent/50 rounded-lg px-4 py-2 backdrop-blur-sm">
+          <span className="font-game text-sm text-game-accent tracking-wider text-glow">EXTRA MODE</span>
+        </div>
+      </div>
+      
+      <TetrisGame gameMode="extra" />
     </div>
   );
 };
 
-export default GamePage;
+export default ExtraGamePage;

@@ -8,9 +8,13 @@ interface GameBoardProps {
   ghostPiece: Piece | null;
   clearedRows: number[];
   paused?: boolean;
+  gameMode?: 'regular' | 'extra';
 }
 
-export const GameBoard = memo(({ board, currentPiece, ghostPiece, clearedRows, paused }: GameBoardProps) => {
+export const GameBoard = memo(({ board, currentPiece, ghostPiece, clearedRows, paused, gameMode = 'regular' }: GameBoardProps) => {
+  // Board dimensions based on game mode
+  const boardWidth = gameMode === 'extra' ? 15 : 10;
+  
   // Create a display board that includes the ghost piece and current piece
   const displayBoard = board.map(row => [...row]);
   const ghostBoard = board.map(row => [...row]);
@@ -22,7 +26,7 @@ export const GameBoard = memo(({ board, currentPiece, ghostPiece, clearedRows, p
         if (cell) {
           const boardY = ghostPiece.y + y;
           const boardX = ghostPiece.x + x;
-          if (boardY >= 0 && boardY < 20 && boardX >= 0 && boardX < 10 && !displayBoard[boardY][boardX]) {
+          if (boardY >= 0 && boardY < 20 && boardX >= 0 && boardX < boardWidth && !displayBoard[boardY][boardX]) {
             ghostBoard[boardY][boardX] = `ghost-${ghostPiece.type}`;
           }
         }
@@ -37,7 +41,7 @@ export const GameBoard = memo(({ board, currentPiece, ghostPiece, clearedRows, p
         if (cell) {
           const boardY = currentPiece.y + y;
           const boardX = currentPiece.x + x;
-          if (boardY >= 0 && boardY < 20 && boardX >= 0 && boardX < 10) {
+          if (boardY >= 0 && boardY < 20 && boardX >= 0 && boardX < boardWidth) {
             displayBoard[boardY][boardX] = currentPiece.type;
           }
         }
@@ -71,7 +75,10 @@ export const GameBoard = memo(({ board, currentPiece, ghostPiece, clearedRows, p
       {/* Game board */}
       <div className="p-3 bg-game-board rounded-lg shadow-2xl">
         {/* Board grid */}
-        <div className="grid grid-cols-10 gap-[2px] bg-game-grid/50 p-2 rounded">
+        <div 
+          className="grid gap-[2px] bg-game-grid/50 p-2 rounded"
+          style={{ gridTemplateColumns: `repeat(${boardWidth}, 1fr)` }}
+        >
           {displayBoard.map((row, y) =>
             row.map((cell, x) => {
               const ghostCell = ghostBoard[y][x];

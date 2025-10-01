@@ -2,23 +2,27 @@ import { useState, useCallback, useEffect, useRef } from 'react';
 import { GameState, Piece, Board } from '../types/tetris';
 import { PIECES, rotatePiece, getRandomPieceType, resetPieceBag } from '../utils/tetrisShapes';
 
-const createEmptyBoard = (): Board => {
-  return Array(20).fill(null).map(() => Array(10).fill(''));
+const createEmptyBoard = (width: number = 10): Board => {
+  return Array(20).fill(null).map(() => Array(width).fill(''));
 };
 
-const createPiece = (type: string): Piece => {
+const createPiece = (type: string, boardWidth: number = 10): Piece => {
   return {
     type: type as any,
-    x: 3,
+    x: Math.floor(boardWidth / 2) - 2, // Center piece horizontally
     y: -2, // Start above visible board to create falling effect
     shape: PIECES[type as keyof typeof PIECES].shape,
     rotation: 0
   };
 };
 
-export const useTetrisLogic = () => {
+export const useTetrisLogic = (gameMode: 'regular' | 'extra' = 'regular') => {
+  // Board dimensions based on game mode
+  const BOARD_WIDTH = gameMode === 'extra' ? 15 : 10;
+  const BOARD_HEIGHT = 20;
+
   const [gameState, setGameState] = useState<GameState>({
-    board: createEmptyBoard(),
+    board: createEmptyBoard(BOARD_WIDTH),
     currentPiece: null,
     nextPiece: null,
     holdPiece: null,
@@ -49,8 +53,8 @@ export const useTetrisLogic = () => {
           
           if (
             newX < 0 || 
-            newX >= 10 || 
-            newY >= 20 || 
+            newX >= BOARD_WIDTH || 
+            newY >= BOARD_HEIGHT || 
             (newY >= 0 && board[newY][newX])
           ) {
             return false;
@@ -59,7 +63,7 @@ export const useTetrisLogic = () => {
       }
     }
     return true;
-  }, []);
+  }, [BOARD_WIDTH, BOARD_HEIGHT]);
 
   const placePiece = useCallback((piece: Piece, board: Board): Board => {
     const newBoard = board.map(row => [...row]);
@@ -69,7 +73,7 @@ export const useTetrisLogic = () => {
         if (cell) {
           const boardY = piece.y + y;
           const boardX = piece.x + x;
-          if (boardY >= 0 && boardY < 20 && boardX >= 0 && boardX < 10) {
+          if (boardY >= 0 && boardY < BOARD_HEIGHT && boardX >= 0 && boardX < BOARD_WIDTH) {
             newBoard[boardY][boardX] = piece.type;
           }
         }
@@ -77,7 +81,7 @@ export const useTetrisLogic = () => {
     });
     
     return newBoard;
-  }, []);
+  }, [BOARD_WIDTH, BOARD_HEIGHT]);
 
   const clearLines = useCallback((board: Board): { newBoard: Board; clearedLines: number; clearedRows: number[] } => {
     const clearedRows: number[] = [];
@@ -92,12 +96,12 @@ export const useTetrisLogic = () => {
     const clearedLines = clearedRows.length;
     
     // Add empty rows at the top
-    while (newBoard.length < 20) {
-      newBoard.unshift(Array(10).fill(''));
+    while (newBoard.length < BOARD_HEIGHT) {
+      newBoard.unshift(Array(BOARD_WIDTH).fill(''));
     }
 
     return { newBoard, clearedLines, clearedRows };
-  }, []);
+  }, [BOARD_WIDTH, BOARD_HEIGHT]);
 
   const calculateScore = useCallback((lines: number, level: number): number => {
     const baseScore = [0, 40, 100, 300, 1200];
@@ -166,8 +170,8 @@ export const useTetrisLogic = () => {
         const newDropTime = Math.max(100, baseDropSpeed - (newLevel - 1) * 100);
         
         // Current next piece becomes the current piece, generate new next piece  
-        const newCurrentPiece = prev.nextPiece || createPiece(getRandomPieceType());
-        const newNextPiece = createPiece(getRandomPieceType());
+        const newCurrentPiece = prev.nextPiece || createPiece(getRandomPieceType(), BOARD_WIDTH);
+        const newNextPiece = createPiece(getRandomPieceType(), BOARD_WIDTH);
         
         // Check game over
         const gameOver = !isValidPosition(newCurrentPiece, clearedBoard);
@@ -210,8 +214,8 @@ export const useTetrisLogic = () => {
       const newLevel = Math.floor(newLinesCleared / 10) + 1;
       
       // Current next piece becomes the current piece, generate new next piece
-      const newCurrentPiece = prev.nextPiece || createPiece(getRandomPieceType());
-      const newNextPiece = createPiece(getRandomPieceType());
+      const newCurrentPiece = prev.nextPiece || createPiece(getRandomPieceType(), BOARD_WIDTH);
+      const newNextPiece = createPiece(getRandomPieceType(), BOARD_WIDTH);
       
       const gameOver = !isValidPosition(newCurrentPiece, clearedBoard);
 
@@ -234,12 +238,12 @@ export const useTetrisLogic = () => {
   const startGame = useCallback(() => {
     console.log(`🚀 Starting game with baseDropSpeed: ${baseDropSpeed}ms`);
     resetPieceBag(); // Reset the piece bag to ensure fair distribution
-    const firstPiece = createPiece(getRandomPieceType());
-    const secondPiece = createPiece(getRandomPieceType());
+    const firstPiece = createPiece(getRandomPieceType(), BOARD_WIDTH);
+    const secondPiece = createPiece(getRandomPieceType(), BOARD_WIDTH);
     
     setGameState(prev => ({
       ...prev,
-      board: createEmptyBoard(),
+      board: createEmptyBoard(BOARD_WIDTH),
       currentPiece: firstPiece,
       nextPiece: secondPiece,
       holdPiece: null,
@@ -254,12 +258,12 @@ export const useTetrisLogic = () => {
       dropTime: baseDropSpeed,
       lastDrop: Date.now()
     }));
-  }, [baseDropSpeed]);
+  }, [baseDropSpeed, BOARD_WIDTH]);
 
   const resetGame = useCallback(() => {
     resetPieceBag(); // Reset the piece bag for fresh distribution
     setGameState({
-      board: createEmptyBoard(),
+      board: createEmptyBoard(BOARD_WIDTH),
       currentPiece: null,
       nextPiece: null,
       holdPiece: null,
@@ -274,7 +278,7 @@ export const useTetrisLogic = () => {
       dropTime: baseDropSpeed,
       lastDrop: 0
     });
-  }, [baseDropSpeed]);
+  }, [baseDropSpeed, BOARD_WIDTH]);
 
   // Game loop
   useEffect(() => {
@@ -327,14 +331,14 @@ export const useTetrisLogic = () => {
         // Swap current piece with hold piece
         newCurrentPiece = {
           ...prev.holdPiece,
-          x: 3,
+          x: Math.floor(BOARD_WIDTH / 2) - 2,
           y: -2,
           rotation: 0
         };
       } else {
         // No piece in hold, use next piece as current
-        newCurrentPiece = prev.nextPiece || createPiece(getRandomPieceType());
-        newNextPiece = createPiece(getRandomPieceType());
+        newCurrentPiece = prev.nextPiece || createPiece(getRandomPieceType(), BOARD_WIDTH);
+        newNextPiece = createPiece(getRandomPieceType(), BOARD_WIDTH);
       }
 
       // Check if the new current piece can fit
@@ -346,7 +350,7 @@ export const useTetrisLogic = () => {
         nextPiece: gameOver ? prev.nextPiece : newNextPiece,
         holdPiece: {
           ...currentPieceToHold,
-          x: 3,
+          x: Math.floor(BOARD_WIDTH / 2) - 2,
           y: -2,
           rotation: 0
         },

@@ -5,7 +5,11 @@ import { HoldUI } from './HoldUI';
 import { useTetrisLogic } from '../hooks/useTetrisLogic';
 import { useGameControls } from '../hooks/useGameControls';
 
-export const TetrisGame = () => {
+interface TetrisGameProps {
+  gameMode?: 'regular' | 'extra';
+}
+
+export const TetrisGame = ({ gameMode = 'regular' }: TetrisGameProps) => {
   const {
     board,
     currentPiece,
@@ -30,7 +34,7 @@ export const TetrisGame = () => {
     hardDrop,
     holdPieceAction,
     togglePause
-  } = useTetrisLogic();
+  } = useTetrisLogic(gameMode);
 
   useGameControls({
     onMoveLeft: () => movePiece(-1, 0),
@@ -68,6 +72,7 @@ export const TetrisGame = () => {
           ghostPiece={ghostPiece}
           clearedRows={clearedRows}
           paused={paused}
+          gameMode={gameMode}
         />
         </div>
         
