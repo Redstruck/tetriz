@@ -1,4 +1,4 @@
-import { PieceType } from '../types/tetris';
+import { PieceType, ExtraPieceType } from '../types/tetris';
 
 export const PIECES: Record<PieceType, { shape: number[][], color: string }> = {
   I: {
@@ -66,7 +66,164 @@ export const PIECES: Record<PieceType, { shape: number[][], color: string }> = {
   }
 };
 
+// Extra mode pieces based on the provided image
+export const EXTRA_PIECES: Record<ExtraPieceType, { shape: number[][], color: string }> = {
+  // Long I piece (5 blocks)
+  I5: {
+    shape: [
+      [0, 0, 0, 0, 0, 0],
+      [1, 1, 1, 1, 1, 0],
+      [0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0]
+    ],
+    color: 'tetris-i'
+  },
+  // Large L shapes
+  L3: {
+    shape: [
+      [0, 0, 0, 0, 0],
+      [1, 0, 0, 0, 0],
+      [1, 0, 0, 0, 0],
+      [1, 1, 1, 0, 0],
+      [0, 0, 0, 0, 0]
+    ],
+    color: 'tetris-l'
+  },
+  L4: {
+    shape: [
+      [0, 0, 0, 0, 0],
+      [0, 0, 1, 0, 0],
+      [0, 0, 1, 0, 0],
+      [1, 1, 1, 0, 0],
+      [0, 0, 0, 0, 0]
+    ],
+    color: 'tetris-l'
+  },
+  // Large J shapes
+  J3: {
+    shape: [
+      [0, 0, 0, 0, 0],
+      [0, 0, 1, 0, 0],
+      [0, 0, 1, 0, 0],
+      [1, 1, 1, 0, 0],
+      [0, 0, 0, 0, 0]
+    ],
+    color: 'tetris-j'
+  },
+  J4: {
+    shape: [
+      [0, 0, 0, 0, 0],
+      [1, 0, 0, 0, 0],
+      [1, 0, 0, 0, 0],
+      [1, 1, 1, 0, 0],
+      [0, 0, 0, 0, 0]
+    ],
+    color: 'tetris-j'
+  },
+  // Large T shapes
+  T3: {
+    shape: [
+      [0, 0, 0, 0, 0],
+      [0, 1, 0, 0, 0],
+      [1, 1, 1, 0, 0],
+      [0, 1, 0, 0, 0],
+      [0, 0, 0, 0, 0]
+    ],
+    color: 'tetris-t'
+  },
+  T4: {
+    shape: [
+      [0, 0, 0, 0, 0],
+      [1, 1, 1, 0, 0],
+      [0, 1, 0, 0, 0],
+      [0, 1, 0, 0, 0],
+      [0, 0, 0, 0, 0]
+    ],
+    color: 'tetris-t'
+  },
+  // U shape
+  U: {
+    shape: [
+      [0, 0, 0, 0, 0],
+      [1, 0, 1, 0, 0],
+      [1, 1, 1, 0, 0],
+      [0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0]
+    ],
+    color: 'tetris-s'
+  },
+  // Y shape
+  Y: {
+    shape: [
+      [0, 0, 0, 0, 0],
+      [0, 1, 0, 0, 0],
+      [1, 1, 0, 0, 0],
+      [0, 1, 0, 0, 0],
+      [0, 1, 0, 0, 0]
+    ],
+    color: 'tetris-z'
+  },
+  // F shape
+  F: {
+    shape: [
+      [0, 0, 0, 0, 0],
+      [0, 1, 1, 0, 0],
+      [1, 1, 0, 0, 0],
+      [0, 1, 0, 0, 0],
+      [0, 0, 0, 0, 0]
+    ],
+    color: 'tetris-s'
+  },
+  // P shape
+  P: {
+    shape: [
+      [0, 0, 0, 0, 0],
+      [1, 1, 0, 0, 0],
+      [1, 1, 0, 0, 0],
+      [1, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0]
+    ],
+    color: 'tetris-j'
+  },
+  // N shape
+  N: {
+    shape: [
+      [0, 0, 0, 0, 0],
+      [1, 0, 0, 0, 0],
+      [1, 1, 0, 0, 0],
+      [0, 1, 0, 0, 0],
+      [0, 1, 0, 0, 0]
+    ],
+    color: 'tetris-z'
+  },
+  // H shape
+  H: {
+    shape: [
+      [0, 0, 0, 0, 0],
+      [1, 0, 1, 0, 0],
+      [1, 1, 1, 0, 0],
+      [1, 0, 1, 0, 0],
+      [0, 0, 0, 0, 0]
+    ],
+    color: 'tetris-t'
+  },
+  // W shape
+  W: {
+    shape: [
+      [0, 0, 0, 0, 0],
+      [1, 0, 0, 0, 0],
+      [1, 1, 0, 0, 0],
+      [0, 1, 1, 0, 0],
+      [0, 0, 0, 0, 0]
+    ],
+    color: 'tetris-s'
+  }
+};
+
 export const PIECE_TYPES: PieceType[] = ['I', 'O', 'T', 'S', 'Z', 'J', 'L'];
+export const EXTRA_PIECE_TYPES: ExtraPieceType[] = ['I5', 'L3', 'L4', 'J3', 'J4', 'T3', 'T4', 'U', 'Y', 'F', 'P', 'N', 'H', 'W'];
 
 export const rotatePiece = (shape: number[][]): number[][] => {
   const size = shape.length;
@@ -81,12 +238,24 @@ export const rotatePiece = (shape: number[][]): number[][] => {
   return rotated;
 };
 
-// 7-bag random piece generator for better distribution
+// Bag random piece generator for better distribution
 class PieceBag {
-  private bag: PieceType[] = [];
+  private bag: (PieceType | ExtraPieceType)[] = [];
+  private gameMode: 'regular' | 'extra' = 'regular';
+  
+  setGameMode(mode: 'regular' | 'extra'): void {
+    this.gameMode = mode;
+    this.bag = []; // Reset bag when mode changes
+  }
   
   private shuffleBag(): void {
-    this.bag = [...PIECE_TYPES];
+    if (this.gameMode === 'extra') {
+      // Mix regular and extra pieces for extra mode
+      this.bag = [...PIECE_TYPES, ...EXTRA_PIECE_TYPES];
+    } else {
+      this.bag = [...PIECE_TYPES];
+    }
+    
     // Fisher-Yates shuffle algorithm
     for (let i = this.bag.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
@@ -94,7 +263,7 @@ class PieceBag {
     }
   }
   
-  getNextPiece(): PieceType {
+  getNextPiece(): PieceType | ExtraPieceType {
     if (this.bag.length === 0) {
       this.shuffleBag();
     }
@@ -109,10 +278,21 @@ class PieceBag {
 // Global piece bag instance
 const pieceBag = new PieceBag();
 
-export const getRandomPieceType = (): PieceType => {
+export const getRandomPieceType = (gameMode: 'regular' | 'extra' = 'regular'): PieceType | ExtraPieceType => {
+  pieceBag.setGameMode(gameMode);
   return pieceBag.getNextPiece();
 };
 
-export const resetPieceBag = (): void => {
+export const resetPieceBag = (gameMode: 'regular' | 'extra' = 'regular'): void => {
+  pieceBag.setGameMode(gameMode);
   pieceBag.reset();
+};
+
+// Helper function to get piece data
+export const getPieceData = (pieceType: PieceType | ExtraPieceType): { shape: number[][], color: string } => {
+  if (pieceType in PIECES) {
+    return PIECES[pieceType as PieceType];
+  } else {
+    return EXTRA_PIECES[pieceType as ExtraPieceType];
+  }
 };

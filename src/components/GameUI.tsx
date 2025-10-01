@@ -3,7 +3,7 @@ import { Play } from 'lucide-react';
 import { Piece } from '../types/tetris';
 import { Button } from './ui/button';
 import { cn } from '../lib/utils';
-import { PIECES } from '../utils/tetrisShapes';
+import { getPieceData } from '../utils/tetrisShapes';
 
 // Custom Pause icon with perfectly balanced lines
 const PauseIcon = ({ className }: { className?: string }) => (
@@ -74,6 +74,7 @@ export const GameUI = memo(({
     }
     
     switch (cellType) {
+      // Regular pieces
       case 'I': return `${baseClasses} bg-gradient-to-br from-tetris-i via-tetris-i to-cyan-600 shadow-[inset_1px_1px_2px_rgba(255,255,255,0.3),inset_-1px_-1px_2px_rgba(0,0,0,0.3)] border border-cyan-400/30`;
       case 'O': return `${baseClasses} bg-gradient-to-br from-tetris-o via-tetris-o to-yellow-600 shadow-[inset_1px_1px_2px_rgba(255,255,255,0.3),inset_-1px_-1px_2px_rgba(0,0,0,0.3)] border border-yellow-400/30`;
       case 'T': return `${baseClasses} bg-gradient-to-br from-tetris-t via-tetris-t to-purple-700 shadow-[inset_1px_1px_2px_rgba(255,255,255,0.3),inset_-1px_-1px_2px_rgba(0,0,0,0.3)] border border-purple-400/30`;
@@ -81,6 +82,17 @@ export const GameUI = memo(({
       case 'Z': return `${baseClasses} bg-gradient-to-br from-tetris-z via-tetris-z to-red-700 shadow-[inset_1px_1px_2px_rgba(255,255,255,0.3),inset_-1px_-1px_2px_rgba(0,0,0,0.3)] border border-red-400/30`;
       case 'J': return `${baseClasses} bg-gradient-to-br from-tetris-j via-tetris-j to-blue-700 shadow-[inset_1px_1px_2px_rgba(255,255,255,0.3),inset_-1px_-1px_2px_rgba(0,0,0,0.3)]`;
       case 'L': return `${baseClasses} bg-gradient-to-br from-tetris-l via-tetris-l to-orange-600 shadow-[inset_1px_1px_2px_rgba(255,255,255,0.3),inset_-1px_-1px_2px_rgba(0,0,0,0.3)] border border-orange-400/30`;
+      
+      // Extra pieces - use similar colors to their base variants
+      case 'I5': return `${baseClasses} bg-gradient-to-br from-tetris-i via-tetris-i to-cyan-600 shadow-[inset_1px_1px_2px_rgba(255,255,255,0.3),inset_-1px_-1px_2px_rgba(0,0,0,0.3)] border border-cyan-400/30`;
+      case 'L3': case 'L4': return `${baseClasses} bg-gradient-to-br from-tetris-l via-tetris-l to-orange-600 shadow-[inset_1px_1px_2px_rgba(255,255,255,0.3),inset_-1px_-1px_2px_rgba(0,0,0,0.3)] border border-orange-400/30`;
+      case 'J3': case 'J4': return `${baseClasses} bg-gradient-to-br from-tetris-j via-tetris-j to-blue-700 shadow-[inset_1px_1px_2px_rgba(255,255,255,0.3),inset_-1px_-1px_2px_rgba(0,0,0,0.3)]`;
+      case 'T3': case 'T4': return `${baseClasses} bg-gradient-to-br from-tetris-t via-tetris-t to-purple-700 shadow-[inset_1px_1px_2px_rgba(255,255,255,0.3),inset_-1px_-1px_2px_rgba(0,0,0,0.3)] border border-purple-400/30`;
+      case 'U': case 'F': case 'W': return `${baseClasses} bg-gradient-to-br from-tetris-s via-tetris-s to-green-600 shadow-[inset_1px_1px_2px_rgba(255,255,255,0.3),inset_-1px_-1px_2px_rgba(0,0,0,0.3)] border border-green-400/30`;
+      case 'Y': case 'N': return `${baseClasses} bg-gradient-to-br from-tetris-z via-tetris-z to-red-700 shadow-[inset_1px_1px_2px_rgba(255,255,255,0.3),inset_-1px_-1px_2px_rgba(0,0,0,0.3)] border border-red-400/30`;
+      case 'P': return `${baseClasses} bg-gradient-to-br from-tetris-j via-tetris-j to-blue-700 shadow-[inset_1px_1px_2px_rgba(255,255,255,0.3),inset_-1px_-1px_2px_rgba(0,0,0,0.3)]`;
+      case 'H': return `${baseClasses} bg-gradient-to-br from-tetris-t via-tetris-t to-purple-700 shadow-[inset_1px_1px_2px_rgba(255,255,255,0.3),inset_-1px_-1px_2px_rgba(0,0,0,0.3)] border border-purple-400/30`;
+      
       default: return `${baseClasses} bg-game-grid border border-game-border/20`;
     }
   };
@@ -142,11 +154,11 @@ export const GameUI = memo(({
           <h3 className="text-sm font-retro font-bold text-game-accent mb-2 tracking-wider text-retro-glow">NEXT</h3>
           <div className="flex justify-center">
             <div className="grid gap-[1px] bg-game-grid/50 p-2 rounded" 
-                 style={{ gridTemplateColumns: `repeat(4, 1fr)` }}>
-              {Array.from({ length: 16 }, (_, i) => {
-                const y = Math.floor(i / 4);
-                const x = i % 4;
-                const shape = PIECES[nextPiece.type].shape;
+                 style={{ gridTemplateColumns: `repeat(6, 1fr)` }}>
+              {Array.from({ length: 36 }, (_, i) => {
+                const y = Math.floor(i / 6);
+                const x = i % 6;
+                const shape = getPieceData(nextPiece.type).shape;
                 const hasBlock = shape[y] && shape[y][x] === 1;
                 
                 return (
