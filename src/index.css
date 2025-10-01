@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Press+Start+2P&family=VT323:wght@400&family=Exo+2:wght@300;400;500;600;700&family=Rajdhani:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -111,7 +113,9 @@
   }
 
   body {
-    @apply bg-black text-foreground;
+    @apply bg-black text-foreground font-game;
+    font-feature-settings: "liga" 0;
+    text-rendering: optimizeLegibility;
   }
 }
 
@@ -216,5 +220,59 @@
   .focus-ring-enhanced:focus-visible {
     outline: 2px solid hsl(var(--game-accent) / 0.6);
     outline-offset: 2px;
+  }
+  
+  /* Retro font enhancements */
+  .font-retro {
+    font-family: 'Press Start 2P', 'VT323', 'Courier New', monospace;
+    text-shadow: 0 0 4px hsl(var(--game-accent) / 0.3);
+    letter-spacing: 0.08em;
+  }
+  
+  .font-game {
+    font-family: 'Orbitron', 'Exo 2', 'Rajdhani', sans-serif;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+  }
+  
+  .text-glow {
+    text-shadow: 0 0 8px currentColor, 0 0 16px currentColor;
+  }
+  
+  .text-retro-glow {
+    text-shadow: 
+      0 0 5px hsl(var(--game-accent) / 0.8),
+      0 0 10px hsl(var(--game-accent) / 0.6),
+      0 0 15px hsl(var(--game-accent) / 0.4);
+  }
+  
+  /* Retro CRT effect for title */
+  .retro-title {
+    animation: retro-flicker 3s ease-in-out infinite alternate;
+  }
+  
+  @keyframes retro-flicker {
+    0%, 100% {
+      text-shadow: 
+        0 0 5px hsl(var(--game-accent) / 0.8),
+        0 0 10px hsl(var(--game-accent) / 0.6),
+        0 0 15px hsl(var(--game-accent) / 0.4),
+        0 0 20px hsl(var(--game-accent) / 0.2);
+    }
+    50% {
+      text-shadow: 
+        0 0 2px hsl(var(--game-accent) / 0.6),
+        0 0 5px hsl(var(--game-accent) / 0.4),
+        0 0 8px hsl(var(--game-accent) / 0.2),
+        0 0 12px hsl(var(--game-accent) / 0.1);
+    }
+  }
+  
+  /* Retro pixelated text for small sizes */
+  .text-pixel {
+    image-rendering: -moz-crisp-edges;
+    image-rendering: -webkit-crisp-edges;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
   }
 }

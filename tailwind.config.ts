@@ -18,6 +18,12 @@ export default {
 			}
 		},
 		extend: {
+			fontFamily: {
+				'mono': ['JetBrains Mono', 'Fira Code', 'Consolas', 'Monaco', 'Courier New', 'monospace'],
+				'game': ['Orbitron', 'Exo 2', 'Rajdhani', 'sans-serif'],
+				'retro': ['Press Start 2P', 'VT323', 'Courier New', 'monospace'],
+				'digital': ['Digital-7', 'Segment7', 'monospace'],
+			},
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',

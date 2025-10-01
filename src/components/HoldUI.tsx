@@ -25,8 +25,8 @@ const getCellClasses = (cellType: string, isHoldUsed: boolean) => {
 export const HoldUI = memo(({ holdPiece, holdUsed }: HoldUIProps) => {
   return (
     <div className="bg-card/95 backdrop-blur-sm border border-border/50 rounded-lg p-4 shadow-lg">
-      <h3 className="text-lg font-bold text-foreground mb-2 text-center">HOLD</h3>
-      <div className="text-xs text-muted-foreground text-center mb-2">Press C</div>
+      <h3 className="text-lg font-retro font-bold text-foreground mb-2 text-center tracking-wider text-retro-glow">HOLD</h3>
+      <div className="text-xs text-muted-foreground text-center mb-2 font-mono">Press C</div>
       
       <div className="w-24 h-24 bg-game-grid/50 rounded border border-game-border/30 p-1">
         <div className="grid grid-cols-4 gap-[1px] h-full">

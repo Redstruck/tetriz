@@ -63,7 +63,7 @@ const PWAInstallButton = () => {
       className="fixed top-4 right-4 z-50 bg-background/90 backdrop-blur-sm border-game-accent/30 hover:border-game-accent/70 button-ripple hover-lift focus-ring-enhanced overflow-hidden group"
       style={{ position: 'fixed', top: '1rem', right: '1rem' }}
     >
-      <span className="relative z-10 flex items-center gap-2">
+      <span className="relative z-10 flex items-center gap-2 font-game tracking-wide">
         <Download className="w-4 h-4" />
         Install App
       </span>

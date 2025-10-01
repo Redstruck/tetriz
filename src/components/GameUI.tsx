@@ -89,26 +89,26 @@ export const GameUI = memo(({
     <div className="flex flex-col gap-4 min-w-[200px]">
       {/* Score Section */}
       <div className="bg-game-board border border-game-border rounded-lg p-4 text-game-text">
-        <h2 className="text-lg font-bold text-game-accent mb-2">SCORE</h2>
+        <h2 className="text-lg font-retro font-bold text-game-accent mb-2 tracking-wider text-retro-glow">SCORE</h2>
         <div className="space-y-1 font-mono">
           <div className="flex justify-between">
-            <span>Score:</span>
-            <span className="text-game-score font-bold">{score.toLocaleString()}</span>
+            <span className="font-game text-sm">Score:</span>
+            <span className="text-game-score font-bold font-mono tracking-wider">{score.toLocaleString()}</span>
           </div>
           <div className="flex justify-between">
-            <span>Level:</span>
-            <span className="text-game-accent">{level}</span>
+            <span className="font-game text-sm">Level:</span>
+            <span className="text-game-accent font-bold font-mono">{level}</span>
           </div>
           <div className="flex justify-between">
-            <span>Lines:</span>
-            <span className="text-game-accent">{linesCleared}</span>
+            <span className="font-game text-sm">Lines:</span>
+            <span className="text-game-accent font-bold font-mono">{linesCleared}</span>
           </div>
         </div>
       </div>
 
       {/* Speed Editor */}
       <div className="bg-game-board border border-game-border rounded-lg p-4 text-game-text">
-        <h2 className="text-lg font-bold text-game-accent mb-3">SPEED</h2>
+        <h2 className="text-lg font-retro font-bold text-game-accent mb-3 tracking-wider text-retro-glow">SPEED</h2>
         <div className="grid grid-cols-3 gap-2">
           {[
             { label: 'Slow', value: 1500 },
@@ -121,13 +121,13 @@ export const GameUI = memo(({
               size="sm"
               onClick={() => onSpeedChange(value)}
               disabled={gameStarted && !gameOver && !paused}
-              className={`text-xs h-8 font-medium button-ripple hover-lift focus-ring-enhanced relative overflow-hidden ${
+              className={`text-xs h-8 font-game font-medium button-ripple hover-lift focus-ring-enhanced relative overflow-hidden tracking-wide ${
                 baseDropSpeed === value 
                   ? 'speed-button-active' 
                   : ''
               }`}
             >
-              <span className="relative z-10">{label}</span>
+              <span className="relative z-10 font-game tracking-wider">{label}</span>
               {baseDropSpeed === value && (
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-pulse" />
               )}
@@ -139,7 +139,7 @@ export const GameUI = memo(({
       {/* Next Piece */}
       {nextPiece && (
         <div className="bg-game-board border border-game-border rounded-lg p-4">
-          <h3 className="text-sm font-bold text-game-accent mb-2">NEXT</h3>
+          <h3 className="text-sm font-retro font-bold text-game-accent mb-2 tracking-wider text-retro-glow">NEXT</h3>
           <div className="flex justify-center">
             <div className="grid gap-[1px] bg-game-grid/50 p-2 rounded" 
                  style={{ gridTemplateColumns: `repeat(4, 1fr)` }}>
@@ -167,14 +167,14 @@ export const GameUI = memo(({
 
       {/* Controls */}
       <div className="bg-game-board border border-game-border rounded-lg p-4">
-        <h3 className="text-sm font-bold text-game-accent mb-2">CONTROLS</h3>
+        <h3 className="text-sm font-retro font-bold text-game-accent mb-2 tracking-wider text-retro-glow">CONTROLS</h3>
         <div className="text-xs text-game-text space-y-1 font-mono">
-          <div>← → Move</div>
-          <div>↑ Rotate</div>
-          <div>↓ Soft Drop</div>
-          <div>SPACE Hard Drop</div>
-          <div>C Hold Piece</div>
-          <div>P Pause/Resume</div>
+          <div className="font-mono">← → Move</div>
+          <div className="font-mono">↑ Rotate</div>
+          <div className="font-mono">↓ Soft Drop</div>
+          <div className="font-mono">SPACE Hard Drop</div>
+          <div className="font-mono">C Hold Piece</div>
+          <div className="font-mono">P Pause/Resume</div>
         </div>
       </div>
 
@@ -187,7 +187,7 @@ export const GameUI = memo(({
             size="lg"
             className="w-full game-button-glow button-pulse button-ripple hover-lift focus-ring-enhanced relative overflow-hidden group"
           >
-            <span className="relative z-10 flex items-center gap-2">
+            <span className="relative z-10 flex items-center gap-2 font-retro tracking-wider">
               START GAME
             </span>
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 group-hover:translate-x-full transition-transform duration-700 ease-out" />
@@ -201,7 +201,7 @@ export const GameUI = memo(({
                 size="lg"
                 className="w-full font-bold button-ripple hover-lift focus-ring-enhanced relative overflow-hidden group"
               >
-                <span className="relative z-10 flex items-center gap-2">
+                <span className="relative z-10 flex items-center gap-2 font-game tracking-wider">
                   {paused ? <Play className="w-4 h-4" /> : <PauseIcon className="w-4 h-4" />}
                   {paused ? 'RESUME' : 'PAUSE'}
                 </span>
@@ -213,7 +213,7 @@ export const GameUI = memo(({
               variant="gameOutline"
               className="w-full button-ripple hover-lift focus-ring-enhanced relative overflow-hidden group"
             >
-              <span className="relative z-10 flex items-center gap-2">
+              <span className="relative z-10 flex items-center gap-2 font-game tracking-wider">
                 <ResetIcon className="w-4 h-4" />
                 RESET
               </span>
@@ -226,15 +226,15 @@ export const GameUI = memo(({
       {/* Game Over */}
       {gameOver && (
         <div className="bg-destructive/20 border border-destructive rounded-lg p-4 text-center animate-pulse">
-          <h3 className="text-lg font-bold text-destructive mb-2">GAME OVER</h3>
-          <p className="text-sm text-game-text mb-4">Final Score: {score.toLocaleString()}</p>
+          <h3 className="text-lg font-retro font-bold text-destructive mb-2 tracking-wider text-glow">GAME OVER</h3>
+          <p className="text-sm text-game-text mb-4 font-mono">Final Score: {score.toLocaleString()}</p>
           <Button 
             onClick={onReset}
             variant="gameAccent"
             size="lg"
             className="w-full game-button-glow button-ripple hover-lift focus-ring-enhanced relative overflow-hidden group"
           >
-            <span className="relative z-10 flex items-center gap-2">
+            <span className="relative z-10 flex items-center gap-2 font-retro tracking-wider">
               PLAY AGAIN
             </span>
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 group-hover:translate-x-full transition-transform duration-700 ease-out" />

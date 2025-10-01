@@ -48,9 +48,19 @@ export const TetrisGame = () => {
 
   return (
     <div 
-      className="h-screen w-screen bg-black flex items-center justify-center overflow-hidden outline-none" 
+      className="h-screen w-screen bg-black flex flex-col items-center justify-center overflow-hidden outline-none" 
       tabIndex={0}
     >
+      {/* Game Title */}
+      <div className="mb-4 text-center">
+        <h1 className="text-4xl lg:text-6xl font-retro font-bold text-game-accent tracking-wider retro-title">
+          TETRIS
+        </h1>
+        <div className="text-xs font-mono text-game-text/60 mt-2 tracking-widest">
+          CLASSIC RETRO EDITION
+        </div>
+      </div>
+      
       <div className="flex flex-col lg:flex-row items-center justify-center gap-4 p-4 max-w-7xl w-full">
         {/* Hold UI */}
         <div className="flex-shrink-0 order-1 lg:order-1">
