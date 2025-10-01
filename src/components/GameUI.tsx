@@ -109,9 +109,6 @@ export const GameUI = memo(({
       {/* Speed Editor */}
       <div className="bg-game-board border border-game-border rounded-lg p-4 text-game-text">
         <h2 className="text-lg font-bold text-game-accent mb-3">SPEED</h2>
-        <div className="text-xs text-game-text mb-2 font-mono text-center">
-          Current: {baseDropSpeed}ms
-        </div>
         <div className="grid grid-cols-3 gap-2">
           {[
             { label: 'Slow', value: 1500 },
