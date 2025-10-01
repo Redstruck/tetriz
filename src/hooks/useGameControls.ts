@@ -28,28 +28,77 @@ export const useGameControls = ({
   gameStarted
 }: GameControlsProps) => {
   const keysPressed = useRef<Set<string>>(new Set());
-  const repeatTimers = useRef<Map<string, NodeJS.Timeout>>(new Map());
+  const keyTimers = useRef<Map<string, { startTime: number; lastAction: number }>>(new Map());
+  const animationFrameRef = useRef<number>();
 
-  const startRepeating = useCallback((key: string, action: () => void, initialDelay = 150, repeatDelay = 50) => {
-    if (repeatTimers.current.has(key)) return;
-    
-    // Start auto-repeat after initial delay (DAS behavior)
-    const initialTimer = setTimeout(() => {
-      // Clear the initial timer and start the repeat timer
-      repeatTimers.current.delete(key);
-      const repeatTimer = setInterval(action, repeatDelay);
-      repeatTimers.current.set(key, repeatTimer);
-    }, initialDelay);
-    
-    repeatTimers.current.set(key, initialTimer);
-  }, []);
+  // Constants for timing
+  const INITIAL_DELAY = 150; // ms before auto-repeat starts
+  const REPEAT_DELAY = 60;   // ms between auto-repeats
 
-  const stopRepeating = useCallback((key: string) => {
-    const timer = repeatTimers.current.get(key);
-    if (timer) {
-      clearTimeout(timer); // Clear both setTimeout and setInterval
-      clearInterval(timer);
-      repeatTimers.current.delete(key);
+  // Animation frame loop for continuous key checking
+  const gameLoop = useCallback(() => {
+    const now = Date.now();
+    
+    // Check each pressed key for auto-repeat
+    keysPressed.current.forEach(key => {
+      const timer = keyTimers.current.get(key);
+      if (!timer) return;
+
+      // Check if initial delay has passed
+      if (now - timer.startTime >= INITIAL_DELAY) {
+        // Check if it's time for another repeat action
+        if (now - timer.lastAction >= REPEAT_DELAY) {
+          // Perform the action based on the key
+          switch (key) {
+            case 'ArrowLeft':
+              console.log('Auto-repeat: Moving left');
+              onMoveLeft();
+              break;
+            case 'ArrowRight':
+              console.log('Auto-repeat: Moving right');
+              onMoveRight();
+              break;
+            case 'ArrowDown':
+              onMoveDown();
+              break;
+          }
+          
+          // Update last action time
+          timer.lastAction = now;
+        }
+      }
+    });
+
+    // Continue the loop if we have active keys
+    if (keysPressed.current.size > 0) {
+      animationFrameRef.current = requestAnimationFrame(gameLoop);
+    }
+  }, [onMoveLeft, onMoveRight, onMoveDown]);
+
+  const startKeyRepeat = useCallback((key: string) => {
+    const now = Date.now();
+    console.log(`Starting key repeat for ${key}`);
+    keyTimers.current.set(key, {
+      startTime: now,
+      lastAction: now
+    });
+    
+    // Start the game loop if not already running
+    if (!animationFrameRef.current) {
+      console.log('Starting animation loop');
+      animationFrameRef.current = requestAnimationFrame(gameLoop);
+    }
+  }, [gameLoop]);
+
+  const stopKeyRepeat = useCallback((key: string) => {
+    console.log(`Stopping key repeat for ${key}`);
+    keyTimers.current.delete(key);
+    
+    // Stop the game loop if no keys are pressed
+    if (keysPressed.current.size === 0 && animationFrameRef.current) {
+      console.log('Stopping animation loop');
+      cancelAnimationFrame(animationFrameRef.current);
+      animationFrameRef.current = undefined;
     }
   }, []);
 
@@ -82,22 +131,28 @@ export const useGameControls = ({
     }
 
     // Ignore if key is already pressed (prevents repeat from OS)
-    if (keysPressed.current.has(key)) return;
+    if (keysPressed.current.has(key)) {
+      console.log(`Key ${key} already pressed, ignoring repeat`);
+      return;
+    }
     
+    console.log(`Key pressed: ${key}`);
     keysPressed.current.add(key);
 
     switch (key) {
       case 'ArrowLeft':
+        console.log('ArrowLeft pressed - moving left and starting repeat');
         onMoveLeft();
-        startRepeating(key, onMoveLeft, 180, 80); // 180ms initial delay, 80ms repeat
+        startKeyRepeat(key);
         break;
       case 'ArrowRight':
+        console.log('ArrowRight pressed - moving right and starting repeat');
         onMoveRight();
-        startRepeating(key, onMoveRight, 180, 80); // 180ms initial delay, 80ms repeat
+        startKeyRepeat(key);
         break;
       case 'ArrowDown':
         onMoveDown();
-        startRepeating(key, onMoveDown, 0, 50); // No initial delay for soft drop
+        startKeyRepeat(key);
         break;
       case 'ArrowUp':
         onRotate();
@@ -115,7 +170,6 @@ export const useGameControls = ({
         break;
       case '=':
       case '+':
-        // Speed controls only work when game is not active
         if (!gameStarted) {
           onSpeedUp?.();
         }
@@ -132,41 +186,50 @@ export const useGameControls = ({
         }
         break;
     }
-  }, [gameStarted, onMoveLeft, onMoveRight, onMoveDown, onRotate, onHardDrop, onHold, onPause, onSpeedUp, onSpeedDown, onSpeedReset, startRepeating]);
+  }, [gameStarted, onMoveLeft, onMoveRight, onMoveDown, onRotate, onHardDrop, onHold, onPause, onSpeedUp, onSpeedDown, onSpeedReset, startKeyRepeat]);
 
   const handleKeyUp = useCallback((event: KeyboardEvent) => {
     const key = event.key;
     
+    if (key === 'ArrowLeft' || key === 'ArrowRight' || key === 'ArrowDown') {
+      console.log(`${key} released - stopping repeat`);
+    }
+    
     keysPressed.current.delete(key);
-    stopRepeating(key);
-  }, [stopRepeating]);
+    stopKeyRepeat(key);
+  }, [stopKeyRepeat]);
 
   useEffect(() => {
+    console.log('Setting up keyboard event listeners');
     window.addEventListener('keydown', handleKeyDown);
     window.addEventListener('keyup', handleKeyUp);
 
     return () => {
+      console.log('Cleaning up keyboard event listeners');
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
       
-      // Clean up all repeat timers
-      repeatTimers.current.forEach(timer => {
-        clearTimeout(timer);
-        clearInterval(timer);
-      });
-      repeatTimers.current.clear();
+      // Clean up animation frame
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+      
+      // Clear all timers and keys
+      keyTimers.current.clear();
+      keysPressed.current.clear();
     };
   }, [handleKeyDown, handleKeyUp]);
 
   // Clean up on game state change
   useEffect(() => {
     if (!gameStarted) {
+      console.log('Game not started, clearing all key states');
       keysPressed.current.clear();
-      repeatTimers.current.forEach(timer => {
-        clearTimeout(timer);
-        clearInterval(timer);
-      });
-      repeatTimers.current.clear();
+      keyTimers.current.clear();
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+        animationFrameRef.current = undefined;
+      }
     }
   }, [gameStarted]);
 };
