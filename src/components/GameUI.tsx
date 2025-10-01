@@ -1,8 +1,24 @@
 import { memo } from 'react';
+import { Play } from 'lucide-react';
 import { Piece } from '../types/tetris';
 import { Button } from './ui/button';
 import { cn } from '../lib/utils';
 import { PIECES } from '../utils/tetrisShapes';
+
+// Custom Pause icon with perfectly balanced lines
+const PauseIcon = ({ className }: { className?: string }) => (
+  <svg
+    className={className}
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    viewBox="0 0 24 24"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <rect width="4" height="16" x="6" y="4" rx="1" />
+    <rect width="4" height="16" x="14" y="4" rx="1" />
+  </svg>
+);
 
 interface GameUIProps {
   score: number;
@@ -169,7 +185,8 @@ export const GameUI = memo(({
                 className="w-full font-bold button-ripple hover-lift focus-ring-enhanced relative overflow-hidden group"
               >
                 <span className="relative z-10 flex items-center gap-2">
-                  {paused ? '▶️ RESUME' : '⏸️ PAUSE'}
+                  {paused ? <Play className="w-4 h-4" /> : <PauseIcon className="w-4 h-4" />}
+                  {paused ? 'RESUME' : 'PAUSE'}
                 </span>
                 <div className="absolute inset-0 bg-gradient-to-r from-game-accent/10 via-game-accent/20 to-game-accent/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               </Button>
