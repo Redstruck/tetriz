@@ -5,7 +5,7 @@ interface GameMenuProps {
   onGameModeSelect: (mode: 'regular' | 'extra') => void;
 }
 
-export const GameMenu = ({ onGameModeSelect }: GameMenuProps) => {
+const GameMenu = ({ onGameModeSelect }: GameMenuProps) => {
   const navigate = useNavigate();
 
   const handleRegularMode = () => {
