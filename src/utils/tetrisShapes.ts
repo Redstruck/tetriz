@@ -278,13 +278,17 @@ class PieceBag {
 // Global piece bag instance
 const pieceBag = new PieceBag();
 
-export const getRandomPieceType = (gameMode: 'regular' | 'extra' = 'regular'): PieceType | ExtraPieceType => {
-  pieceBag.setGameMode(gameMode);
+export const getRandomPieceType = (gameMode: 'regular' | 'extra' | 'speedrun' = 'regular'): PieceType | ExtraPieceType => {
+  // Speedrun mode uses the same pieces as regular mode
+  const effectiveMode = gameMode === 'speedrun' ? 'regular' : gameMode;
+  pieceBag.setGameMode(effectiveMode);
   return pieceBag.getNextPiece();
 };
 
-export const resetPieceBag = (gameMode: 'regular' | 'extra' = 'regular'): void => {
-  pieceBag.setGameMode(gameMode);
+export const resetPieceBag = (gameMode: 'regular' | 'extra' | 'speedrun' = 'regular'): void => {
+  // Speedrun mode uses the same pieces as regular mode
+  const effectiveMode = gameMode === 'speedrun' ? 'regular' : gameMode;
+  pieceBag.setGameMode(effectiveMode);
   pieceBag.reset();
 };
 

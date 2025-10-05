@@ -2,11 +2,12 @@ import { useEffect, useState, useCallback } from 'react';
 import { GameBoard } from './GameBoard';
 import { GameUI } from './GameUI';
 import { HoldUI } from './HoldUI';
+import { SpeedrunUI } from './SpeedrunUI';
 import { useTetrisLogic } from '../hooks/useTetrisLogic';
 import { useGameControls } from '../hooks/useGameControls';
 
 interface TetrisGameProps {
-  gameMode?: 'regular' | 'extra';
+  gameMode?: 'regular' | 'extra' | 'speedrun';
 }
 
 export const TetrisGame = ({ gameMode = 'regular' }: TetrisGameProps) => {
@@ -33,7 +34,11 @@ export const TetrisGame = ({ gameMode = 'regular' }: TetrisGameProps) => {
     dropPiece,
     hardDrop,
     holdPieceAction,
-    togglePause
+    togglePause,
+    // Speedrun mode specific
+    greyBlocks,
+    wavesCleared,
+    totalTime
   } = useTetrisLogic(gameMode);
 
   useGameControls({
@@ -78,6 +83,13 @@ export const TetrisGame = ({ gameMode = 'regular' }: TetrisGameProps) => {
         
         {/* Game UI */}
         <div className="flex-shrink-0 order-3 lg:order-3">
+          {gameMode === 'speedrun' && greyBlocks && (
+            <SpeedrunUI
+              wavesCleared={wavesCleared || 0}
+              totalTime={totalTime || 0}
+              greyBlocks={greyBlocks}
+            />
+          )}
           <GameUI
             score={score}
             level={level}

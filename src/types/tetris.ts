@@ -26,4 +26,9 @@ export interface GameState {
   clearedRows: number[];
   dropTime: number;
   lastDrop: number;
+  // Speedrun mode specific
+  greyBlocks?: { x: number; y: number }[];
+  wavesCleared?: number;
+  waveStartTime?: number;
+  totalTime?: number;
 }

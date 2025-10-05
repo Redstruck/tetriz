@@ -17,8 +17,8 @@ const createPiece = (type: string, boardWidth: number = 10): Piece => {
   };
 };
 
-export const useTetrisLogic = (gameMode: 'regular' | 'extra' = 'regular') => {
-  // Board dimensions based on game mode
+export const useTetrisLogic = (gameMode: 'regular' | 'extra' | 'speedrun' = 'regular') => {
+  // Board dimensions based on game mode (speedrun uses same as regular)
   const BOARD_WIDTH = gameMode === 'extra' ? 12 : 10;
   const BOARD_HEIGHT = 20;
 
@@ -36,7 +36,12 @@ export const useTetrisLogic = (gameMode: 'regular' | 'extra' = 'regular') => {
     paused: false,
     clearedRows: [],
     dropTime: 1000,
-    lastDrop: 0
+    lastDrop: 0,
+    // Speedrun mode specific
+    greyBlocks: gameMode === 'speedrun' ? [] : undefined,
+    wavesCleared: gameMode === 'speedrun' ? 0 : undefined,
+    waveStartTime: undefined,
+    totalTime: gameMode === 'speedrun' ? 0 : undefined
   });
 
   const [baseDropSpeed, setBaseDropSpeed] = useState(1000); // User-defined base speed
@@ -84,6 +89,37 @@ export const useTetrisLogic = (gameMode: 'regular' | 'extra' = 'regular') => {
     return newBoard;
   }, [BOARD_WIDTH, BOARD_HEIGHT]);
 
+  // Speedrun mode helper functions
+  const generateGreyBlocks = useCallback((count: number = 5): { x: number; y: number }[] => {
+    const greyBlocks: { x: number; y: number }[] = [];
+    const attempts = 100; // Prevent infinite loops
+    
+    for (let i = 0; i < count && greyBlocks.length < count && i < attempts; i++) {
+      const x = Math.floor(Math.random() * BOARD_WIDTH);
+      const y = Math.floor(Math.random() * (BOARD_HEIGHT - 5)) + 5; // Start from row 5 to leave top clear
+      
+      // Check if position is already occupied
+      const isOccupied = greyBlocks.some(block => block.x === x && block.y === y);
+      if (!isOccupied) {
+        greyBlocks.push({ x, y });
+      } else {
+        i--; // Retry this iteration
+      }
+    }
+    
+    return greyBlocks;
+  }, [BOARD_WIDTH, BOARD_HEIGHT]);
+
+  const placeGreyBlocksOnBoard = useCallback((board: Board, greyBlocks: { x: number; y: number }[]): Board => {
+    const newBoard = board.map(row => [...row]);
+    greyBlocks.forEach(({ x, y }) => {
+      if (y >= 0 && y < BOARD_HEIGHT && x >= 0 && x < BOARD_WIDTH) {
+        newBoard[y][x] = 'grey-target';
+      }
+    });
+    return newBoard;
+  }, [BOARD_WIDTH, BOARD_HEIGHT]);
+
   const clearLines = useCallback((board: Board): { newBoard: Board; clearedLines: number; clearedRows: number[] } => {
     const clearedRows: number[] = [];
     const newBoard = board.filter((row, index) => {
@@ -102,6 +138,48 @@ export const useTetrisLogic = (gameMode: 'regular' | 'extra' = 'regular') => {
     }
 
     return { newBoard, clearedLines, clearedRows };
+  }, [BOARD_WIDTH, BOARD_HEIGHT]);
+
+  // Speedrun specific line clearing that tracks grey blocks
+  const clearLinesSpeedrun = useCallback((board: Board, greyBlocks: { x: number; y: number }[]): { 
+    newBoard: Board; 
+    clearedLines: number; 
+    clearedRows: number[];
+    remainingGreyBlocks: { x: number; y: number }[];
+    greyBlocksCleared: number;
+  } => {
+    const clearedRows: number[] = [];
+    let greyBlocksCleared = 0;
+    
+    // Find complete rows and count grey blocks in them
+    const newBoard = board.filter((row, index) => {
+      const isComplete = row.every(cell => cell !== '');
+      if (isComplete) {
+        clearedRows.push(index);
+        // Count grey blocks in this row
+        const greyBlocksInRow = greyBlocks.filter(block => block.y === index).length;
+        greyBlocksCleared += greyBlocksInRow;
+      }
+      return !isComplete;
+    });
+
+    const clearedLines = clearedRows.length;
+    
+    // Remove grey blocks that were in cleared rows and adjust y positions for remaining blocks
+    const remainingGreyBlocks = greyBlocks
+      .filter(block => !clearedRows.includes(block.y))
+      .map(block => {
+        // Adjust y position based on how many rows below were cleared
+        const rowsBelow = clearedRows.filter(row => row > block.y).length;
+        return { ...block, y: block.y + rowsBelow };
+      });
+    
+    // Add empty rows at the top
+    while (newBoard.length < BOARD_HEIGHT) {
+      newBoard.unshift(Array(BOARD_WIDTH).fill(''));
+    }
+
+    return { newBoard, clearedLines, clearedRows, remainingGreyBlocks, greyBlocksCleared };
   }, [BOARD_WIDTH, BOARD_HEIGHT]);
 
   const calculateScore = useCallback((lines: number, level: number): number => {
@@ -164,35 +242,92 @@ export const useTetrisLogic = (gameMode: 'regular' | 'extra' = 'regular') => {
       } else {
         // Piece has landed - use the next piece in queue
         const newBoard = placePiece(prev.currentPiece, prev.board);
-        const { newBoard: clearedBoard, clearedLines, clearedRows } = clearLines(newBoard);
-        const scoreIncrease = calculateScore(clearedLines, prev.level);
-        const newLinesCleared = prev.linesCleared + clearedLines; 
-        const newLevel = Math.floor(newLinesCleared / 10) + 1;
-        const newDropTime = Math.max(100, baseDropSpeed - (newLevel - 1) * 100);
         
-        // Current next piece becomes the current piece, generate new next piece  
-        const newCurrentPiece = prev.nextPiece || createPiece(getRandomPieceType(gameMode), BOARD_WIDTH);
-        const newNextPiece = createPiece(getRandomPieceType(gameMode), BOARD_WIDTH);
-        
-        // Check game over
-        const gameOver = !isValidPosition(newCurrentPiece, clearedBoard);
+        // Handle line clearing differently for speedrun mode
+        if (gameMode === 'speedrun' && prev.greyBlocks) {
+          const { 
+            newBoard: clearedBoard, 
+            clearedLines, 
+            clearedRows,
+            remainingGreyBlocks,
+            greyBlocksCleared 
+          } = clearLinesSpeedrun(newBoard, prev.greyBlocks);
+          
+          const scoreIncrease = calculateScore(clearedLines, prev.level);
+          const newLinesCleared = prev.linesCleared + clearedLines;
+          const newLevel = Math.floor(newLinesCleared / 10) + 1;
+          const newDropTime = Math.max(100, baseDropSpeed - (newLevel - 1) * 100);
+          
+          // Current next piece becomes the current piece, generate new next piece  
+          const newCurrentPiece = prev.nextPiece || createPiece(getRandomPieceType(gameMode), BOARD_WIDTH);
+          const newNextPiece = createPiece(getRandomPieceType(gameMode), BOARD_WIDTH);
+          
+          // Check if all grey blocks are cleared - if so, generate new wave
+          let finalBoard = clearedBoard;
+          let finalGreyBlocks = remainingGreyBlocks;
+          let wavesCleared = prev.wavesCleared || 0;
+          
+          if (remainingGreyBlocks.length === 0) {
+            // Wave completed! Generate new grey blocks
+            const newGreyBlocks = generateGreyBlocks(5 + Math.floor(wavesCleared / 2)); // More blocks each wave
+            finalBoard = placeGreyBlocksOnBoard(clearedBoard, newGreyBlocks);
+            finalGreyBlocks = newGreyBlocks;
+            wavesCleared++;
+          } else {
+            // Place remaining grey blocks back on the board
+            finalBoard = placeGreyBlocksOnBoard(clearedBoard, remainingGreyBlocks);
+          }
+          
+          // Check game over
+          const gameOver = !isValidPosition(newCurrentPiece, finalBoard);
 
-        return {
-          ...prev,
-          board: clearedBoard,
-          currentPiece: gameOver ? null : newCurrentPiece,
-          nextPiece: gameOver ? prev.nextPiece : newNextPiece,
-          score: prev.score + scoreIncrease,
-          level: newLevel,
-          linesCleared: newLinesCleared,
-          gameOver,
-          clearedRows,
-          dropTime: newDropTime,
-          holdUsed: false // Reset hold usage after piece lands
-        };
+          return {
+            ...prev,
+            board: finalBoard,
+            currentPiece: gameOver ? null : newCurrentPiece,
+            nextPiece: gameOver ? prev.nextPiece : newNextPiece,
+            score: prev.score + scoreIncrease,
+            level: newLevel,
+            linesCleared: newLinesCleared,
+            gameOver,
+            clearedRows,
+            dropTime: newDropTime,
+            holdUsed: false, // Reset hold usage after piece lands
+            greyBlocks: finalGreyBlocks,
+            wavesCleared
+          };
+        } else {
+          // Regular mode line clearing
+          const { newBoard: clearedBoard, clearedLines, clearedRows } = clearLines(newBoard);
+          const scoreIncrease = calculateScore(clearedLines, prev.level);
+          const newLinesCleared = prev.linesCleared + clearedLines; 
+          const newLevel = Math.floor(newLinesCleared / 10) + 1;
+          const newDropTime = Math.max(100, baseDropSpeed - (newLevel - 1) * 100);
+          
+          // Current next piece becomes the current piece, generate new next piece  
+          const newCurrentPiece = prev.nextPiece || createPiece(getRandomPieceType(gameMode), BOARD_WIDTH);
+          const newNextPiece = createPiece(getRandomPieceType(gameMode), BOARD_WIDTH);
+          
+          // Check game over
+          const gameOver = !isValidPosition(newCurrentPiece, clearedBoard);
+
+          return {
+            ...prev,
+            board: clearedBoard,
+            currentPiece: gameOver ? null : newCurrentPiece,
+            nextPiece: gameOver ? prev.nextPiece : newNextPiece,
+            score: prev.score + scoreIncrease,
+            level: newLevel,
+            linesCleared: newLinesCleared,
+            gameOver,
+            clearedRows,
+            dropTime: newDropTime,
+            holdUsed: false // Reset hold usage after piece lands
+          };
+        }
       }
     });
-  }, [isValidPosition, placePiece, clearLines, calculateScore, gameMode, BOARD_WIDTH]);
+  }, [isValidPosition, placePiece, clearLines, clearLinesSpeedrun, calculateScore, gameMode, BOARD_WIDTH, generateGreyBlocks, placeGreyBlocksOnBoard, baseDropSpeed]);
 
   const hardDrop = useCallback(() => {
     setGameState(prev => {
@@ -209,32 +344,87 @@ export const useTetrisLogic = (gameMode: 'regular' | 'extra' = 'regular') => {
       };
 
       const newBoard = placePiece(droppedPiece, prev.board);
-      const { newBoard: clearedBoard, clearedLines, clearedRows } = clearLines(newBoard);
-      const scoreIncrease = calculateScore(clearedLines, prev.level) + dropDistance * 2;
-      const newLinesCleared = prev.linesCleared + clearedLines;
-      const newLevel = Math.floor(newLinesCleared / 10) + 1;
       
-      // Current next piece becomes the current piece, generate new next piece
-      const newCurrentPiece = prev.nextPiece || createPiece(getRandomPieceType(gameMode), BOARD_WIDTH);
-      const newNextPiece = createPiece(getRandomPieceType(gameMode), BOARD_WIDTH);
-      
-      const gameOver = !isValidPosition(newCurrentPiece, clearedBoard);
+      // Handle line clearing differently for speedrun mode
+      if (gameMode === 'speedrun' && prev.greyBlocks) {
+        const { 
+          newBoard: clearedBoard, 
+          clearedLines, 
+          clearedRows,
+          remainingGreyBlocks,
+          greyBlocksCleared 
+        } = clearLinesSpeedrun(newBoard, prev.greyBlocks);
+        
+        const scoreIncrease = calculateScore(clearedLines, prev.level) + dropDistance * 2;
+        const newLinesCleared = prev.linesCleared + clearedLines;
+        const newLevel = Math.floor(newLinesCleared / 10) + 1;
+        
+        // Current next piece becomes the current piece, generate new next piece
+        const newCurrentPiece = prev.nextPiece || createPiece(getRandomPieceType(gameMode), BOARD_WIDTH);
+        const newNextPiece = createPiece(getRandomPieceType(gameMode), BOARD_WIDTH);
+        
+        // Check if all grey blocks are cleared - if so, generate new wave
+        let finalBoard = clearedBoard;
+        let finalGreyBlocks = remainingGreyBlocks;
+        let wavesCleared = prev.wavesCleared || 0;
+        
+        if (remainingGreyBlocks.length === 0) {
+          // Wave completed! Generate new grey blocks
+          const newGreyBlocks = generateGreyBlocks(5 + Math.floor(wavesCleared / 2)); // More blocks each wave
+          finalBoard = placeGreyBlocksOnBoard(clearedBoard, newGreyBlocks);
+          finalGreyBlocks = newGreyBlocks;
+          wavesCleared++;
+        } else {
+          // Place remaining grey blocks back on the board
+          finalBoard = placeGreyBlocksOnBoard(clearedBoard, remainingGreyBlocks);
+        }
+        
+        const gameOver = !isValidPosition(newCurrentPiece, finalBoard);
 
-      return {
-        ...prev,
-        board: clearedBoard,
-        currentPiece: gameOver ? null : newCurrentPiece,
-        nextPiece: gameOver ? prev.nextPiece : newNextPiece,
-        score: prev.score + scoreIncrease,
-        level: newLevel,
-        linesCleared: newLinesCleared,
-        gameOver,
-        clearedRows,
-        dropTime: Math.max(100, baseDropSpeed - (newLevel - 1) * 100),
-        holdUsed: false // Reset hold usage after piece lands
-      };
+        return {
+          ...prev,
+          board: finalBoard,
+          currentPiece: gameOver ? null : newCurrentPiece,
+          nextPiece: gameOver ? prev.nextPiece : newNextPiece,
+          score: prev.score + scoreIncrease,
+          level: newLevel,
+          linesCleared: newLinesCleared,
+          gameOver,
+          clearedRows,
+          dropTime: Math.max(100, baseDropSpeed - (newLevel - 1) * 100),
+          holdUsed: false, // Reset hold usage after piece lands
+          greyBlocks: finalGreyBlocks,
+          wavesCleared
+        };
+      } else {
+        // Regular mode line clearing
+        const { newBoard: clearedBoard, clearedLines, clearedRows } = clearLines(newBoard);
+        const scoreIncrease = calculateScore(clearedLines, prev.level) + dropDistance * 2;
+        const newLinesCleared = prev.linesCleared + clearedLines;
+        const newLevel = Math.floor(newLinesCleared / 10) + 1;
+        
+        // Current next piece becomes the current piece, generate new next piece
+        const newCurrentPiece = prev.nextPiece || createPiece(getRandomPieceType(gameMode), BOARD_WIDTH);
+        const newNextPiece = createPiece(getRandomPieceType(gameMode), BOARD_WIDTH);
+        
+        const gameOver = !isValidPosition(newCurrentPiece, clearedBoard);
+
+        return {
+          ...prev,
+          board: clearedBoard,
+          currentPiece: gameOver ? null : newCurrentPiece,
+          nextPiece: gameOver ? prev.nextPiece : newNextPiece,
+          score: prev.score + scoreIncrease,
+          level: newLevel,
+          linesCleared: newLinesCleared,
+          gameOver,
+          clearedRows,
+          dropTime: Math.max(100, baseDropSpeed - (newLevel - 1) * 100),
+          holdUsed: false // Reset hold usage after piece lands
+        };
+      }
     });
-  }, [isValidPosition, placePiece, clearLines, calculateScore, gameMode, BOARD_WIDTH]);
+  }, [isValidPosition, placePiece, clearLines, clearLinesSpeedrun, calculateScore, gameMode, BOARD_WIDTH, generateGreyBlocks, placeGreyBlocksOnBoard, baseDropSpeed]);
 
   const startGame = useCallback(() => {
     console.log(`🚀 Starting game with baseDropSpeed: ${baseDropSpeed}ms`);
@@ -242,9 +432,18 @@ export const useTetrisLogic = (gameMode: 'regular' | 'extra' = 'regular') => {
     const firstPiece = createPiece(getRandomPieceType(gameMode), BOARD_WIDTH);
     const secondPiece = createPiece(getRandomPieceType(gameMode), BOARD_WIDTH);
     
+    // Initialize speedrun mode with grey blocks
+    let initialBoard = createEmptyBoard(BOARD_WIDTH);
+    let initialGreyBlocks: { x: number; y: number }[] | undefined;
+    
+    if (gameMode === 'speedrun') {
+      initialGreyBlocks = generateGreyBlocks(5); // Start with 5 grey blocks
+      initialBoard = placeGreyBlocksOnBoard(initialBoard, initialGreyBlocks);
+    }
+    
     setGameState(prev => ({
       ...prev,
-      board: createEmptyBoard(BOARD_WIDTH),
+      board: initialBoard,
       currentPiece: firstPiece,
       nextPiece: secondPiece,
       holdPiece: null,
@@ -257,7 +456,12 @@ export const useTetrisLogic = (gameMode: 'regular' | 'extra' = 'regular') => {
       paused: false,
       clearedRows: [],
       dropTime: baseDropSpeed,
-      lastDrop: Date.now()
+      lastDrop: Date.now(),
+      // Speedrun mode specific initialization
+      greyBlocks: initialGreyBlocks,
+      wavesCleared: gameMode === 'speedrun' ? 0 : undefined,
+      waveStartTime: gameMode === 'speedrun' ? Date.now() : undefined,
+      totalTime: gameMode === 'speedrun' ? 0 : undefined
     }));
   }, [baseDropSpeed, BOARD_WIDTH, gameMode]);
 
@@ -279,7 +483,7 @@ export const useTetrisLogic = (gameMode: 'regular' | 'extra' = 'regular') => {
       dropTime: baseDropSpeed,
       lastDrop: 0
     });
-  }, [baseDropSpeed, BOARD_WIDTH, gameMode]);
+  }, [baseDropSpeed, BOARD_WIDTH, gameMode, generateGreyBlocks, placeGreyBlocksOnBoard]);
 
   // Game loop
   useEffect(() => {
@@ -403,6 +607,22 @@ export const useTetrisLogic = (gameMode: 'regular' | 'extra' = 'regular') => {
     });
   }, []);
 
+  // Timer update for speedrun mode
+  useEffect(() => {
+    if (gameMode !== 'speedrun' || !gameState.gameStarted || gameState.gameOver || gameState.paused) {
+      return;
+    }
+
+    const interval = setInterval(() => {
+      setGameState(prev => ({
+        ...prev,
+        totalTime: prev.waveStartTime ? Date.now() - prev.waveStartTime : 0
+      }));
+    }, 100); // Update every 100ms for smooth timer display
+
+    return () => clearInterval(interval);
+  }, [gameMode, gameState.gameStarted, gameState.gameOver, gameState.paused, gameState.waveStartTime]);
+
   return {
     board: gameState.board,
     currentPiece: gameState.currentPiece,
@@ -426,6 +646,10 @@ export const useTetrisLogic = (gameMode: 'regular' | 'extra' = 'regular') => {
     dropPiece,
     hardDrop,
     holdPieceAction: holdPiece,
-    togglePause
+    togglePause,
+    // Speedrun mode specific
+    greyBlocks: gameState.greyBlocks,
+    wavesCleared: gameState.wavesCleared,
+    totalTime: gameState.totalTime
   };
 };

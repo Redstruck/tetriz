@@ -275,4 +275,26 @@
     image-rendering: pixelated;
     image-rendering: crisp-edges;
   }
+
+  /* Speedrun mode grey target blocks animation */
+  .grey-target-pulse {
+    animation: grey-pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes grey-pulse {
+    0%, 100% {
+      opacity: 0.6;
+      box-shadow: 
+        inset 2px 2px 4px rgba(255,255,255,0.2),
+        inset -2px -2px 4px rgba(0,0,0,0.5),
+        0 0 8px rgba(156,163,175,0.3);
+    }
+    50% {
+      opacity: 0.9;
+      box-shadow: 
+        inset 2px 2px 4px rgba(255,255,255,0.3),
+        inset -2px -2px 4px rgba(0,0,0,0.3),
+        0 0 12px rgba(156,163,175,0.6);
+    }
+  }
 }
