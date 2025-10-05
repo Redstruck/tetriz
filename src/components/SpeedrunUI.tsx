@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import { memo, useMemo } from 'react';
 
 interface SpeedrunUIProps {
   wavesCleared: number;
@@ -7,13 +7,13 @@ interface SpeedrunUIProps {
 }
 
 export const SpeedrunUI = memo(({ wavesCleared, totalTime, greyBlocks }: SpeedrunUIProps) => {
-  // Format time as mm:ss.ms
-  const formatTime = (timeMs: number) => {
-    const minutes = Math.floor(timeMs / 60000);
-    const seconds = Math.floor((timeMs % 60000) / 1000);
-    const milliseconds = Math.floor((timeMs % 1000) / 10);
+  // Memoize time formatting to reduce calculations
+  const formattedTime = useMemo(() => {
+    const minutes = Math.floor(totalTime / 60000);
+    const seconds = Math.floor((totalTime % 60000) / 1000);
+    const milliseconds = Math.floor((totalTime % 1000) / 10);
     return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}.${milliseconds.toString().padStart(2, '0')}`;
-  };
+  }, [totalTime]);
 
   const remainingTargets = greyBlocks.length;
 
@@ -23,7 +23,7 @@ export const SpeedrunUI = memo(({ wavesCleared, totalTime, greyBlocks }: Speedru
       <div className="mb-3 p-3 bg-gradient-to-br from-orange-500/20 to-yellow-500/10 border border-orange-500/30 rounded-lg">
         <div className="text-xs font-mono text-orange-200/80 mb-1 tracking-wide">TIME</div>
         <div className="text-2xl font-mono font-bold text-orange-300 font-digital tracking-wider">
-          {formatTime(totalTime)}
+          {formattedTime}
         </div>
       </div>
 

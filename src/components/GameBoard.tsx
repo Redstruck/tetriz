@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import { memo, useMemo } from 'react';
 import { Board, Piece } from '../types/tetris';
 import { cn } from '../lib/utils';
 
@@ -15,42 +15,46 @@ export const GameBoard = memo(({ board, currentPiece, ghostPiece, clearedRows, p
   // Board dimensions based on game mode
   const boardWidth = gameMode === 'extra' ? 12 : 10;
   
-  // Create a display board that includes the ghost piece and current piece
-  const displayBoard = board.map(row => [...row]);
-  const ghostBoard = board.map(row => [...row]);
-  
-  // Add ghost piece to ghost board (only if not overlapping with current piece)
-  if (ghostPiece && currentPiece && ghostPiece.y !== currentPiece.y) {
-    ghostPiece.shape.forEach((row, y) => {
-      row.forEach((cell, x) => {
-        if (cell) {
-          const boardY = ghostPiece.y + y;
-          const boardX = ghostPiece.x + x;
-          if (boardY >= 0 && boardY < 20 && boardX >= 0 && boardX < boardWidth && !displayBoard[boardY][boardX]) {
-            ghostBoard[boardY][boardX] = `ghost-${ghostPiece.type}`;
+  // Memoize the display board calculation to prevent unnecessary recalculations
+  const { displayBoard, ghostBoard } = useMemo(() => {
+    const displayBoard = board.map(row => [...row]);
+    const ghostBoard = board.map(row => [...row]);
+    
+    // Add ghost piece to ghost board (only if not overlapping with current piece)
+    if (ghostPiece && currentPiece && ghostPiece.y !== currentPiece.y) {
+      ghostPiece.shape.forEach((row, y) => {
+        row.forEach((cell, x) => {
+          if (cell) {
+            const boardY = ghostPiece.y + y;
+            const boardX = ghostPiece.x + x;
+            if (boardY >= 0 && boardY < 20 && boardX >= 0 && boardX < boardWidth && !displayBoard[boardY][boardX]) {
+              ghostBoard[boardY][boardX] = `ghost-${ghostPiece.type}`;
+            }
           }
-        }
+        });
       });
-    });
-  }
-  
-  // Add current piece to display board
-  if (currentPiece) {
-    currentPiece.shape.forEach((row, y) => {
-      row.forEach((cell, x) => {
-        if (cell) {
-          const boardY = currentPiece.y + y;
-          const boardX = currentPiece.x + x;
-          if (boardY >= 0 && boardY < 20 && boardX >= 0 && boardX < boardWidth) {
-            displayBoard[boardY][boardX] = currentPiece.type;
+    }
+    
+    // Add current piece to display board
+    if (currentPiece) {
+      currentPiece.shape.forEach((row, y) => {
+        row.forEach((cell, x) => {
+          if (cell) {
+            const boardY = currentPiece.y + y;
+            const boardX = currentPiece.x + x;
+            if (boardY >= 0 && boardY < 20 && boardX >= 0 && boardX < boardWidth) {
+              displayBoard[boardY][boardX] = currentPiece.type;
+            }
           }
-        }
+        });
       });
-    });
-  }
+    }
+    
+    return { displayBoard, ghostBoard };
+  }, [board, currentPiece, ghostPiece, boardWidth]);
 
   const getCellClasses = (cellType: string, isGhost: boolean = false, isClearing: boolean = false) => {
-    const baseClasses = "aspect-square rounded-sm transition-all duration-75 relative overflow-hidden";
+    const baseClasses = "aspect-square rounded-sm piece-transition relative overflow-hidden gpu-accelerated";
     
     if (isGhost) {
       return `${baseClasses} bg-transparent border-2 border-dashed border-gray-400/40`;

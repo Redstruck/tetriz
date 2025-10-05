@@ -31,9 +31,9 @@ export const useGameControls = ({
   const keyTimers = useRef<Map<string, { startTime: number; lastAction: number }>>(new Map());
   const animationFrameRef = useRef<number>();
 
-  // Constants for timing
-  const INITIAL_DELAY = 150; // ms before auto-repeat starts
-  const REPEAT_DELAY = 60;   // ms between auto-repeats
+  // Constants for timing - optimized for fast, responsive gameplay
+  const INITIAL_DELAY = 100; // ms before auto-repeat starts (reduced from 150)
+  const REPEAT_DELAY = 35;   // ms between auto-repeats (reduced from 60)
 
   // Animation frame loop for continuous key checking
   const gameLoop = useCallback(() => {

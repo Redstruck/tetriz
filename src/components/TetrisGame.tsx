@@ -55,11 +55,10 @@ export const TetrisGame = ({ gameMode = 'regular' }: TetrisGameProps) => {
     gameStarted
   });
 
-  return (
-    <div 
-      className="h-screen w-screen bg-black flex flex-col items-center justify-center overflow-hidden outline-none" 
-      tabIndex={0}
-    >
+  return (      <div 
+        className="h-screen w-screen bg-black flex flex-col items-center justify-center overflow-hidden outline-none gpu-accelerated" 
+        tabIndex={0}
+      >
       <div className="flex flex-col lg:flex-row items-center justify-center gap-4 p-4 max-w-7xl w-full">
         {/* Hold UI */}
         <div className="flex-shrink-0 order-1 lg:order-1">

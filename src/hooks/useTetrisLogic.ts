@@ -44,7 +44,7 @@ export const useTetrisLogic = (gameMode: 'regular' | 'extra' | 'speedrun' = 'reg
     totalTime: gameMode === 'speedrun' ? 0 : undefined
   });
 
-  const [baseDropSpeed, setBaseDropSpeed] = useState(1000); // User-defined base speed
+  const [baseDropSpeed, setBaseDropSpeed] = useState(700); // Faster default speed (reduced from 1000ms)
 
   const gameLoopRef = useRef<number>();
 
@@ -427,7 +427,6 @@ export const useTetrisLogic = (gameMode: 'regular' | 'extra' | 'speedrun' = 'reg
   }, [isValidPosition, placePiece, clearLines, clearLinesSpeedrun, calculateScore, gameMode, BOARD_WIDTH, generateGreyBlocks, placeGreyBlocksOnBoard, baseDropSpeed]);
 
   const startGame = useCallback(() => {
-    console.log(`🚀 Starting game with baseDropSpeed: ${baseDropSpeed}ms`);
     resetPieceBag(gameMode); // Reset the piece bag to ensure fair distribution
     const firstPiece = createPiece(getRandomPieceType(gameMode), BOARD_WIDTH);
     const secondPiece = createPiece(getRandomPieceType(gameMode), BOARD_WIDTH);
@@ -512,12 +511,12 @@ export const useTetrisLogic = (gameMode: 'regular' | 'extra' | 'speedrun' = 'reg
     };
   }, [gameState.gameStarted, gameState.gameOver, gameState.paused, gameState.dropTime, gameState.lastDrop, dropPiece]);
 
-  // Clear cleared rows animation
+  // Clear cleared rows animation - reduced time for faster gameplay
   useEffect(() => {
     if (gameState.clearedRows.length > 0) {
       const timer = setTimeout(() => {
         setGameState(prev => ({ ...prev, clearedRows: [] }));
-      }, 800);
+      }, 300); // Reduced from 800ms to 300ms
       return () => clearTimeout(timer);
     }
   }, [gameState.clearedRows]);
@@ -594,12 +593,10 @@ export const useTetrisLogic = (gameMode: 'regular' | 'extra' | 'speedrun' = 'reg
   }, []);
 
   const setDropSpeed = useCallback((speed: number) => {
-    console.log(`🎮 Speed changed to: ${speed}ms (${speed === 1500 ? 'Slow' : speed === 1000 ? 'Normal' : 'Fast'})`);
     setBaseDropSpeed(speed);
     // Update current drop time regardless of game state
     setGameState(prev => {
       const newDropTime = Math.max(100, speed - (prev.level - 1) * 100);
-      console.log(`🎯 Updated dropTime: ${newDropTime}ms (level: ${prev.level})`);
       return {
         ...prev,
         dropTime: newDropTime
@@ -607,20 +604,33 @@ export const useTetrisLogic = (gameMode: 'regular' | 'extra' | 'speedrun' = 'reg
     });
   }, []);
 
-  // Timer update for speedrun mode
+  // Optimized timer for speedrun mode - using ref to avoid re-renders
+  const speedrunTimerRef = useRef<number | null>(null);
+  const [speedrunTime, setSpeedrunTime] = useState(0);
+  
   useEffect(() => {
-    if (gameMode !== 'speedrun' || !gameState.gameStarted || gameState.gameOver || gameState.paused) {
+    if (gameMode !== 'speedrun' || !gameState.gameStarted || gameState.gameOver || gameState.paused || !gameState.waveStartTime) {
+      if (speedrunTimerRef.current) {
+        cancelAnimationFrame(speedrunTimerRef.current);
+        speedrunTimerRef.current = null;
+      }
       return;
     }
 
-    const interval = setInterval(() => {
-      setGameState(prev => ({
-        ...prev,
-        totalTime: prev.waveStartTime ? Date.now() - prev.waveStartTime : 0
-      }));
-    }, 100); // Update every 100ms for smooth timer display
+    const updateTimer = () => {
+      const currentTime = Date.now() - (gameState.waveStartTime || 0);
+      setSpeedrunTime(currentTime);
+      speedrunTimerRef.current = requestAnimationFrame(updateTimer);
+    };
 
-    return () => clearInterval(interval);
+    speedrunTimerRef.current = requestAnimationFrame(updateTimer);
+
+    return () => {
+      if (speedrunTimerRef.current) {
+        cancelAnimationFrame(speedrunTimerRef.current);
+        speedrunTimerRef.current = null;
+      }
+    };
   }, [gameMode, gameState.gameStarted, gameState.gameOver, gameState.paused, gameState.waveStartTime]);
 
   return {
@@ -650,6 +660,6 @@ export const useTetrisLogic = (gameMode: 'regular' | 'extra' | 'speedrun' = 'reg
     // Speedrun mode specific
     greyBlocks: gameState.greyBlocks,
     wavesCleared: gameState.wavesCleared,
-    totalTime: gameState.totalTime
+    totalTime: gameMode === 'speedrun' ? speedrunTime : gameState.totalTime
   };
 };
