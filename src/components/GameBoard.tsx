@@ -82,8 +82,8 @@ export const GameBoard = memo(({ board, currentPiece, ghostPiece, clearedRows, p
       case 'P': return `${baseClasses} bg-gradient-to-br from-tetris-j via-tetris-j to-blue-700 shadow-[inset_2px_2px_4px_rgba(255,255,255,0.3),inset_-2px_-2px_4px_rgba(0,0,0,0.3)]${clearingClass}`;
       case 'H': return `${baseClasses} bg-gradient-to-br from-tetris-t via-tetris-t to-purple-700 shadow-[inset_2px_2px_4px_rgba(255,255,255,0.3),inset_-2px_-2px_4px_rgba(0,0,0,0.3)] border border-purple-400/20${clearingClass}`;
       
-      // Speedrun mode grey target blocks
-      case 'grey-target': return `${baseClasses} bg-gradient-to-br from-gray-500 via-gray-600 to-gray-700 shadow-[inset_2px_2px_4px_rgba(255,255,255,0.2),inset_-2px_-2px_4px_rgba(0,0,0,0.5)] border border-gray-400/30 opacity-75`;
+      // Speedrun mode grey target blocks with enhanced animation
+      case 'grey-target': return `${baseClasses} bg-gradient-to-br from-gray-500 via-gray-600 to-gray-700 shadow-[inset_2px_2px_4px_rgba(255,255,255,0.2),inset_-2px_-2px_4px_rgba(0,0,0,0.5)] border border-gray-400/30 grey-target-enhanced${clearingClass}`;
       
       default: return `${baseClasses} bg-game-grid border border-game-border/30`;
     }
@@ -118,9 +118,20 @@ export const GameBoard = memo(({ board, currentPiece, ghostPiece, clearedRows, p
                     height: 'clamp(22px, 4vw, 34px)'
                   }}
                 >
-                  {/* White flash overlay for clearing animation */}
+                  {/* Special effects for clearing animation */}
                   {isClearing && (
-                    <div className="absolute inset-0 bg-white rounded-sm animate-line-clear" />
+                    <>
+                      {/* Neon explosion effect for target destruction */}
+                      {displayCell === 'grey-target' && (
+                        <div className="target-explosion absolute inset-0 bg-gradient-to-br from-gray-400 via-green-400 to-blue-400 rounded-sm">
+                          {/* TODO: Add particle effects for enhanced visual feedback */}
+                        </div>
+                      )}
+                      {/* Standard white flash for other blocks */}
+                      {displayCell !== 'grey-target' && (
+                        <div className="absolute inset-0 bg-white rounded-sm animate-line-clear" />
+                      )}
+                    </>
                   )}
                   {/* Inner highlight for 3D effect */}
                   {hasActualPiece && !isClearing && (

@@ -40,6 +40,8 @@ export const useTetrisLogic = (gameMode: 'regular' | 'extra' | 'speedrun' = 'reg
     // Speedrun mode specific
     greyBlocks: gameMode === 'speedrun' ? [] : undefined,
     wavesCleared: gameMode === 'speedrun' ? 0 : undefined,
+    currentRound: gameMode === 'speedrun' ? 1 : undefined,
+    targetsDestroyedInRound: gameMode === 'speedrun' ? 0 : undefined,
     waveStartTime: undefined,
     totalTime: gameMode === 'speedrun' ? 0 : undefined
   });
@@ -90,20 +92,40 @@ export const useTetrisLogic = (gameMode: 'regular' | 'extra' | 'speedrun' = 'reg
   }, [BOARD_WIDTH, BOARD_HEIGHT]);
 
   // Speedrun mode helper functions
+  const getTargetsForRound = useCallback((round: number): number => {
+    // Progressive target increase: 
+    // Rounds 1-4: 1 target, 5-8: 2 targets, 9-12: 3 targets, etc.
+    return Math.floor((round - 1) / 4) + 1;
+  }, []);
+
   const generateGreyBlocks = useCallback((count: number = 5): { x: number; y: number }[] => {
     const greyBlocks: { x: number; y: number }[] = [];
     const attempts = 100; // Prevent infinite loops
     
-    for (let i = 0; i < count && greyBlocks.length < count && i < attempts; i++) {
-      const x = Math.floor(Math.random() * BOARD_WIDTH);
-      const y = Math.floor(Math.random() * (BOARD_HEIGHT - 5)) + 5; // Start from row 5 to leave top clear
+    // Create balanced spawn zones to ensure better distribution
+    const spawnZones: { x: number; y: number }[] = [];
+    
+    // Generate potential spawn positions across the grid
+    for (let y = 5; y < BOARD_HEIGHT - 2; y++) { // Leave top and bottom clear
+      for (let x = 0; x < BOARD_WIDTH; x++) {
+        spawnZones.push({ x, y });
+      }
+    }
+    
+    // Shuffle spawn zones to prevent predictable patterns
+    for (let i = spawnZones.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [spawnZones[i], spawnZones[j]] = [spawnZones[j], spawnZones[i]];
+    }
+    
+    // Select targets ensuring they don't overlap
+    for (let i = 0; i < Math.min(count, spawnZones.length) && greyBlocks.length < count; i++) {
+      const zone = spawnZones[i];
       
       // Check if position is already occupied
-      const isOccupied = greyBlocks.some(block => block.x === x && block.y === y);
+      const isOccupied = greyBlocks.some(block => block.x === zone.x && block.y === zone.y);
       if (!isOccupied) {
-        greyBlocks.push({ x, y });
-      } else {
-        i--; // Retry this iteration
+        greyBlocks.push({ x: zone.x, y: zone.y });
       }
     }
     
@@ -262,17 +284,27 @@ export const useTetrisLogic = (gameMode: 'regular' | 'extra' | 'speedrun' = 'reg
           const newCurrentPiece = prev.nextPiece || createPiece(getRandomPieceType(gameMode), BOARD_WIDTH);
           const newNextPiece = createPiece(getRandomPieceType(gameMode), BOARD_WIDTH);
           
-          // Check if all grey blocks are cleared - if so, generate new wave
+          // Progressive round system - track targets destroyed
           let finalBoard = clearedBoard;
           let finalGreyBlocks = remainingGreyBlocks;
+          let currentRound = prev.currentRound || 1;
+          let targetsDestroyedInRound = (prev.targetsDestroyedInRound || 0) + greyBlocksCleared;
           let wavesCleared = prev.wavesCleared || 0;
           
-          if (remainingGreyBlocks.length === 0) {
-            // Wave completed! Generate new grey blocks
-            const newGreyBlocks = generateGreyBlocks(5 + Math.floor(wavesCleared / 2)); // More blocks each wave
+          const targetsNeededForRound = getTargetsForRound(currentRound);
+          
+          // Check if round is completed (all targets destroyed)
+          if (targetsDestroyedInRound >= targetsNeededForRound) {
+            // Round completed! Move to next round
+            currentRound++;
+            targetsDestroyedInRound = 0;
+            wavesCleared++; // Keep track of completed rounds for scoring
+            
+            // Generate new targets for the next round
+            const newTargetsCount = getTargetsForRound(currentRound);
+            const newGreyBlocks = generateGreyBlocks(newTargetsCount);
             finalBoard = placeGreyBlocksOnBoard(clearedBoard, newGreyBlocks);
             finalGreyBlocks = newGreyBlocks;
-            wavesCleared++;
           } else {
             // Place remaining grey blocks back on the board
             finalBoard = placeGreyBlocksOnBoard(clearedBoard, remainingGreyBlocks);
@@ -294,7 +326,9 @@ export const useTetrisLogic = (gameMode: 'regular' | 'extra' | 'speedrun' = 'reg
             dropTime: newDropTime,
             holdUsed: false, // Reset hold usage after piece lands
             greyBlocks: finalGreyBlocks,
-            wavesCleared
+            wavesCleared,
+            currentRound,
+            targetsDestroyedInRound
           };
         } else {
           // Regular mode line clearing
@@ -363,17 +397,27 @@ export const useTetrisLogic = (gameMode: 'regular' | 'extra' | 'speedrun' = 'reg
         const newCurrentPiece = prev.nextPiece || createPiece(getRandomPieceType(gameMode), BOARD_WIDTH);
         const newNextPiece = createPiece(getRandomPieceType(gameMode), BOARD_WIDTH);
         
-        // Check if all grey blocks are cleared - if so, generate new wave
+        // Progressive round system - track targets destroyed
         let finalBoard = clearedBoard;
         let finalGreyBlocks = remainingGreyBlocks;
+        let currentRound = prev.currentRound || 1;
+        let targetsDestroyedInRound = (prev.targetsDestroyedInRound || 0) + greyBlocksCleared;
         let wavesCleared = prev.wavesCleared || 0;
         
-        if (remainingGreyBlocks.length === 0) {
-          // Wave completed! Generate new grey blocks
-          const newGreyBlocks = generateGreyBlocks(5 + Math.floor(wavesCleared / 2)); // More blocks each wave
+        const targetsNeededForRound = getTargetsForRound(currentRound);
+        
+        // Check if round is completed (all targets destroyed)
+        if (targetsDestroyedInRound >= targetsNeededForRound) {
+          // Round completed! Move to next round
+          currentRound++;
+          targetsDestroyedInRound = 0;
+          wavesCleared++; // Keep track of completed rounds for scoring
+          
+          // Generate new targets for the next round
+          const newTargetsCount = getTargetsForRound(currentRound);
+          const newGreyBlocks = generateGreyBlocks(newTargetsCount);
           finalBoard = placeGreyBlocksOnBoard(clearedBoard, newGreyBlocks);
           finalGreyBlocks = newGreyBlocks;
-          wavesCleared++;
         } else {
           // Place remaining grey blocks back on the board
           finalBoard = placeGreyBlocksOnBoard(clearedBoard, remainingGreyBlocks);
@@ -394,7 +438,9 @@ export const useTetrisLogic = (gameMode: 'regular' | 'extra' | 'speedrun' = 'reg
           dropTime: Math.max(100, baseDropSpeed - (newLevel - 1) * 100),
           holdUsed: false, // Reset hold usage after piece lands
           greyBlocks: finalGreyBlocks,
-          wavesCleared
+          wavesCleared,
+          currentRound,
+          targetsDestroyedInRound
         };
       } else {
         // Regular mode line clearing
@@ -436,7 +482,9 @@ export const useTetrisLogic = (gameMode: 'regular' | 'extra' | 'speedrun' = 'reg
     let initialGreyBlocks: { x: number; y: number }[] | undefined;
     
     if (gameMode === 'speedrun') {
-      initialGreyBlocks = generateGreyBlocks(5); // Start with 5 grey blocks
+      // Start with round 1 - should have 1 target
+      const initialTargetCount = getTargetsForRound(1);
+      initialGreyBlocks = generateGreyBlocks(initialTargetCount);
       initialBoard = placeGreyBlocksOnBoard(initialBoard, initialGreyBlocks);
     }
     
@@ -459,10 +507,12 @@ export const useTetrisLogic = (gameMode: 'regular' | 'extra' | 'speedrun' = 'reg
       // Speedrun mode specific initialization
       greyBlocks: initialGreyBlocks,
       wavesCleared: gameMode === 'speedrun' ? 0 : undefined,
+      currentRound: gameMode === 'speedrun' ? 1 : undefined,
+      targetsDestroyedInRound: gameMode === 'speedrun' ? 0 : undefined,
       waveStartTime: gameMode === 'speedrun' ? Date.now() : undefined,
       totalTime: gameMode === 'speedrun' ? 0 : undefined
     }));
-  }, [baseDropSpeed, BOARD_WIDTH, gameMode]);
+  }, [baseDropSpeed, BOARD_WIDTH, gameMode, getTargetsForRound, generateGreyBlocks, placeGreyBlocksOnBoard]);
 
   const resetGame = useCallback(() => {
     resetPieceBag(gameMode); // Reset the piece bag for fresh distribution
@@ -480,7 +530,14 @@ export const useTetrisLogic = (gameMode: 'regular' | 'extra' | 'speedrun' = 'reg
       paused: false,
       clearedRows: [],
       dropTime: baseDropSpeed,
-      lastDrop: 0
+      lastDrop: 0,
+      // Speedrun mode specific
+      greyBlocks: gameMode === 'speedrun' ? [] : undefined,
+      wavesCleared: gameMode === 'speedrun' ? 0 : undefined,
+      currentRound: gameMode === 'speedrun' ? 1 : undefined,
+      targetsDestroyedInRound: gameMode === 'speedrun' ? 0 : undefined,
+      waveStartTime: undefined,
+      totalTime: gameMode === 'speedrun' ? 0 : undefined
     });
   }, [baseDropSpeed, BOARD_WIDTH, gameMode, generateGreyBlocks, placeGreyBlocksOnBoard]);
 
@@ -660,6 +717,8 @@ export const useTetrisLogic = (gameMode: 'regular' | 'extra' | 'speedrun' = 'reg
     // Speedrun mode specific
     greyBlocks: gameState.greyBlocks,
     wavesCleared: gameState.wavesCleared,
+    currentRound: gameState.currentRound,
+    targetsDestroyedInRound: gameState.targetsDestroyedInRound,
     totalTime: gameMode === 'speedrun' ? speedrunTime : gameState.totalTime
   };
 };

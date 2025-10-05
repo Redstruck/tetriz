@@ -29,6 +29,8 @@ export interface GameState {
   // Speedrun mode specific
   greyBlocks?: { x: number; y: number }[];
   wavesCleared?: number;
+  currentRound?: number;
+  targetsDestroyedInRound?: number;
   waveStartTime?: number;
   totalTime?: number;
 }

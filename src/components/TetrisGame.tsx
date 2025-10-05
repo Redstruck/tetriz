@@ -38,6 +38,8 @@ export const TetrisGame = ({ gameMode = 'regular' }: TetrisGameProps) => {
     // Speedrun mode specific
     greyBlocks,
     wavesCleared,
+    currentRound,
+    targetsDestroyedInRound,
     totalTime
   } = useTetrisLogic(gameMode);
 
@@ -85,6 +87,8 @@ export const TetrisGame = ({ gameMode = 'regular' }: TetrisGameProps) => {
           {gameMode === 'speedrun' && greyBlocks && (
             <SpeedrunUI
               wavesCleared={wavesCleared || 0}
+              currentRound={currentRound || 1}
+              targetsDestroyedInRound={targetsDestroyedInRound || 0}
               totalTime={totalTime || 0}
               greyBlocks={greyBlocks}
             />
