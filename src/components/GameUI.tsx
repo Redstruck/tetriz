@@ -50,6 +50,7 @@ interface GameUIProps {
   onReset: () => void;
   onPause: () => void;
   onSpeedChange: (speed: number) => void;
+  gameMode?: 'regular' | 'extra' | 'speedrun';
 }
 
 export const GameUI = memo(({ 
@@ -64,7 +65,8 @@ export const GameUI = memo(({
   onStart,
   onReset,
   onPause,
-  onSpeedChange
+  onSpeedChange,
+  gameMode
 }: GameUIProps) => {
   const getCellClasses = (cellType: string, hasBlock: boolean) => {
     const baseClasses = "w-4 h-4 rounded-[2px] transition-all duration-100 relative overflow-hidden";
@@ -99,24 +101,26 @@ export const GameUI = memo(({
 
   return (
     <div className="flex flex-col gap-4 min-w-[200px]">
-      {/* Score Section */}
-      <div className="bg-game-board border border-game-border rounded-lg p-4 text-game-text">
-        <h2 className="text-lg font-retro font-bold text-game-accent mb-2 tracking-wider text-retro-glow">SCORE</h2>
-        <div className="space-y-1 font-mono">
-          <div className="flex justify-between">
-            <span className="font-game text-sm">Score:</span>
-            <span className="text-game-score font-bold font-mono tracking-wider">{score.toLocaleString()}</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="font-game text-sm">Level:</span>
-            <span className="text-game-accent font-bold font-mono">{level}</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="font-game text-sm">Lines:</span>
-            <span className="text-game-accent font-bold font-mono">{linesCleared}</span>
+      {/* Score Section - Hidden in speedrun mode */}
+      {gameMode !== 'speedrun' && (
+        <div className="bg-game-board border border-game-border rounded-lg p-4 text-game-text">
+          <h2 className="text-lg font-retro font-bold text-game-accent mb-2 tracking-wider text-retro-glow">SCORE</h2>
+          <div className="space-y-1 font-mono">
+            <div className="flex justify-between">
+              <span className="font-game text-sm">Score:</span>
+              <span className="text-game-score font-bold font-mono tracking-wider">{score.toLocaleString()}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="font-game text-sm">Level:</span>
+              <span className="text-game-accent font-bold font-mono">{level}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="font-game text-sm">Lines:</span>
+              <span className="text-game-accent font-bold font-mono">{linesCleared}</span>
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* Speed Editor */}
       <div className="bg-game-board border border-game-border rounded-lg p-4 text-game-text">

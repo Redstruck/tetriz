@@ -106,6 +106,7 @@ export const TetrisGame = ({ gameMode = 'regular' }: TetrisGameProps) => {
             onReset={resetGame}
             onPause={togglePause}
             onSpeedChange={setDropSpeed}
+            gameMode={gameMode}
           />
         </div>
       </div>
