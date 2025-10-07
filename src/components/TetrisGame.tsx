@@ -62,13 +62,52 @@ export const TetrisGame = ({ gameMode = 'regular' }: TetrisGameProps) => {
         tabIndex={0}
       >
       <div className="flex flex-col lg:flex-row items-center justify-center gap-4 p-4 max-w-7xl w-full">
-        {/* Hold UI */}
-        <div className="flex-shrink-0 order-1 lg:order-1">
-          <HoldUI 
-            holdPiece={holdPiece}
-            holdUsed={holdUsed}
-          />
-        </div>
+        {/* Left Side Panel - Targets Above Hold (Speedrun Mode Only) */}
+        {gameMode === 'speedrun' ? (
+          <div className="flex-shrink-0 order-1 lg:order-1 flex flex-col gap-4">
+            {/* Targets Left - Above Hold */}
+            {greyBlocks && (
+              <div className="p-3 bg-gradient-to-br from-gray-500/20 to-gray-600/10 border border-gray-500/30 rounded-lg relative overflow-hidden">
+                <div className="relative z-10">
+                  <div className="text-xs font-mono text-gray-200/80 mb-1 tracking-wide">TARGETS LEFT</div>
+                  <div className="text-xl font-mono font-bold text-gray-300 tracking-wider">
+                    {greyBlocks.length}
+                  </div>
+                  
+                  {/* Target indicators with enhanced animation */}
+                  <div className="mt-2 flex justify-center">
+                    <div className="flex space-x-1">
+                      {Array.from({ length: Math.min(greyBlocks.length, 10) }, (_, i) => (
+                        <div
+                          key={i}
+                          className="w-2 h-2 bg-gray-400 rounded-full opacity-75 animate-pulse"
+                          style={{ animationDelay: `${i * 100}ms` }}
+                        />
+                      ))}
+                      {greyBlocks.length > 10 && (
+                        <div className="text-xs text-gray-400 ml-2">+{greyBlocks.length - 10}</div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Hold UI - Below Targets */}
+            <HoldUI 
+              holdPiece={holdPiece}
+              holdUsed={holdUsed}
+            />
+          </div>
+        ) : (
+          /* Regular Mode - Just Hold UI */
+          <div className="flex-shrink-0 order-1 lg:order-1">
+            <HoldUI 
+              holdPiece={holdPiece}
+              holdUsed={holdUsed}
+            />
+          </div>
+        )}
         
         {/* Game Board */}
         <div className="flex-shrink-0 order-2 lg:order-2">
@@ -90,7 +129,6 @@ export const TetrisGame = ({ gameMode = 'regular' }: TetrisGameProps) => {
               currentRound={currentRound || 1}
               targetsDestroyedInRound={targetsDestroyedInRound || 0}
               totalTime={totalTime || 0}
-              greyBlocks={greyBlocks}
             />
           )}
           <GameUI
