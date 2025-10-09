@@ -8,28 +8,37 @@ const ExtraGamePage = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-black flex items-center justify-center p-4 relative">
+    <div className="h-screen w-screen bg-black flex flex-col overflow-hidden">
       <PWAInstallButton />
       
-      {/* Back to Menu Button */}
-      <Button
-        onClick={() => navigate('/')}
-        variant="gameOutline"
-        size="sm"
-        className="fixed top-4 left-4 z-50 font-game tracking-wide hover-lift focus-ring-enhanced"
-      >
-        <ArrowLeft className="w-4 h-4 mr-2" />
-        MENU
-      </Button>
-      
-      {/* Mode Indicator */}
-      <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50">
-        <div className="bg-game-board/90 border border-game-accent/50 rounded-lg px-4 py-2 backdrop-blur-sm">
-          <span className="font-game text-sm text-game-accent tracking-wider text-glow">EXTRA MODE</span>
+      {/* Header */}
+      <div className="flex items-center justify-between px-4 py-2 bg-black/50 border-b border-game-border/30">
+        <Button
+          onClick={() => navigate("/")}
+          variant="gameOutline"
+          size="sm"
+          className="flex items-center gap-2 hover:scale-105 transition-transform duration-200"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Back to Menu
+        </Button>
+        
+        <div className="text-center">
+          <h1 className="text-2xl font-retro font-bold text-purple-400 tracking-wider">
+            EXTRA MODE
+          </h1>
+          <p className="text-xs font-mono text-purple-200/60 mt-1">
+            Enhanced Experience with New Pieces & Challenges
+          </p>
         </div>
+        
+        <div className="w-24" /> {/* Spacer for balance */}
       </div>
-      
-      <TetrisGame gameMode="extra" />
+
+      {/* Game Area */}
+      <div className="flex-1 flex items-center justify-center p-2">
+        <TetrisGame gameMode="extra" />
+      </div>
     </div>
   );
 };
