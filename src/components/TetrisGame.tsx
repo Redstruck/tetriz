@@ -8,9 +8,12 @@ import { useGameControls } from '../hooks/useGameControls';
 
 interface TetrisGameProps {
   gameMode?: 'regular' | 'extra' | 'speedrun';
+  title?: string;
+  subtitle?: string;
+  titleColor?: string;
 }
 
-export const TetrisGame = ({ gameMode = 'regular' }: TetrisGameProps) => {
+export const TetrisGame = ({ gameMode = 'regular', title, subtitle, titleColor = 'text-white' }: TetrisGameProps) => {
   const {
     board,
     currentPiece,
@@ -61,6 +64,20 @@ export const TetrisGame = ({ gameMode = 'regular' }: TetrisGameProps) => {
         className="h-screen w-screen bg-black flex flex-col items-center justify-center overflow-hidden outline-none gpu-accelerated" 
         tabIndex={0}
       >
+      {/* Game Mode Title - Above everything */}
+      {title && (
+        <div className="text-center mb-6">
+          <h1 className={`text-3xl font-retro font-bold tracking-wider ${titleColor}`}>
+            {title}
+          </h1>
+          {subtitle && (
+            <p className={`text-sm font-mono mt-2 opacity-60 tracking-wide ${titleColor.replace('text-', 'text-').replace('-400', '-200')}`}>
+              {subtitle}
+            </p>
+          )}
+        </div>
+      )}
+
       <div className="flex flex-col lg:flex-row items-center justify-center gap-4 p-4 max-w-7xl w-full">
         {/* Left Side Panel - Targets Above Hold (Speedrun Mode Only) */}
         {gameMode === 'speedrun' ? (

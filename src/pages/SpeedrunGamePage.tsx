@@ -20,21 +20,17 @@ const SpeedrunGamePage = () => {
           Back to Menu
         </Button>
         
-        <div className="text-center">
-          <h1 className="text-2xl font-retro font-bold text-orange-400 tracking-wider">
-            SPEEDRUN MODE
-          </h1>
-          <p className="text-xs font-mono text-orange-200/60 mt-1">
-            Clear Grey Target Blocks as Fast as Possible
-          </p>
-        </div>
-        
         <div className="w-24" /> {/* Spacer for balance */}
       </div>
 
       {/* Game Area */}
       <div className="flex-1 flex items-center justify-center p-2">
-        <TetrisGame gameMode="speedrun" />
+        <TetrisGame 
+          gameMode="speedrun" 
+          title="SPEEDRUN MODE"
+          subtitle="Clear Grey Target Blocks as Fast as Possible"
+          titleColor="text-orange-400"
+        />
       </div>
     </div>
   );

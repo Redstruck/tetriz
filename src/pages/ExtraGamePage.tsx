@@ -23,21 +23,17 @@ const ExtraGamePage = () => {
           Back to Menu
         </Button>
         
-        <div className="text-center">
-          <h1 className="text-2xl font-retro font-bold text-purple-400 tracking-wider">
-            EXTRA MODE
-          </h1>
-          <p className="text-xs font-mono text-purple-200/60 mt-1">
-            Enhanced Experience with New Pieces & Challenges
-          </p>
-        </div>
-        
         <div className="w-24" /> {/* Spacer for balance */}
       </div>
 
       {/* Game Area */}
       <div className="flex-1 flex items-center justify-center p-2">
-        <TetrisGame gameMode="extra" />
+        <TetrisGame 
+          gameMode="extra" 
+          title="EXTRA MODE"
+          subtitle="Enhanced Experience with New Pieces & Challenges"
+          titleColor="text-purple-400"
+        />
       </div>
     </div>
   );

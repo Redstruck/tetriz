@@ -23,21 +23,17 @@ const GamePage = () => {
           Back to Menu
         </Button>
         
-        <div className="text-center">
-          <h1 className="text-2xl font-retro font-bold text-cyan-400 tracking-wider">
-            CLASSIC MODE
-          </h1>
-          <p className="text-xs font-mono text-cyan-200/60 mt-1">
-            Traditional Tetris with Progressive Difficulty
-          </p>
-        </div>
-        
         <div className="w-24" /> {/* Spacer for balance */}
       </div>
 
       {/* Game Area */}
       <div className="flex-1 flex items-center justify-center p-2">
-        <TetrisGame gameMode="regular" />
+        <TetrisGame 
+          gameMode="regular" 
+          title="CLASSIC MODE"
+          subtitle="Traditional Tetris with Progressive Difficulty"
+          titleColor="text-cyan-400"
+        />
       </div>
     </div>
   );
