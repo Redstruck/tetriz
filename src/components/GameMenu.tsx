@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import AnimatedHyperspeedBackground from "@/components/ui/AnimatedHyperspeedBackground";
 
 interface GameMenuProps {
   onGameModeSelect: (mode: 'regular' | 'extra' | 'speedrun') => void;
@@ -109,27 +110,26 @@ const GameMenu = ({ onGameModeSelect }: GameMenuProps) => {
   };
 
   return (
-    <div className="min-h-screen w-screen bg-gradient-to-br from-black via-slate-900 to-black flex flex-col items-center justify-center overflow-hidden outline-none p-8">
-      {/* Animated background elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-cyan-500/5 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute top-1/2 right-1/4 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl animate-pulse delay-1000"></div>
-        <div className="absolute bottom-1/4 left-1/3 w-80 h-80 bg-emerald-500/5 rounded-full blur-3xl animate-pulse delay-2000"></div>
-      </div>
+    <div className="min-h-screen w-screen flex flex-col items-center justify-center overflow-hidden outline-none p-8 relative">
+      {/* Animated Hyperspeed background */}
+      <AnimatedHyperspeedBackground className="absolute inset-0 w-full h-full" />
+      
+      {/* Dark overlay for better text readability */}
+      <div className="absolute inset-0 bg-black/40 pointer-events-none" />
 
       {/* Menu Title */}
-      <div className="mb-16 text-center relative z-10">
+      <div className="mb-16 text-center relative z-20">
         <h1 className="text-5xl lg:text-7xl font-retro font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-purple-500 to-emerald-400 tracking-wider retro-title mb-6 drop-shadow-2xl">
           TETRIS
         </h1>
-        <div className="text-sm font-mono text-slate-400 tracking-widest mb-4">
+        <div className="text-sm font-mono text-slate-200 tracking-widest mb-4 drop-shadow-lg">
           CLASSIC RETRO EDITION
         </div>
-        <div className="w-32 h-1 bg-gradient-to-r from-transparent via-cyan-500 to-transparent mx-auto rounded-full"></div>
+        <div className="w-32 h-1 bg-gradient-to-r from-transparent via-cyan-400 to-transparent mx-auto rounded-full shadow-lg shadow-cyan-400/50"></div>
       </div>
 
       {/* Game Mode Selection */}
-      <div className="flex flex-col items-center gap-12 relative z-10">
+      <div className="flex flex-col items-center gap-12 relative z-20">
         <div className="text-center">
           <h2 className="text-2xl font-game font-bold text-slate-200 tracking-wider mb-2">
             SELECT GAME MODE
@@ -142,7 +142,7 @@ const GameMenu = ({ onGameModeSelect }: GameMenuProps) => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-4xl">
           {/* Regular Mode Button */}
           <div className="group cursor-pointer floating-element" onClick={handleRegularMode}>
-            <div className="relative bg-gradient-to-br from-slate-800/50 to-slate-900/80 p-6 rounded-3xl border border-cyan-500/30 hover:border-cyan-400/60 menu-card-hover shadow-2xl hover:shadow-cyan-500/20">
+            <div className="relative bg-gradient-to-br from-slate-800/70 to-slate-900/90 p-6 rounded-3xl border border-cyan-500/40 hover:border-cyan-400/70 menu-card-hover shadow-2xl hover:shadow-cyan-500/30 backdrop-blur-sm">
               {/* Background glow */}
               <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 via-transparent to-cyan-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-3xl" />
               
@@ -177,7 +177,7 @@ const GameMenu = ({ onGameModeSelect }: GameMenuProps) => {
 
           {/* Extra Mode Button */}
           <div className="group cursor-pointer floating-element" onClick={handleExtraMode}>
-            <div className="relative bg-gradient-to-br from-slate-800/50 to-slate-900/80 p-6 rounded-3xl border border-emerald-500/30 hover:border-emerald-400/60 menu-card-hover shadow-2xl hover:shadow-emerald-500/20">
+            <div className="relative bg-gradient-to-br from-slate-800/70 to-slate-900/90 p-6 rounded-3xl border border-emerald-500/40 hover:border-emerald-400/70 menu-card-hover shadow-2xl hover:shadow-emerald-500/30 backdrop-blur-sm">
               {/* Background glow */}
               <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 via-transparent to-teal-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-3xl" />
               
@@ -212,7 +212,7 @@ const GameMenu = ({ onGameModeSelect }: GameMenuProps) => {
 
           {/* Speedrun Mode Button */}
           <div className="group cursor-pointer floating-element" onClick={handleSpeedrunMode}>
-            <div className="relative bg-gradient-to-br from-slate-800/50 to-slate-900/80 p-6 rounded-3xl border border-orange-500/30 hover:border-orange-400/60 menu-card-hover shadow-2xl hover:shadow-orange-500/20">
+            <div className="relative bg-gradient-to-br from-slate-800/70 to-slate-900/90 p-6 rounded-3xl border border-orange-500/40 hover:border-orange-400/70 menu-card-hover shadow-2xl hover:shadow-orange-500/30 backdrop-blur-sm">
               {/* Background glow */}
               <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 via-transparent to-red-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-3xl" />
               
@@ -247,22 +247,22 @@ const GameMenu = ({ onGameModeSelect }: GameMenuProps) => {
         </div>
 
         {/* Footer information */}
-        <div className="mt-12 text-center">
-          <div className="flex items-center justify-center gap-6 text-xs text-slate-500 font-mono">
+        <div className="mt-12 text-center relative z-20">
+          <div className="flex items-center justify-center gap-6 text-xs text-slate-300 font-mono drop-shadow-lg">
             <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-cyan-500 rounded-full animate-pulse"></div>
+              <div className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse shadow-lg shadow-cyan-400/50"></div>
               <span>ARROW KEYS TO MOVE</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse delay-300"></div>
+              <div className="w-2 h-2 bg-purple-400 rounded-full animate-pulse delay-300 shadow-lg shadow-purple-400/50"></div>
               <span>SPACE TO ROTATE</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse delay-600"></div>
+              <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse delay-600 shadow-lg shadow-emerald-400/50"></div>
               <span>SHIFT TO DROP</span>
             </div>
           </div>
-          <div className="mt-4 text-xs text-slate-600">
+          <div className="mt-4 text-xs text-slate-400 drop-shadow-lg">
             Press P to pause • C to hold piece • R to reset
           </div>
         </div>
