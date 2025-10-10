@@ -50,19 +50,20 @@ const AnimatedHyperspeedBackground = ({
         effectOptions={{
           ...currentPreset,
           colors: {
-            roadColor: 0x080808,
-            islandColor: 0x0a0a0a,
-            background: 0x000000,
-            shoulderLines: 0x1a1a1a,
-            brokenLines: 0x1a1a1a,
-            leftCars: [0x06b6d4, 0x0ea5e9, 0x3b82f6], // Tetris cyan/blue theme
-            rightCars: [0x8b5cf6, 0xa855f7, 0x9333ea], // Tetris purple theme
-            sticks: 0x10b981 // Tetris emerald accent
+            roadColor: 0x1a1a1a, // Brighter road
+            islandColor: 0x2a2a2a, // Brighter island
+            background: 0x0a0a0a, // Slightly brighter background
+            shoulderLines: 0x66ffff, // Bright cyan shoulder lines
+            brokenLines: 0x44ffaa, // Bright green broken lines
+            leftCars: [0x00e5ff, 0x40c4ff, 0x2196f3], // Bright cyan/blue car lights
+            rightCars: [0xd500f9, 0xaa00ff, 0x7c4dff], // Bright purple/magenta car lights
+            sticks: 0x00ff88 // Bright emerald side lights
           },
           speedUp: isMobile ? 1.1 : 1.3, // Reduce speed on mobile for performance
-          carLightsFade: 0.8,
+          carLightsFade: 0.2, // Even lower fade for maximum brightness
           totalSideLightSticks: isMobile ? 15 : 30, // Fewer lights on mobile
           lightPairsPerRoadWay: isMobile ? 20 : 35, // Fewer car lights on mobile
+          carLightsRadius: [0.08, 0.18] as [number, number], // Larger light radius for more brightness
           fov: isMobile ? 80 : 90, // Slightly reduced FOV on mobile
           fovSpeedUp: isMobile ? 120 : 150, // Reduced speed-up FOV on mobile
           onSpeedUp: () => {

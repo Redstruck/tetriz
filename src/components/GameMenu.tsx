@@ -114,8 +114,8 @@ const GameMenu = ({ onGameModeSelect }: GameMenuProps) => {
       {/* Animated Hyperspeed background */}
       <AnimatedHyperspeedBackground className="absolute inset-0 w-full h-full" />
       
-      {/* Dark overlay for better text readability */}
-      <div className="absolute inset-0 bg-black/40 pointer-events-none" />
+      {/* Lighter overlay for better visibility of bright background */}
+      <div className="absolute inset-0 bg-black/20 pointer-events-none" />
 
       {/* Menu Title */}
       <div className="mb-16 text-center relative z-20">
@@ -142,7 +142,7 @@ const GameMenu = ({ onGameModeSelect }: GameMenuProps) => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-4xl">
           {/* Regular Mode Button */}
           <div className="group cursor-pointer floating-element" onClick={handleRegularMode}>
-            <div className="relative bg-gradient-to-br from-slate-800/70 to-slate-900/90 p-6 rounded-3xl border border-cyan-500/40 hover:border-cyan-400/70 menu-card-hover shadow-2xl hover:shadow-cyan-500/30 backdrop-blur-sm">
+            <div className="relative bg-gradient-to-br from-slate-800/50 to-slate-900/70 p-6 rounded-3xl border border-cyan-500/60 hover:border-cyan-400/90 menu-card-hover shadow-2xl hover:shadow-cyan-500/50 backdrop-blur-sm">
               {/* Background glow */}
               <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 via-transparent to-cyan-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-3xl" />
               
@@ -177,7 +177,7 @@ const GameMenu = ({ onGameModeSelect }: GameMenuProps) => {
 
           {/* Extra Mode Button */}
           <div className="group cursor-pointer floating-element" onClick={handleExtraMode}>
-            <div className="relative bg-gradient-to-br from-slate-800/70 to-slate-900/90 p-6 rounded-3xl border border-emerald-500/40 hover:border-emerald-400/70 menu-card-hover shadow-2xl hover:shadow-emerald-500/30 backdrop-blur-sm">
+            <div className="relative bg-gradient-to-br from-slate-800/50 to-slate-900/70 p-6 rounded-3xl border border-emerald-500/60 hover:border-emerald-400/90 menu-card-hover shadow-2xl hover:shadow-emerald-500/50 backdrop-blur-sm">
               {/* Background glow */}
               <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 via-transparent to-teal-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-3xl" />
               
@@ -212,7 +212,7 @@ const GameMenu = ({ onGameModeSelect }: GameMenuProps) => {
 
           {/* Speedrun Mode Button */}
           <div className="group cursor-pointer floating-element" onClick={handleSpeedrunMode}>
-            <div className="relative bg-gradient-to-br from-slate-800/70 to-slate-900/90 p-6 rounded-3xl border border-orange-500/40 hover:border-orange-400/70 menu-card-hover shadow-2xl hover:shadow-orange-500/30 backdrop-blur-sm">
+            <div className="relative bg-gradient-to-br from-slate-800/50 to-slate-900/70 p-6 rounded-3xl border border-orange-500/60 hover:border-orange-400/90 menu-card-hover shadow-2xl hover:shadow-orange-500/50 backdrop-blur-sm">
               {/* Background glow */}
               <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 via-transparent to-red-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-3xl" />
               

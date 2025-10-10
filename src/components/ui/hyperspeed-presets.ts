@@ -26,14 +26,14 @@ export const hyperspeedPresets = {
     carShiftX: [-0.8, 0.8] as [number, number],
     carFloorSeparation: [0, 5] as [number, number],
     colors: {
-      roadColor: 0x080808,
-      islandColor: 0x0a0a0a,
-      background: 0x000000,
-      shoulderLines: 0x131318,
-      brokenLines: 0x131318,
-      leftCars: [0xd856bf, 0x6750a2, 0xc247ac],
-      rightCars: [0x03b3c3, 0x0e5ea5, 0x324555],
-      sticks: 0x03b3c3
+      roadColor: 0x1a1a1a,
+      islandColor: 0x2a2a2a,
+      background: 0x0a0a0a,
+      shoulderLines: 0x66ffff,
+      brokenLines: 0x44ffaa,
+      leftCars: [0xff69b4, 0x9c27b0, 0xe91e63],
+      rightCars: [0x00e5ff, 0x2196f3, 0x03a9f4],
+      sticks: 0x00e5ff
     }
   },
   two: {
@@ -63,14 +63,14 @@ export const hyperspeedPresets = {
     carShiftX: [-0.2, 0.2] as [number, number],
     carFloorSeparation: [0.05, 1] as [number, number],
     colors: {
-      roadColor: 0x080808,
-      islandColor: 0x0a0a0a,
-      background: 0x000000,
-      shoulderLines: 0x131318,
-      brokenLines: 0x131318,
-      leftCars: [0xff102a, 0xeb383e, 0xff102a],
-      rightCars: [0xdadafa, 0xbebae3, 0x8f97e4],
-      sticks: 0xdadafa
+      roadColor: 0x1a1a1a,
+      islandColor: 0x2a2a2a,
+      background: 0x0a0a0a,
+      shoulderLines: 0xff6b6b,
+      brokenLines: 0xffd93d,
+      leftCars: [0xff4757, 0xff3742, 0xff4757],
+      rightCars: [0x70a1ff, 0x5352ed, 0x3742fa],
+      sticks: 0x70a1ff
     }
   },
   three: {
@@ -100,14 +100,14 @@ export const hyperspeedPresets = {
     carShiftX: [-0.5, 0.5] as [number, number],
     carFloorSeparation: [0, 0.1] as [number, number],
     colors: {
-      roadColor: 0x080808,
-      islandColor: 0x0a0a0a,
-      background: 0x000000,
-      shoulderLines: 0x131318,
-      brokenLines: 0x131318,
-      leftCars: [0x7d0d1b, 0xa90519, 0xff102a],
-      rightCars: [0xf1eece, 0xe6e2b1, 0xdfd98a],
-      sticks: 0xf1eece
+      roadColor: 0x1a1a1a,
+      islandColor: 0x2a2a2a,
+      background: 0x0a0a0a,
+      shoulderLines: 0xff9ff3,
+      brokenLines: 0x54a0ff,
+      leftCars: [0xff6b6b, 0xff4757, 0xff3838],
+      rightCars: [0xffff00, 0xffd700, 0xffed4e],
+      sticks: 0xffff00
     }
   },
   four: {
@@ -137,14 +137,14 @@ export const hyperspeedPresets = {
     carShiftX: [-0.2, 0.2] as [number, number],
     carFloorSeparation: [0.05, 1] as [number, number],
     colors: {
-      roadColor: 0x080808,
-      islandColor: 0x0a0a0a,
-      background: 0x000000,
-      shoulderLines: 0x131318,
-      brokenLines: 0x131318,
-      leftCars: [0xff5f73, 0xe74d60, 0xff102a],
-      rightCars: [0xa4e3e6, 0x80d1d4, 0x53c2c6],
-      sticks: 0xa4e3e6
+      roadColor: 0x1a1a1a,
+      islandColor: 0x2a2a2a,
+      background: 0x0a0a0a,
+      shoulderLines: 0xff6348,
+      brokenLines: 0x2ed573,
+      leftCars: [0xff7675, 0xe84393, 0xff3838],
+      rightCars: [0x00cec9, 0x55efc4, 0x81ecec],
+      sticks: 0x00cec9
     }
   },
   five: {
@@ -174,14 +174,14 @@ export const hyperspeedPresets = {
     carShiftX: [-0.2, 0.2] as [number, number],
     carFloorSeparation: [0.05, 1] as [number, number],
     colors: {
-      roadColor: 0x080808,
-      islandColor: 0x0a0a0a,
-      background: 0x000000,
-      shoulderLines: 0x131318,
-      brokenLines: 0x131318,
-      leftCars: [0xdc5b20, 0xdca320, 0xdc2020],
-      rightCars: [0x334bf7, 0xe5e6ed, 0xbfc6f3],
-      sticks: 0xc5e8eb
+      roadColor: 0x1a1a1a,
+      islandColor: 0x2a2a2a,
+      background: 0x0a0a0a,
+      shoulderLines: 0xffa726,
+      brokenLines: 0x66bb6a,
+      leftCars: [0xff8a50, 0xffab00, 0xff6d00],
+      rightCars: [0x448aff, 0x2979ff, 0x2962ff],
+      sticks: 0x26c6da
     }
   },
   six: {
@@ -211,14 +211,14 @@ export const hyperspeedPresets = {
     carShiftX: [-0.2, 0.2] as [number, number],
     carFloorSeparation: [0.05, 1] as [number, number],
     colors: {
-      roadColor: 0x080808,
-      islandColor: 0x0a0a0a,
-      background: 0x000000,
-      shoulderLines: 0x131318,
-      brokenLines: 0x131318,
-      leftCars: [0xff322f, 0xa33010, 0xa81508],
-      rightCars: [0xfdfdf0, 0xf3dea0, 0xe2bb88],
-      sticks: 0xfdfdf0
+      roadColor: 0x1a1a1a,
+      islandColor: 0x2a2a2a,
+      background: 0x0a0a0a,
+      shoulderLines: 0xff5722,
+      brokenLines: 0x4caf50,
+      leftCars: [0xff5252, 0xff1744, 0xd50000],
+      rightCars: [0xffffff, 0xfff59d, 0xffee58],
+      sticks: 0xffffff
     }
   }
 };

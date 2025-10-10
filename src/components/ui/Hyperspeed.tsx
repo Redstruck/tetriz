@@ -965,7 +965,7 @@ class App {
     this.scene = new THREE.Scene();
     this.scene.background = null;
 
-    const fog = new THREE.Fog(options.colors.background, options.length * 0.2, options.length * 500);
+    const fog = new THREE.Fog(options.colors.background, options.length * 0.4, options.length * 800);
     this.scene.fog = fog;
 
     this.fogUniforms = {
@@ -1028,9 +1028,10 @@ class App {
     this.bloomPass = new EffectPass(
       this.camera,
       new BloomEffect({
-        luminanceThreshold: 0.2,
-        luminanceSmoothing: 0,
-        resolutionScale: 1
+        luminanceThreshold: 0.05, // Much lower threshold for brighter bloom
+        luminanceSmoothing: 0.1,
+        resolutionScale: 1,
+        intensity: 1.5 // Increased bloom intensity
       })
     );
 
