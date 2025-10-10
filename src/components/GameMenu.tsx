@@ -255,11 +255,11 @@ const GameMenu = ({ onGameModeSelect }: GameMenuProps) => {
             </div>
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-purple-400 rounded-full animate-pulse delay-300 shadow-lg shadow-purple-400/50"></div>
-              <span>SPACE TO ROTATE</span>
+              <span>UP ARROW TO ROTATE</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse delay-600 shadow-lg shadow-emerald-400/50"></div>
-              <span>SHIFT TO DROP</span>
+              <span>SPACE TO DROP</span>
             </div>
           </div>
           <div className="mt-4 text-xs text-slate-400 drop-shadow-lg">
