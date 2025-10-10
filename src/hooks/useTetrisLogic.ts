@@ -46,7 +46,7 @@ export const useTetrisLogic = (gameMode: 'regular' | 'extra' | 'speedrun' = 'reg
     totalTime: gameMode === 'speedrun' ? 0 : undefined
   });
 
-  const [baseDropSpeed, setBaseDropSpeed] = useState(700); // Faster default speed (reduced from 1000ms)
+  const [baseDropSpeed, setBaseDropSpeed] = useState(1000); // Normal speed as default
 
   const gameLoopRef = useRef<number>();
 
