@@ -20,6 +20,7 @@
     --tetris-z: 0 100% 60%;   /* Red - Z piece */
     --tetris-j: 220 100% 60%; /* Blue - J piece */
     --tetris-l: 25 100% 55%;  /* Orange - L piece */
+    --tetris-p: 320 100% 60%; /* Pink - P piece */
     
     /* Game UI */
     --game-board: 220 25% 12%;

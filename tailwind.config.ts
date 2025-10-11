@@ -75,7 +75,8 @@ export default {
 					s: 'hsl(var(--tetris-s))',
 					z: 'hsl(var(--tetris-z))',
 					j: 'hsl(var(--tetris-j))',
-					l: 'hsl(var(--tetris-l))'
+					l: 'hsl(var(--tetris-l))',
+					p: 'hsl(var(--tetris-p))'
 				},
 				game: {
 					board: 'hsl(var(--game-board))',

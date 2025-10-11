@@ -185,7 +185,7 @@ export const EXTRA_PIECES: Record<ExtraPieceType, { shape: number[][], color: st
       [1, 0, 0, 0, 0],
       [0, 0, 0, 0, 0]
     ],
-    color: 'tetris-j'
+    color: 'tetris-p'
   },
   // N shape
   N: {
