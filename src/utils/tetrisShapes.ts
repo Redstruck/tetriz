@@ -219,11 +219,22 @@ export const EXTRA_PIECES: Record<ExtraPieceType, { shape: number[][], color: st
       [0, 0, 0, 0, 0]
     ],
     color: 'tetris-s'
+  },
+  // B shape (Brown short L-shape)
+  B: {
+    shape: [
+      [0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0],
+      [1, 0, 0, 0, 0],
+      [1, 1, 0, 0, 0],
+      [0, 0, 0, 0, 0]
+    ],
+    color: 'tetris-b'
   }
 };
 
 export const PIECE_TYPES: PieceType[] = ['I', 'O', 'T', 'S', 'Z', 'J', 'L'];
-export const EXTRA_PIECE_TYPES: ExtraPieceType[] = ['I5', 'L3', 'L4', 'J3', 'J4', 'T3', 'T4', 'U', 'Y', 'F', 'P', 'N', 'H', 'W'];
+export const EXTRA_PIECE_TYPES: ExtraPieceType[] = ['I5', 'L3', 'L4', 'J3', 'J4', 'T3', 'T4', 'U', 'Y', 'F', 'P', 'N', 'H', 'W', 'B'];
 
 export const rotatePiece = (shape: number[][]): number[][] => {
   const size = shape.length;
