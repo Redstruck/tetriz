@@ -87,44 +87,73 @@ const getCellClasses = (cellType: string, isHoldUsed: boolean) => {
 };
 
 export const HoldUI = memo(({ holdPiece, holdUsed, gameMode = 'regular' }: HoldUIProps) => {
-  // Use 4x4 grid for all game modes for consistent sizing
-  const gridSize = 4;
-  const totalCells = gridSize * gridSize;
-  const containerSize = 'w-20 h-20';
-  const cellSize = { width: '16px', height: '16px' };
+  const blockSize = 16; // Size of each block in pixels
+  
+  const renderPiece = () => {
+    if (!holdPiece) {
+      // Show empty state with minimum container size
+      return (
+        <div className="flex justify-center items-center" style={{ width: '64px', height: '64px' }}>
+          <div className="text-xs text-muted-foreground/50 font-mono">Empty</div>
+        </div>
+      );
+    }
+
+    const shape = holdPiece.shape;
+    const blocks = [];
+    
+    // Find all blocks in the shape and their positions
+    for (let y = 0; y < shape.length; y++) {
+      for (let x = 0; x < shape[y].length; x++) {
+        if (shape[y][x] === 1) {
+          blocks.push({ x, y });
+        }
+      }
+    }
+    
+    if (blocks.length === 0) return null;
+    
+    // Calculate bounding box for centering
+    const minX = Math.min(...blocks.map(b => b.x));
+    const maxX = Math.max(...blocks.map(b => b.x));
+    const minY = Math.min(...blocks.map(b => b.y));
+    const maxY = Math.max(...blocks.map(b => b.y));
+    
+    const pieceWidth = (maxX - minX + 1) * blockSize;
+    const pieceHeight = (maxY - minY + 1) * blockSize;
+    
+    return (
+      <div className="flex justify-center">
+        <div className="relative" style={{ width: `${pieceWidth}px`, height: `${pieceHeight}px` }}>
+          {blocks.map((block, index) => (
+            <div
+              key={index}
+              className={getCellClasses(holdPiece.type, holdUsed)}
+              style={{
+                position: 'absolute',
+                left: `${(block.x - minX) * blockSize}px`,
+                top: `${(block.y - minY) * blockSize}px`,
+                width: `${blockSize}px`,
+                height: `${blockSize}px`
+              }}
+            >
+              {!holdUsed && (
+                <div className="absolute inset-[1px] rounded-sm bg-gradient-to-br from-white/20 to-transparent" />
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className="bg-card/95 backdrop-blur-sm border border-border/50 rounded-lg p-4 shadow-lg">
       <h3 className="text-lg font-retro font-bold text-foreground mb-2 text-center tracking-wider text-retro-glow">HOLD</h3>
       <div className="text-xs text-muted-foreground text-center mb-2 font-mono">Press C</div>
       
-      <div className={`${containerSize} bg-game-grid/50 rounded border border-game-border/30 p-1 mx-auto`}>
-        <div className={`grid gap-[1px] h-full`} style={{ gridTemplateColumns: `repeat(${gridSize}, 1fr)` }}>
-          {Array(totalCells).fill(null).map((_, index) => {
-            const x = index % gridSize;
-            const y = Math.floor(index / gridSize);
-            
-            let cellType = '';
-            if (holdPiece) {
-              const centeredShape = centerPieceInGrid(holdPiece.shape, gridSize);
-              if (centeredShape[y] && centeredShape[y][x] === 1) {
-                cellType = holdPiece.type;
-              }
-            }
-            
-            return (
-              <div
-                key={index}
-                className={getCellClasses(cellType, holdUsed)}
-                style={cellSize}
-              >
-                {cellType && !holdUsed && (
-                  <div className="absolute inset-[1px] rounded-sm bg-gradient-to-br from-white/20 to-transparent" />
-                )}
-              </div>
-            );
-          })}
-        </div>
+      <div className="min-h-16 flex items-center justify-center">
+        {renderPiece()}
       </div>
       
       {holdUsed && (

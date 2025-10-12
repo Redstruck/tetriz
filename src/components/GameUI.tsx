@@ -211,33 +211,50 @@ export const GameUI = memo(({
 
       {/* Next Piece */}
       {nextPiece && (() => {
-        // Use 4x4 grid for all game modes for consistent sizing
-        const gridSize = 4;
-        const totalCells = gridSize * gridSize;
+        const shape = getPieceData(nextPiece.type).shape;
+        const blockSize = 16; // Size of each block in pixels
+        const blocks = [];
+        
+        // Find all blocks in the shape and their positions
+        for (let y = 0; y < shape.length; y++) {
+          for (let x = 0; x < shape[y].length; x++) {
+            if (shape[y][x] === 1) {
+              blocks.push({ x, y });
+            }
+          }
+        }
+        
+        // Calculate bounding box for centering
+        if (blocks.length === 0) return null;
+        
+        const minX = Math.min(...blocks.map(b => b.x));
+        const maxX = Math.max(...blocks.map(b => b.x));
+        const minY = Math.min(...blocks.map(b => b.y));
+        const maxY = Math.max(...blocks.map(b => b.y));
+        
+        const pieceWidth = (maxX - minX + 1) * blockSize;
+        const pieceHeight = (maxY - minY + 1) * blockSize;
         
         return (
           <div className="bg-game-board border border-game-border rounded-lg p-4">
             <h3 className="text-sm font-retro font-bold text-game-accent mb-2 tracking-wider text-retro-glow">NEXT</h3>
             <div className="flex justify-center">
-              <div className="grid gap-[1px] bg-game-grid/50 p-2 rounded" 
-                   style={{ gridTemplateColumns: `repeat(${gridSize}, 1fr)` }}>
-                {Array.from({ length: totalCells }, (_, i) => {
-                  const y = Math.floor(i / gridSize);
-                  const x = i % gridSize;
-                  const shape = centerPieceInGrid(getPieceData(nextPiece.type).shape, gridSize);
-                  const hasBlock = shape[y] && shape[y][x] === 1;
-                  
-                  return (
-                    <div
-                      key={i}
-                      className={cn(getCellClasses(nextPiece.type, hasBlock))}
-                    >
-                      {hasBlock && (
-                        <div className="absolute inset-[1px] rounded-[1px] bg-gradient-to-br from-white/20 to-transparent" />
-                      )}
-                    </div>
-                  );
-                })}
+              <div className="relative" style={{ width: `${pieceWidth}px`, height: `${pieceHeight}px` }}>
+                {blocks.map((block, index) => (
+                  <div
+                    key={index}
+                    className={cn(getCellClasses(nextPiece.type, true))}
+                    style={{
+                      position: 'absolute',
+                      left: `${(block.x - minX) * blockSize}px`,
+                      top: `${(block.y - minY) * blockSize}px`,
+                      width: `${blockSize}px`,
+                      height: `${blockSize}px`
+                    }}
+                  >
+                    <div className="absolute inset-[1px] rounded-[1px] bg-gradient-to-br from-white/20 to-transparent" />
+                  </div>
+                ))}
               </div>
             </div>
           </div>
