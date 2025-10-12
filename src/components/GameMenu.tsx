@@ -154,7 +154,7 @@ const GameMenu = ({ onGameModeSelect }: GameMenuProps) => {
               {/* Title and description */}
               <div className="text-center relative z-10">
                 <h3 className="text-2xl font-bold text-cyan-400 mb-2 group-hover:text-cyan-300 transition-colors">
-                  REGULAR
+                  CLASSIC
                 </h3>
                 <p className="text-sm text-slate-300 font-mono tracking-wide mb-2">
                   Classic Tetris Experience
