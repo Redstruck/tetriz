@@ -41,6 +41,56 @@ const ResetIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
+// Helper function to center a piece shape in a grid of specified size
+const centerPieceInGrid = (shape: number[][], gridSize: number = 6): number[][] => {
+  // Find the bounding box of the piece
+  let minX = shape[0]?.length || 0;
+  let maxX = -1;
+  let minY = shape.length;
+  let maxY = -1;
+
+  for (let y = 0; y < shape.length; y++) {
+    for (let x = 0; x < shape[y].length; x++) {
+      if (shape[y][x] === 1) {
+        minX = Math.min(minX, x);
+        maxX = Math.max(maxX, x);
+        minY = Math.min(minY, y);
+        maxY = Math.max(maxY, y);
+      }
+    }
+  }
+
+  // If no blocks found, return empty grid
+  if (minX > maxX || minY > maxY) {
+    return Array(gridSize).fill(null).map(() => Array(gridSize).fill(0));
+  }
+
+  // Calculate the piece dimensions
+  const pieceWidth = maxX - minX + 1;
+  const pieceHeight = maxY - minY + 1;
+
+  // Calculate centering offsets
+  const offsetX = Math.floor((gridSize - pieceWidth) / 2);
+  const offsetY = Math.floor((gridSize - pieceHeight) / 2);
+
+  // Create centered grid
+  const centeredGrid = Array(gridSize).fill(null).map(() => Array(gridSize).fill(0));
+
+  for (let y = minY; y <= maxY; y++) {
+    for (let x = minX; x <= maxX; x++) {
+      if (shape[y] && shape[y][x] === 1) {
+        const newY = offsetY + (y - minY);
+        const newX = offsetX + (x - minX);
+        if (newY >= 0 && newY < gridSize && newX >= 0 && newX < gridSize) {
+          centeredGrid[newY][newX] = 1;
+        }
+      }
+    }
+  }
+
+  return centeredGrid;
+};
+
 interface GameUIProps {
   score: number;
   level: number;
@@ -160,33 +210,39 @@ export const GameUI = memo(({
       </div>
 
       {/* Next Piece */}
-      {nextPiece && (
-        <div className="bg-game-board border border-game-border rounded-lg p-4">
-          <h3 className="text-sm font-retro font-bold text-game-accent mb-2 tracking-wider text-retro-glow">NEXT</h3>
-          <div className="flex justify-center">
-            <div className="grid gap-[1px] bg-game-grid/50 p-2 rounded" 
-                 style={{ gridTemplateColumns: `repeat(6, 1fr)` }}>
-              {Array.from({ length: 36 }, (_, i) => {
-                const y = Math.floor(i / 6);
-                const x = i % 6;
-                const shape = getPieceData(nextPiece.type).shape;
-                const hasBlock = shape[y] && shape[y][x] === 1;
-                
-                return (
-                  <div
-                    key={i}
-                    className={cn(getCellClasses(nextPiece.type, hasBlock))}
-                  >
-                    {hasBlock && (
-                      <div className="absolute inset-[1px] rounded-[1px] bg-gradient-to-br from-white/20 to-transparent" />
-                    )}
-                  </div>
-                );
-              })}
+      {nextPiece && (() => {
+        // Use 6x6 grid for extra mode (larger pieces), 4x4 for others
+        const gridSize = gameMode === 'extra' ? 6 : 4;
+        const totalCells = gridSize * gridSize;
+        
+        return (
+          <div className="bg-game-board border border-game-border rounded-lg p-4">
+            <h3 className="text-sm font-retro font-bold text-game-accent mb-2 tracking-wider text-retro-glow">NEXT</h3>
+            <div className="flex justify-center">
+              <div className="grid gap-[1px] bg-game-grid/50 p-2 rounded" 
+                   style={{ gridTemplateColumns: `repeat(${gridSize}, 1fr)` }}>
+                {Array.from({ length: totalCells }, (_, i) => {
+                  const y = Math.floor(i / gridSize);
+                  const x = i % gridSize;
+                  const shape = centerPieceInGrid(getPieceData(nextPiece.type).shape, gridSize);
+                  const hasBlock = shape[y] && shape[y][x] === 1;
+                  
+                  return (
+                    <div
+                      key={i}
+                      className={cn(getCellClasses(nextPiece.type, hasBlock))}
+                    >
+                      {hasBlock && (
+                        <div className="absolute inset-[1px] rounded-[1px] bg-gradient-to-br from-white/20 to-transparent" />
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
 
       {/* Controls */}
       <div className="bg-game-board border border-game-border rounded-lg p-4">

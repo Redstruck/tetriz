@@ -114,6 +114,7 @@ export const TetrisGame = ({ gameMode = 'regular', title, subtitle, titleColor =
             <HoldUI 
               holdPiece={holdPiece}
               holdUsed={holdUsed}
+              gameMode={gameMode}
             />
           </div>
         ) : (
@@ -122,6 +123,7 @@ export const TetrisGame = ({ gameMode = 'regular', title, subtitle, titleColor =
             <HoldUI 
               holdPiece={holdPiece}
               holdUsed={holdUsed}
+              gameMode={gameMode}
             />
           </div>
         )}

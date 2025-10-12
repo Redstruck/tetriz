@@ -1,9 +1,60 @@
 import { memo } from 'react';
 import { Piece } from '../types/tetris';
 
+// Helper function to center a piece shape in a grid of specified size
+const centerPieceInGrid = (shape: number[][], gridSize: number = 6): number[][] => {
+  // Find the bounding box of the piece
+  let minX = shape[0]?.length || 0;
+  let maxX = -1;
+  let minY = shape.length;
+  let maxY = -1;
+
+  for (let y = 0; y < shape.length; y++) {
+    for (let x = 0; x < shape[y].length; x++) {
+      if (shape[y][x] === 1) {
+        minX = Math.min(minX, x);
+        maxX = Math.max(maxX, x);
+        minY = Math.min(minY, y);
+        maxY = Math.max(maxY, y);
+      }
+    }
+  }
+
+  // If no blocks found, return empty grid
+  if (minX > maxX || minY > maxY) {
+    return Array(gridSize).fill(null).map(() => Array(gridSize).fill(0));
+  }
+
+  // Calculate the piece dimensions
+  const pieceWidth = maxX - minX + 1;
+  const pieceHeight = maxY - minY + 1;
+
+  // Calculate centering offsets
+  const offsetX = Math.floor((gridSize - pieceWidth) / 2);
+  const offsetY = Math.floor((gridSize - pieceHeight) / 2);
+
+  // Create centered grid
+  const centeredGrid = Array(gridSize).fill(null).map(() => Array(gridSize).fill(0));
+
+  for (let y = minY; y <= maxY; y++) {
+    for (let x = minX; x <= maxX; x++) {
+      if (shape[y] && shape[y][x] === 1) {
+        const newY = offsetY + (y - minY);
+        const newX = offsetX + (x - minX);
+        if (newY >= 0 && newY < gridSize && newX >= 0 && newX < gridSize) {
+          centeredGrid[newY][newX] = 1;
+        }
+      }
+    }
+  }
+
+  return centeredGrid;
+};
+
 interface HoldUIProps {
   holdPiece: Piece | null;
   holdUsed: boolean;
+  gameMode?: 'regular' | 'extra' | 'speedrun';
 }
 
 const getCellClasses = (cellType: string, isHoldUsed: boolean) => {
@@ -35,31 +86,37 @@ const getCellClasses = (cellType: string, isHoldUsed: boolean) => {
   }
 };
 
-export const HoldUI = memo(({ holdPiece, holdUsed }: HoldUIProps) => {
+export const HoldUI = memo(({ holdPiece, holdUsed, gameMode = 'regular' }: HoldUIProps) => {
+  // Use 6x6 grid for extra mode (larger pieces), 4x4 for others
+  const gridSize = gameMode === 'extra' ? 6 : 4;
+  const totalCells = gridSize * gridSize;
+  const containerSize = gameMode === 'extra' ? 'w-32 h-32' : 'w-20 h-20';
+  const cellSize = gameMode === 'extra' ? { width: '20px', height: '20px' } : { width: '16px', height: '16px' };
+
   return (
     <div className="bg-card/95 backdrop-blur-sm border border-border/50 rounded-lg p-4 shadow-lg">
       <h3 className="text-lg font-retro font-bold text-foreground mb-2 text-center tracking-wider text-retro-glow">HOLD</h3>
       <div className="text-xs text-muted-foreground text-center mb-2 font-mono">Press C</div>
       
-      <div className="w-32 h-32 bg-game-grid/50 rounded border border-game-border/30 p-1">
-        <div className="grid grid-cols-6 gap-[1px] h-full">
-          {Array(36).fill(null).map((_, index) => {
-            const x = index % 6;
-            const y = Math.floor(index / 6);
+      <div className={`${containerSize} bg-game-grid/50 rounded border border-game-border/30 p-1 mx-auto`}>
+        <div className={`grid gap-[1px] h-full`} style={{ gridTemplateColumns: `repeat(${gridSize}, 1fr)` }}>
+          {Array(totalCells).fill(null).map((_, index) => {
+            const x = index % gridSize;
+            const y = Math.floor(index / gridSize);
             
             let cellType = '';
-            if (holdPiece && holdPiece.shape[y] && holdPiece.shape[y][x] === 1) {
-              cellType = holdPiece.type;
+            if (holdPiece) {
+              const centeredShape = centerPieceInGrid(holdPiece.shape, gridSize);
+              if (centeredShape[y] && centeredShape[y][x] === 1) {
+                cellType = holdPiece.type;
+              }
             }
             
             return (
               <div
                 key={index}
                 className={getCellClasses(cellType, holdUsed)}
-                style={{
-                  width: '20px',
-                  height: '20px'
-                }}
+                style={cellSize}
               >
                 {cellType && !holdUsed && (
                   <div className="absolute inset-[1px] rounded-sm bg-gradient-to-br from-white/20 to-transparent" />
