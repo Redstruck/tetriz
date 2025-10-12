@@ -211,8 +211,8 @@ export const GameUI = memo(({
 
       {/* Next Piece */}
       {nextPiece && (() => {
-        // Use 6x6 grid for extra mode (larger pieces), 4x4 for others
-        const gridSize = gameMode === 'extra' ? 6 : 4;
+        // Use 4x4 grid for all game modes for consistent sizing
+        const gridSize = 4;
         const totalCells = gridSize * gridSize;
         
         return (

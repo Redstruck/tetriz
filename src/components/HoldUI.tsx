@@ -87,11 +87,11 @@ const getCellClasses = (cellType: string, isHoldUsed: boolean) => {
 };
 
 export const HoldUI = memo(({ holdPiece, holdUsed, gameMode = 'regular' }: HoldUIProps) => {
-  // Use 6x6 grid for extra mode (larger pieces), 4x4 for others
-  const gridSize = gameMode === 'extra' ? 6 : 4;
+  // Use 4x4 grid for all game modes for consistent sizing
+  const gridSize = 4;
   const totalCells = gridSize * gridSize;
-  const containerSize = gameMode === 'extra' ? 'w-32 h-32' : 'w-20 h-20';
-  const cellSize = gameMode === 'extra' ? { width: '20px', height: '20px' } : { width: '16px', height: '16px' };
+  const containerSize = 'w-20 h-20';
+  const cellSize = { width: '16px', height: '16px' };
 
   return (
     <div className="bg-card/95 backdrop-blur-sm border border-border/50 rounded-lg p-4 shadow-lg">
