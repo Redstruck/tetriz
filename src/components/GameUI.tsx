@@ -4,6 +4,10 @@ import { Piece } from '../types/tetris';
 import { Button } from './ui/button';
 import { cn } from '../lib/utils';
 import { getPieceData } from '../utils/tetrisShapes';
+import {
+  RippleButton,
+  RippleButtonRipples,
+} from '@/components/animate-ui/primitives/buttons/ripple';
 
 // Custom Pause icon with perfectly balanced lines
 const PauseIcon = ({ className }: { className?: string }) => (
@@ -132,23 +136,25 @@ export const GameUI = memo(({
             { label: 'Normal', value: 1000 },
             { label: 'Fast', value: 500 }
           ].map(({ label, value }) => (
-            <Button
+            <RippleButton
               key={label}
-              variant={baseDropSpeed === value ? "gameSelected" : "gameOutline"}
-              size="sm"
+              hoverScale={1.05}
+              tapScale={0.95}
               onClick={() => onSpeedChange(value)}
               disabled={gameStarted && !gameOver && !paused}
-              className={`text-xs h-8 font-game font-medium button-ripple hover-lift focus-ring-enhanced relative overflow-hidden tracking-wide ${
-                baseDropSpeed === value 
-                  ? 'speed-button-active' 
-                  : ''
-              }`}
+              className={cn(
+                'text-xs h-8 font-game font-medium relative overflow-hidden tracking-wide transition-all duration-200',
+                baseDropSpeed === value
+                  ? 'bg-game-accent text-background border border-game-accent hover:bg-game-accent/90 hover:shadow-lg hover:shadow-game-accent/40 hover:brightness-110 [--ripple-button-ripple-color:rgba(0,0,0,0.3)]'
+                  : 'border border-game-border/50 text-game-text bg-transparent hover:bg-game-grid/60 hover:border-game-accent/50 hover:text-game-accent hover:shadow-md hover:shadow-game-accent/20 [--ripple-button-ripple-color:rgba(0,255,255,0.6)]'
+              )}
             >
               <span className="relative z-10 font-game tracking-wider">{label}</span>
               {baseDropSpeed === value && (
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-pulse" />
               )}
-            </Button>
+              <RippleButtonRipples />
+            </RippleButton>
           ))}
         </div>
       </div>
