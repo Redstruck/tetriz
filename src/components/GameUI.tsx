@@ -176,14 +176,8 @@ export const GameUI = memo(({
               <span className="text-game-accent font-bold font-mono">{linesCleared}</span>
             </div>
             <div className="flex justify-between border-t border-game-border/30 pt-1 mt-2">
-              <span className="font-game text-sm text-yellow-400">High Score:</span>
-              <span className={`font-bold font-mono tracking-wider ${
-                linesCleared >= currentHighScore * 0.9 && linesCleared < currentHighScore
-                  ? 'text-orange-400 animate-pulse'
-                  : linesCleared >= currentHighScore
-                    ? 'text-green-400 animate-bounce'
-                    : 'text-yellow-400'
-              }`}>
+              <span className="font-game text-sm text-purple-400">High Score:</span>
+              <span className="text-purple-400 font-bold font-mono tracking-wider">
                 {currentHighScore.toLocaleString()}
               </span>
             </div>
