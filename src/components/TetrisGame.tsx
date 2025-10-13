@@ -120,13 +120,11 @@ export const TetrisGame = ({ gameMode = 'regular', title, subtitle, titleColor =
             {/* Targets Left - Above Hold */}
             {greyBlocks && (
               <div className="p-3 bg-gradient-to-br from-gray-500/20 to-gray-600/10 border border-gray-500/30 rounded-lg relative overflow-hidden">
-                <div className="relative z-10">
+                <div className="relative z-10 text-center">
                   <div className="text-xs font-mono text-gray-200/80 mb-1 tracking-wide">TARGETS LEFT</div>
                   <div className="text-xl font-mono font-bold text-gray-300 tracking-wider">
                     {greyBlocks.length}
                   </div>
-                  
-
                 </div>
               </div>
             )}
