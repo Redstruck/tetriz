@@ -5,9 +5,10 @@ interface SpeedrunUIProps {
   currentRound: number;
   targetsDestroyedInRound: number;
   totalTime: number;
+  currentHighScore?: number;
 }
 
-export const SpeedrunUI = memo(({ wavesCleared, currentRound, targetsDestroyedInRound, totalTime }: SpeedrunUIProps) => {
+export const SpeedrunUI = memo(({ wavesCleared, currentRound, targetsDestroyedInRound, totalTime, currentHighScore = 0 }: SpeedrunUIProps) => {
   // Memoize time formatting to reduce calculations
   const formattedTime = useMemo(() => {
     const minutes = Math.floor(totalTime / 60000);
@@ -112,6 +113,19 @@ export const SpeedrunUI = memo(({ wavesCleared, currentRound, targetsDestroyedIn
         </div>
       </div>
 
+      {/* High Score */}
+      <div className="p-3 bg-gradient-to-br from-purple-500/20 to-indigo-500/10 border border-purple-500/30 rounded-lg">
+        <div className="text-xs font-mono text-purple-200/80 mb-1 tracking-wide">BEST ROUND</div>
+        <div className={`text-xl font-mono font-bold tracking-wider ${
+          currentRound >= currentHighScore * 0.9 && currentRound < currentHighScore
+            ? 'text-orange-300 animate-pulse'
+            : currentRound >= currentHighScore
+              ? 'text-green-300 animate-bounce'
+              : 'text-purple-300'
+        }`}>
+          {currentHighScore}
+        </div>
+      </div>
 
     </div>
   );

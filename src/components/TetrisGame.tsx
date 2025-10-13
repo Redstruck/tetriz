@@ -3,8 +3,10 @@ import { GameBoard } from './GameBoard';
 import { GameUI } from './GameUI';
 import { HoldUI } from './HoldUI';
 import { SpeedrunUI } from './SpeedrunUI';
+import { HighScoreCelebration } from './HighScoreCelebration';
 import { useTetrisLogic } from '../hooks/useTetrisLogic';
 import { useGameControls } from '../hooks/useGameControls';
+import { useHighScore } from '../hooks/useHighScore';
 
 interface TetrisGameProps {
   gameMode?: 'regular' | 'extra' | 'speedrun';
@@ -16,6 +18,7 @@ interface TetrisGameProps {
 export const TetrisGame = ({ gameMode = 'regular', title, subtitle, titleColor = 'text-white' }: TetrisGameProps) => {
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [wasAlreadyPaused, setWasAlreadyPaused] = useState(false);
+  const [hasCheckedHighScore, setHasCheckedHighScore] = useState(false);
   
   const {
     board,
@@ -48,6 +51,37 @@ export const TetrisGame = ({ gameMode = 'regular', title, subtitle, titleColor =
     targetsDestroyedInRound,
     totalTime
   } = useTetrisLogic(gameMode);
+
+  const {
+    currentHighScore,
+    checkForNewHighScore,
+    showCelebration,
+    celebrationData,
+    hideCelebration
+  } = useHighScore(gameMode);
+
+  // Check for high score when game ends
+  useEffect(() => {
+    if (gameOver && gameStarted && !hasCheckedHighScore) {
+      let scoreToCheck: number;
+      
+      if (gameMode === 'speedrun') {
+        // For speedrun, use the round number reached
+        scoreToCheck = currentRound || 1;
+      } else {
+        // For regular and extra modes, use lines cleared
+        scoreToCheck = linesCleared;
+      }
+      
+      checkForNewHighScore(scoreToCheck);
+      setHasCheckedHighScore(true);
+    }
+    
+    // Reset the check flag when starting a new game
+    if (gameStarted && !gameOver) {
+      setHasCheckedHighScore(false);
+    }
+  }, [gameOver, gameStarted, gameMode, linesCleared, currentRound, checkForNewHighScore, hasCheckedHighScore]);
 
   const handleResetConfirm = useCallback(() => {
     if (gameStarted && !gameOver) {
@@ -95,10 +129,22 @@ export const TetrisGame = ({ gameMode = 'regular', title, subtitle, titleColor =
     gameStarted
   });
 
-  return (      <div 
-        className="h-screen w-screen bg-black flex flex-col items-center justify-center overflow-hidden outline-none gpu-accelerated" 
-        tabIndex={0}
-      >
+  return (      
+    <div 
+      className="h-screen w-screen bg-black flex flex-col items-center justify-center overflow-hidden outline-none gpu-accelerated" 
+      tabIndex={0}
+    >
+      {/* High Score Celebration Overlay */}
+      {celebrationData && (
+        <HighScoreCelebration
+          isVisible={showCelebration}
+          gameMode={celebrationData.gameMode}
+          newScore={celebrationData.newScore}
+          previousScore={celebrationData.previousScore}
+          onAnimationComplete={hideCelebration}
+        />
+      )}
+
       {/* Game Mode Title - Above everything */}
       {title && (
         <div className="text-center mb-6">
@@ -170,6 +216,7 @@ export const TetrisGame = ({ gameMode = 'regular', title, subtitle, titleColor =
               currentRound={currentRound || 1}
               targetsDestroyedInRound={targetsDestroyedInRound || 0}
               totalTime={totalTime || 0}
+              currentHighScore={currentHighScore}
             />
           )}
           <GameUI
@@ -181,6 +228,7 @@ export const TetrisGame = ({ gameMode = 'regular', title, subtitle, titleColor =
             gameStarted={gameStarted}
             paused={paused}
             baseDropSpeed={baseDropSpeed}
+            currentHighScore={currentHighScore}
             onStart={startGame}
             onReset={resetGame}
             onPause={togglePause}
