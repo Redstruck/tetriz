@@ -165,25 +165,27 @@ export const GameBoard = memo(({ board, currentPiece, ghostPiece, clearedRows, p
               <div className="text-xl font-retro font-bold text-game-accent mb-4 tracking-wider text-retro-glow">
                 RESET GAME?
               </div>
-              <div className="text-sm font-mono text-gray-300 mb-6">
+              <div className="text-sm font-mono text-game-text mb-6">
                 Are you sure you want to reset the game?
               </div>
               <div className="flex gap-3 justify-center">
                 <Button 
                   onClick={onResetYes}
-                  variant="destructive"
+                  variant="gameAccent"
                   size="sm"
-                  className="font-retro tracking-wider min-w-[80px]"
+                  className="font-retro tracking-wider min-w-[80px] game-button-glow button-ripple hover-lift focus-ring-enhanced relative overflow-hidden group"
                 >
-                  YES
+                  <span className="relative z-10 font-retro tracking-wider">YES</span>
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 group-hover:translate-x-full transition-transform duration-700 ease-out" />
                 </Button>
                 <Button 
                   onClick={onResetNo}
                   variant="gameOutline"
                   size="sm"
-                  className="font-retro tracking-wider min-w-[80px]"
+                  className="font-retro tracking-wider min-w-[80px] button-ripple hover-lift focus-ring-enhanced relative overflow-hidden group"
                 >
-                  NO
+                  <span className="relative z-10 font-retro tracking-wider">NO</span>
+                  <div className="absolute inset-0 bg-gradient-to-r from-game-accent/10 via-game-accent/20 to-game-accent/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 </Button>
               </div>
             </div>
