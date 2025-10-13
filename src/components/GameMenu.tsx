@@ -168,7 +168,7 @@ const GameMenu = ({ onGameModeSelect }: GameMenuProps) => {
               
               {/* Hover indicator */}
               <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <div className="bg-cyan-500/20 text-cyan-300 px-3 py-1 rounded-full text-xs font-bold">
+                <div className="bg-cyan-500/40 text-cyan-300 px-3 py-1 rounded-full text-xs font-bold">
                   CLICK TO PLAY
                 </div>
               </div>
@@ -203,7 +203,7 @@ const GameMenu = ({ onGameModeSelect }: GameMenuProps) => {
               
               {/* Hover indicator */}
               <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <div className="bg-emerald-500/20 text-emerald-300 px-3 py-1 rounded-full text-xs font-bold">
+                <div className="bg-emerald-500/40 text-emerald-300 px-3 py-1 rounded-full text-xs font-bold">
                   CLICK TO PLAY
                 </div>
               </div>
@@ -238,7 +238,7 @@ const GameMenu = ({ onGameModeSelect }: GameMenuProps) => {
               
               {/* Hover indicator */}
               <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <div className="bg-orange-500/20 text-orange-300 px-3 py-1 rounded-full text-xs font-bold">
+                <div className="bg-orange-500/40 text-orange-300 px-3 py-1 rounded-full text-xs font-bold">
                   CLICK TO PLAY
                 </div>
               </div>
