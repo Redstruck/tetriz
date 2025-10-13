@@ -1,6 +1,7 @@
 import { memo, useMemo } from 'react';
 import { Board, Piece } from '../types/tetris';
 import { cn } from '../lib/utils';
+import { Button } from './ui/button';
 
 interface GameBoardProps {
   board: Board;
@@ -9,9 +10,12 @@ interface GameBoardProps {
   clearedRows: number[];
   paused?: boolean;
   gameMode?: 'regular' | 'extra' | 'speedrun';
+  showResetConfirm?: boolean;
+  onResetYes?: () => void;
+  onResetNo?: () => void;
 }
 
-export const GameBoard = memo(({ board, currentPiece, ghostPiece, clearedRows, paused, gameMode = 'regular' }: GameBoardProps) => {
+export const GameBoard = memo(({ board, currentPiece, ghostPiece, clearedRows, paused, gameMode = 'regular', showResetConfirm, onResetYes, onResetNo }: GameBoardProps) => {
   // Board dimensions based on game mode
   const boardWidth = gameMode === 'extra' ? 12 : 10;
   
@@ -150,6 +154,38 @@ export const GameBoard = memo(({ board, currentPiece, ghostPiece, clearedRows, p
             <div className="text-center">
               <div className="text-2xl font-retro font-bold text-game-accent mb-3 tracking-wider text-retro-glow">PAUSED</div>
               <div className="text-sm font-mono text-gray-300">Press P to resume</div>
+            </div>
+          </div>
+        )}
+
+        {/* Reset Confirmation Overlay */}
+        {showResetConfirm && (
+          <div className="absolute inset-0 bg-black/70 flex items-center justify-center z-20 rounded-lg">
+            <div className="text-center bg-game-board border border-game-border rounded-lg p-6 shadow-2xl">
+              <div className="text-xl font-retro font-bold text-game-accent mb-4 tracking-wider text-retro-glow">
+                RESET GAME?
+              </div>
+              <div className="text-sm font-mono text-gray-300 mb-6">
+                Are you sure you want to reset the game?
+              </div>
+              <div className="flex gap-3 justify-center">
+                <Button 
+                  onClick={onResetYes}
+                  variant="destructive"
+                  size="sm"
+                  className="font-retro tracking-wider min-w-[80px]"
+                >
+                  YES
+                </Button>
+                <Button 
+                  onClick={onResetNo}
+                  variant="gameOutline"
+                  size="sm"
+                  className="font-retro tracking-wider min-w-[80px]"
+                >
+                  NO
+                </Button>
+              </div>
             </div>
           </div>
         )}

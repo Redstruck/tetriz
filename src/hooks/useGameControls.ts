@@ -8,6 +8,7 @@ interface GameControlsProps {
   onHardDrop: () => void;
   onHold: () => void;
   onPause: () => void;
+  onResetConfirm?: () => void;
   onSpeedUp?: () => void;
   onSpeedDown?: () => void;
   onSpeedReset?: () => void;
@@ -22,6 +23,7 @@ export const useGameControls = ({
   onHardDrop,
   onHold,
   onPause,
+  onResetConfirm,
   onSpeedUp,
   onSpeedDown,
   onSpeedReset,
@@ -120,7 +122,7 @@ export const useGameControls = ({
     }
     
     // Prevent default behavior for game keys
-    if (['ArrowLeft', 'ArrowRight', 'ArrowDown', 'ArrowUp', ' ', 'c', 'C', 'p', 'P', '=', '+', '-', '_', '0'].includes(key)) {
+    if (['ArrowLeft', 'ArrowRight', 'ArrowDown', 'ArrowUp', ' ', 'c', 'C', 'p', 'P', 'r', 'R', '=', '+', '-', '_', '0'].includes(key)) {
       event.preventDefault();
     }
 
@@ -158,6 +160,10 @@ export const useGameControls = ({
       case 'P':
         onPause();
         break;
+      case 'r':
+      case 'R':
+        onResetConfirm?.();
+        break;
       case '=':
       case '+':
         if (!gameStarted) {
@@ -176,7 +182,7 @@ export const useGameControls = ({
         }
         break;
     }
-  }, [gameStarted, onMoveLeft, onMoveRight, onMoveDown, onRotate, onHardDrop, onHold, onPause, onSpeedUp, onSpeedDown, onSpeedReset, startKeyRepeat]);
+  }, [gameStarted, onMoveLeft, onMoveRight, onMoveDown, onRotate, onHardDrop, onHold, onPause, onResetConfirm, onSpeedUp, onSpeedDown, onSpeedReset, startKeyRepeat]);
 
   const handleKeyUp = useCallback((event: KeyboardEvent) => {
     const key = event.key;

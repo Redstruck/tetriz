@@ -14,6 +14,8 @@ interface TetrisGameProps {
 }
 
 export const TetrisGame = ({ gameMode = 'regular', title, subtitle, titleColor = 'text-white' }: TetrisGameProps) => {
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
+  
   const {
     board,
     currentPiece,
@@ -46,6 +48,21 @@ export const TetrisGame = ({ gameMode = 'regular', title, subtitle, titleColor =
     totalTime
   } = useTetrisLogic(gameMode);
 
+  const handleResetConfirm = useCallback(() => {
+    if (gameStarted && !gameOver) {
+      setShowResetConfirm(true);
+    }
+  }, [gameStarted, gameOver]);
+
+  const handleResetYes = useCallback(() => {
+    resetGame();
+    setShowResetConfirm(false);
+  }, [resetGame]);
+
+  const handleResetNo = useCallback(() => {
+    setShowResetConfirm(false);
+  }, []);
+
   useGameControls({
     onMoveLeft: () => movePiece(-1, 0),
     onMoveRight: () => movePiece(1, 0),
@@ -54,6 +71,7 @@ export const TetrisGame = ({ gameMode = 'regular', title, subtitle, titleColor =
     onHardDrop: hardDrop,
     onHold: holdPieceAction,
     onPause: togglePause,
+    onResetConfirm: handleResetConfirm,
     onSpeedUp: () => setDropSpeed(Math.max(200, baseDropSpeed - 100)),
     onSpeedDown: () => setDropSpeed(Math.min(2000, baseDropSpeed + 100)),
     onSpeedReset: () => setDropSpeed(1000),
@@ -137,6 +155,9 @@ export const TetrisGame = ({ gameMode = 'regular', title, subtitle, titleColor =
           clearedRows={clearedRows}
           paused={paused}
           gameMode={gameMode}
+          showResetConfirm={showResetConfirm}
+          onResetYes={handleResetYes}
+          onResetNo={handleResetNo}
         />
         </div>
         

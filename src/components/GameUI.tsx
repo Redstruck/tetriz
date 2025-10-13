@@ -271,6 +271,7 @@ export const GameUI = memo(({
           <div className="font-mono">SPACE Hard Drop</div>
           <div className="font-mono">C Hold Piece</div>
           <div className="font-mono">P Pause/Resume</div>
+          <div className="font-mono">R Reset Game</div>
         </div>
       </div>
 
