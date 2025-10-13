@@ -296,7 +296,9 @@ export const useTetrisLogic = (gameMode: 'regular' | 'extra' | 'speedrun' = 'reg
           // Check if round is completed (all targets destroyed)
           if (targetsDestroyedInRound >= targetsNeededForRound) {
             // Round completed! Move to next round
+            const previousRound = currentRound;
             currentRound++;
+            console.log(`🎯 GAME LOGIC: Round ${previousRound} completed! Advanced to round ${currentRound} (destroyed ${targetsDestroyedInRound}/${targetsNeededForRound} targets)`);
             targetsDestroyedInRound = 0;
             wavesCleared++; // Keep track of completed rounds for scoring
             
@@ -409,7 +411,9 @@ export const useTetrisLogic = (gameMode: 'regular' | 'extra' | 'speedrun' = 'reg
         // Check if round is completed (all targets destroyed)
         if (targetsDestroyedInRound >= targetsNeededForRound) {
           // Round completed! Move to next round
+          const previousRound = currentRound;
           currentRound++;
+          console.log(`🎯 GAME LOGIC (Hard Drop): Round ${previousRound} completed! Advanced to round ${currentRound} (destroyed ${targetsDestroyedInRound}/${targetsNeededForRound} targets)`);
           targetsDestroyedInRound = 0;
           wavesCleared++; // Keep track of completed rounds for scoring
           

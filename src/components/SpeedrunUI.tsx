@@ -1,4 +1,4 @@
-import { memo, useMemo, useState, useEffect } from 'react';
+import { memo, useMemo, useState, useEffect, useRef } from 'react';
 
 interface SpeedrunUIProps {
   wavesCleared: number;
@@ -27,18 +27,20 @@ export const SpeedrunUI = memo(({ wavesCleared, currentRound, targetsDestroyedIn
 
   const roundProgress = targetsDestroyedInRound;
   
-  // Track previous round to detect round completion
-  const [prevRound, setPrevRound] = useState(currentRound);
+  // Track previous round to detect round completion using useRef
+  const prevRoundRef = useRef(currentRound);
   const [showRoundCompleteAnimation, setShowRoundCompleteAnimation] = useState(false);
   const [completedRound, setCompletedRound] = useState(0);
 
   useEffect(() => {
-    if (currentRound > prevRound) {
-      // Round just completed - prevRound is the round that was completed
-      console.log(`🎉 Round ${prevRound} completed! Moving to Round ${currentRound}`);
-      setCompletedRound(prevRound);
+    console.log(`Round tracking: prevRound=${prevRoundRef.current}, currentRound=${currentRound}`);
+    
+    if (currentRound > prevRoundRef.current) {
+      // Round just completed - prevRoundRef.current is the round that was completed
+      const justCompletedRound = prevRoundRef.current;
+      console.log(`🎉 Round ${justCompletedRound} completed! Moving to Round ${currentRound}`);
+      setCompletedRound(justCompletedRound);
       setShowRoundCompleteAnimation(true);
-      setPrevRound(currentRound);
       
       // TODO: Add sound effect for round completion
       // playRoundCompleteSound();
@@ -46,12 +48,15 @@ export const SpeedrunUI = memo(({ wavesCleared, currentRound, targetsDestroyedIn
       // Hide animation after 2 seconds
       const timer = setTimeout(() => {
         setShowRoundCompleteAnimation(false);
-        console.log(`✅ Round completion animation hidden for round ${prevRound}`);
+        console.log(`✅ Round completion animation hidden for round ${justCompletedRound}`);
       }, 2000);
       
       return () => clearTimeout(timer);
     }
-  }, [currentRound, prevRound]);
+    
+    // Always update the ref to track the current round for next time
+    prevRoundRef.current = currentRound;
+  }, [currentRound]);
 
   return (
     <div className="speedrun-ui text-center mb-4 relative">
