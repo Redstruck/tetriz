@@ -115,14 +115,8 @@ export const SpeedrunUI = memo(({ wavesCleared, currentRound, targetsDestroyedIn
 
       {/* High Score */}
       <div className="p-3 bg-gradient-to-br from-purple-500/20 to-indigo-500/10 border border-purple-500/30 rounded-lg">
-        <div className="text-xs font-mono text-purple-200/80 mb-1 tracking-wide">BEST ROUND</div>
-        <div className={`text-xl font-mono font-bold tracking-wider ${
-          currentRound >= currentHighScore * 0.9 && currentRound < currentHighScore
-            ? 'text-orange-300 animate-pulse'
-            : currentRound >= currentHighScore
-              ? 'text-green-300 animate-bounce'
-              : 'text-purple-300'
-        }`}>
+        <div className="text-xs font-mono text-purple-400 mb-1 tracking-wide">BEST ROUND</div>
+        <div className="text-xl font-mono font-bold tracking-wider text-purple-400">
           {currentHighScore}
         </div>
       </div>
