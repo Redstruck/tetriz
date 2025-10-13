@@ -126,21 +126,7 @@ export const TetrisGame = ({ gameMode = 'regular', title, subtitle, titleColor =
                     {greyBlocks.length}
                   </div>
                   
-                  {/* Target indicators with enhanced animation */}
-                  <div className="mt-2 flex justify-center">
-                    <div className="flex space-x-1">
-                      {Array.from({ length: Math.min(greyBlocks.length, 10) }, (_, i) => (
-                        <div
-                          key={i}
-                          className="w-2 h-2 bg-gray-400 rounded-full opacity-75 animate-pulse"
-                          style={{ animationDelay: `${i * 100}ms` }}
-                        />
-                      ))}
-                      {greyBlocks.length > 10 && (
-                        <div className="text-xs text-gray-400 ml-2">+{greyBlocks.length - 10}</div>
-                      )}
-                    </div>
-                  </div>
+
                 </div>
               </div>
             )}
