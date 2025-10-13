@@ -149,7 +149,7 @@ export const GameBoard = memo(({ board, currentPiece, ghostPiece, clearedRows, p
         </div>
         
         {/* Pause Overlay */}
-        {paused && (
+        {paused && !showResetConfirm && (
           <div className="absolute inset-0 bg-black/70 flex items-center justify-center z-10 rounded-lg">
             <div className="text-center">
               <div className="text-2xl font-retro font-bold text-game-accent mb-3 tracking-wider text-retro-glow">PAUSED</div>

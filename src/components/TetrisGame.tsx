@@ -15,6 +15,7 @@ interface TetrisGameProps {
 
 export const TetrisGame = ({ gameMode = 'regular', title, subtitle, titleColor = 'text-white' }: TetrisGameProps) => {
   const [showResetConfirm, setShowResetConfirm] = useState(false);
+  const [wasAlreadyPaused, setWasAlreadyPaused] = useState(false);
   
   const {
     board,
@@ -50,18 +51,34 @@ export const TetrisGame = ({ gameMode = 'regular', title, subtitle, titleColor =
 
   const handleResetConfirm = useCallback(() => {
     if (gameStarted && !gameOver) {
+      // Remember if the game was already paused
+      setWasAlreadyPaused(paused);
+      
+      // Pause the game if it wasn't already paused
+      if (!paused) {
+        togglePause();
+      }
+      
       setShowResetConfirm(true);
     }
-  }, [gameStarted, gameOver]);
+  }, [gameStarted, gameOver, paused, togglePause]);
 
   const handleResetYes = useCallback(() => {
     resetGame();
     setShowResetConfirm(false);
+    setWasAlreadyPaused(false);
   }, [resetGame]);
 
   const handleResetNo = useCallback(() => {
     setShowResetConfirm(false);
-  }, []);
+    
+    // Only resume the game if it wasn't paused before showing the confirmation
+    if (!wasAlreadyPaused) {
+      togglePause();
+    }
+    
+    setWasAlreadyPaused(false);
+  }, [wasAlreadyPaused, togglePause]);
 
   useGameControls({
     onMoveLeft: () => movePiece(-1, 0),
