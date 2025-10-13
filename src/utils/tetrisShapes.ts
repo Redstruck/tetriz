@@ -238,14 +238,18 @@ export const rotatePiece = (shape: number[][]): number[][] => {
   return rotated;
 };
 
-// Bag random piece generator for better distribution
+// Bag random piece generator for better distribution with consecutive piece prevention
 class PieceBag {
   private bag: (PieceType | ExtraPieceType)[] = [];
   private gameMode: 'regular' | 'extra' = 'regular';
+  private recentPieces: (PieceType | ExtraPieceType)[] = [];
+  private readonly MAX_CONSECUTIVE = 2; // Maximum consecutive occurrences of the same piece
+  private readonly RECENT_HISTORY_SIZE = 4; // Track last 4 pieces
   
   setGameMode(mode: 'regular' | 'extra'): void {
     this.gameMode = mode;
     this.bag = []; // Reset bag when mode changes
+    this.recentPieces = []; // Reset history when mode changes
   }
   
   private shuffleBag(): void {
@@ -263,15 +267,66 @@ class PieceBag {
     }
   }
   
+  private countConsecutiveSamePieces(pieceType: PieceType | ExtraPieceType): number {
+    let count = 0;
+    for (let i = this.recentPieces.length - 1; i >= 0; i--) {
+      if (this.recentPieces[i] === pieceType) {
+        count++;
+      } else {
+        break;
+      }
+    }
+    return count;
+  }
+  
+  private getFilteredBag(): (PieceType | ExtraPieceType)[] {
+    if (this.recentPieces.length === 0) {
+      return [...this.bag];
+    }
+    
+    const lastPiece = this.recentPieces[this.recentPieces.length - 1];
+    const consecutiveCount = this.countConsecutiveSamePieces(lastPiece);
+    
+    // If we've had too many consecutive pieces of the same type, filter them out
+    if (consecutiveCount >= this.MAX_CONSECUTIVE) {
+      return this.bag.filter(piece => piece !== lastPiece);
+    }
+    
+    return [...this.bag];
+  }
+  
   getNextPiece(): PieceType | ExtraPieceType {
     if (this.bag.length === 0) {
       this.shuffleBag();
     }
-    return this.bag.pop()!;
+    
+    const filteredBag = this.getFilteredBag();
+    
+    // If filtering removed all pieces (shouldn't happen in practice), fall back to full bag
+    const availablePieces = filteredBag.length > 0 ? filteredBag : this.bag;
+    
+    // Pick a random piece from available pieces
+    const randomIndex = Math.floor(Math.random() * availablePieces.length);
+    const selectedPiece = availablePieces[randomIndex];
+    
+    // Remove the selected piece from the actual bag
+    const bagIndex = this.bag.indexOf(selectedPiece);
+    if (bagIndex !== -1) {
+      this.bag.splice(bagIndex, 1);
+    }
+    
+    // Add to recent pieces history
+    this.recentPieces.push(selectedPiece);
+    if (this.recentPieces.length > this.RECENT_HISTORY_SIZE) {
+      this.recentPieces.shift();
+    }
+    
+    return selectedPiece;
   }
   
   reset(): void {
     this.bag = [];
+    this.recentPieces = [];
   }
 }
 
