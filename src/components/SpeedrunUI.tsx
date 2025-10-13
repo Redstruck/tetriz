@@ -42,6 +42,9 @@ export const SpeedrunUI = memo(({ wavesCleared, currentRound, targetsDestroyedIn
       setCompletedRound(justCompletedRound);
       setShowRoundCompleteAnimation(true);
       
+      // Update the ref IMMEDIATELY after detecting the round change
+      prevRoundRef.current = currentRound;
+      
       // TODO: Add sound effect for round completion
       // playRoundCompleteSound();
       
@@ -52,10 +55,10 @@ export const SpeedrunUI = memo(({ wavesCleared, currentRound, targetsDestroyedIn
       }, 2000);
       
       return () => clearTimeout(timer);
+    } else if (prevRoundRef.current === 0 || prevRoundRef.current !== currentRound) {
+      // Initialize or update ref without showing animation
+      prevRoundRef.current = currentRound;
     }
-    
-    // Always update the ref to track the current round for next time
-    prevRoundRef.current = currentRound;
   }, [currentRound]);
 
   return (
