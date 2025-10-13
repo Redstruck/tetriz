@@ -30,10 +30,13 @@ export const SpeedrunUI = memo(({ wavesCleared, currentRound, targetsDestroyedIn
   // Track previous round to detect round completion
   const [prevRound, setPrevRound] = useState(currentRound);
   const [showRoundCompleteAnimation, setShowRoundCompleteAnimation] = useState(false);
+  const [completedRound, setCompletedRound] = useState(0);
 
   useEffect(() => {
     if (currentRound > prevRound) {
-      // Round just completed
+      // Round just completed - prevRound is the round that was completed
+      console.log(`🎉 Round ${prevRound} completed! Moving to Round ${currentRound}`);
+      setCompletedRound(prevRound);
       setShowRoundCompleteAnimation(true);
       setPrevRound(currentRound);
       
@@ -43,6 +46,7 @@ export const SpeedrunUI = memo(({ wavesCleared, currentRound, targetsDestroyedIn
       // Hide animation after 2 seconds
       const timer = setTimeout(() => {
         setShowRoundCompleteAnimation(false);
+        console.log(`✅ Round completion animation hidden for round ${prevRound}`);
       }, 2000);
       
       return () => clearTimeout(timer);
@@ -53,11 +57,16 @@ export const SpeedrunUI = memo(({ wavesCleared, currentRound, targetsDestroyedIn
     <div className="speedrun-ui text-center mb-4 relative">
       {/* Round Completion Animation Overlay */}
       {showRoundCompleteAnimation && (
-        <div className="absolute inset-0 -inset-4 z-50 flex items-center justify-center pointer-events-none">
-          <div className="round-completion-effect bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-400 text-black font-bold px-6 py-3 rounded-lg shadow-2xl">
-            <div className="text-sm font-mono tracking-wider">ROUND {prevRound} COMPLETE!</div>
-            <div className="text-xs font-mono opacity-75 mt-1">
-              {getTargetsForRound(currentRound)} targets in Round {currentRound}
+        <div className="absolute inset-0 -inset-8 z-50 flex items-center justify-center pointer-events-none">
+          <div className="round-completion-effect bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-400 text-black font-bold px-8 py-6 rounded-xl shadow-2xl border-4 border-yellow-600 transform scale-110 animate-pulse">
+            <div className="text-xl font-mono tracking-wider text-center mb-2 animate-bounce">
+              🎉 ROUND {completedRound} COMPLETE! 🎉
+            </div>
+            <div className="text-sm font-mono opacity-75 text-center">
+              Next: {getTargetsForRound(currentRound)} targets in Round {currentRound}
+            </div>
+            <div className="text-xs font-mono opacity-60 text-center mt-1">
+              Keep going! 🚀
             </div>
           </div>
         </div>
