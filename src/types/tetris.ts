@@ -26,6 +26,9 @@ export interface GameState {
   clearedRows: number[];
   dropTime: number;
   lastDrop: number;
+  // Lock delay mechanism
+  lockDelayStartTime?: number;
+  isLockDelayActive: boolean;
   // Speedrun mode specific
   greyBlocks?: { x: number; y: number }[];
   wavesCleared?: number;

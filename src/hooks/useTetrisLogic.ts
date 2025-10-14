@@ -37,6 +37,9 @@ export const useTetrisLogic = (gameMode: 'regular' | 'extra' | 'speedrun' = 'reg
     clearedRows: [],
     dropTime: 1000,
     lastDrop: 0,
+    // Lock delay mechanism
+    lockDelayStartTime: undefined,
+    isLockDelayActive: false,
     // Speedrun mode specific
     greyBlocks: gameMode === 'speedrun' ? [] : undefined,
     wavesCleared: gameMode === 'speedrun' ? 0 : undefined,
@@ -47,8 +50,10 @@ export const useTetrisLogic = (gameMode: 'regular' | 'extra' | 'speedrun' = 'reg
   });
 
   const [baseDropSpeed, setBaseDropSpeed] = useState(1000); // Normal speed as default
+  const [isDownKeyHeld, setIsDownKeyHeld] = useState(false);
 
   const gameLoopRef = useRef<number>();
+  const lockDelayTimeoutRef = useRef<number | null>(null);
 
   const isValidPosition = useCallback((piece: Piece, board: Board, dx = 0, dy = 0, newShape?: number[][]): boolean => {
     const shape = newShape || piece.shape;
@@ -249,123 +254,183 @@ export const useTetrisLogic = (gameMode: 'regular' | 'extra' | 'speedrun' = 'reg
     });
   }, [isValidPosition]);
 
+  // Helper function to lock piece to board
+  const lockPieceToBoard = useCallback((prev: GameState) => {
+    if (!prev.currentPiece) return prev;
+    
+    // Clear any active timeout
+    if (lockDelayTimeoutRef.current) {
+      window.clearTimeout(lockDelayTimeoutRef.current);
+      lockDelayTimeoutRef.current = null;
+    }
+
+    // Piece has landed - use the next piece in queue
+    const newBoard = placePiece(prev.currentPiece, prev.board);
+    
+    // Handle line clearing differently for speedrun mode
+    if (gameMode === 'speedrun' && prev.greyBlocks) {
+      const { 
+        newBoard: clearedBoard, 
+        clearedLines, 
+        clearedRows,
+        remainingGreyBlocks,
+        greyBlocksCleared 
+      } = clearLinesSpeedrun(newBoard, prev.greyBlocks);
+      
+      const scoreIncrease = calculateScore(clearedLines, prev.level);
+      const newLinesCleared = prev.linesCleared + clearedLines;
+      const newLevel = Math.floor(newLinesCleared / 10) + 1;
+      const newDropTime = Math.max(100, baseDropSpeed - (newLevel - 1) * 100);
+      
+      // Current next piece becomes the current piece, generate new next piece  
+      const newCurrentPiece = prev.nextPiece || createPiece(getRandomPieceType(gameMode), BOARD_WIDTH);
+      const newNextPiece = createPiece(getRandomPieceType(gameMode), BOARD_WIDTH);
+      
+      // Progressive round system - track targets destroyed
+      let finalBoard = clearedBoard;
+      let finalGreyBlocks = remainingGreyBlocks;
+      let currentRound = prev.currentRound || 1;
+      let targetsDestroyedInRound = (prev.targetsDestroyedInRound || 0) + greyBlocksCleared;
+      let wavesCleared = prev.wavesCleared || 0;
+      
+      const targetsNeededForRound = getTargetsForRound(currentRound);
+      
+      // Check if round is completed (all targets destroyed)
+      if (targetsDestroyedInRound >= targetsNeededForRound) {
+        // Round completed! Move to next round
+        const previousRound = currentRound;
+        currentRound++;
+        console.log(`🎯 GAME LOGIC: Round ${previousRound} completed! Advanced to round ${currentRound} (destroyed ${targetsDestroyedInRound}/${targetsNeededForRound} targets)`);
+        targetsDestroyedInRound = 0;
+        wavesCleared++; // Keep track of completed rounds for scoring
+        
+        // Generate new targets for the next round
+        const newTargetsCount = getTargetsForRound(currentRound);
+        const newGreyBlocks = generateGreyBlocks(newTargetsCount);
+        finalBoard = placeGreyBlocksOnBoard(clearedBoard, newGreyBlocks);
+        finalGreyBlocks = newGreyBlocks;
+      } else {
+        // Place remaining grey blocks back on the board
+        finalBoard = placeGreyBlocksOnBoard(clearedBoard, remainingGreyBlocks);
+      }
+      
+      // Check game over
+      const gameOver = !isValidPosition(newCurrentPiece, finalBoard);
+
+      return {
+        ...prev,
+        board: finalBoard,
+        currentPiece: gameOver ? null : newCurrentPiece,
+        nextPiece: gameOver ? prev.nextPiece : newNextPiece,
+        score: prev.score + scoreIncrease,
+        level: newLevel,
+        linesCleared: newLinesCleared,
+        gameOver,
+        clearedRows,
+        dropTime: newDropTime,
+        holdUsed: false, // Reset hold usage after piece lands
+        greyBlocks: finalGreyBlocks,
+        wavesCleared,
+        currentRound,
+        targetsDestroyedInRound,
+        isLockDelayActive: false,
+        lockDelayStartTime: undefined
+      };
+    } else {
+      // Regular mode line clearing
+      const { newBoard: clearedBoard, clearedLines, clearedRows } = clearLines(newBoard);
+      const scoreIncrease = calculateScore(clearedLines, prev.level);
+      const newLinesCleared = prev.linesCleared + clearedLines; 
+      const newLevel = Math.floor(newLinesCleared / 10) + 1;
+      const newDropTime = Math.max(100, baseDropSpeed - (newLevel - 1) * 100);
+      
+      // Current next piece becomes the current piece, generate new next piece  
+      const newCurrentPiece = prev.nextPiece || createPiece(getRandomPieceType(gameMode), BOARD_WIDTH);
+      const newNextPiece = createPiece(getRandomPieceType(gameMode), BOARD_WIDTH);
+      
+      // Check game over
+      const gameOver = !isValidPosition(newCurrentPiece, clearedBoard);
+
+      return {
+        ...prev,
+        board: clearedBoard,
+        currentPiece: gameOver ? null : newCurrentPiece,
+        nextPiece: gameOver ? prev.nextPiece : newNextPiece,
+        score: prev.score + scoreIncrease,
+        level: newLevel,
+        linesCleared: newLinesCleared,
+        gameOver,
+        clearedRows,
+        dropTime: newDropTime,
+        holdUsed: false, // Reset hold usage after piece lands
+        isLockDelayActive: false,
+        lockDelayStartTime: undefined
+      };
+    }
+  }, [placePiece, clearLines, clearLinesSpeedrun, calculateScore, gameMode, BOARD_WIDTH, generateGreyBlocks, placeGreyBlocksOnBoard, baseDropSpeed, getTargetsForRound, getRandomPieceType, isValidPosition]);
+
   const dropPiece = useCallback(() => {
     setGameState(prev => {
       if (!prev.currentPiece || prev.gameOver || !prev.gameStarted || prev.paused) return prev;
 
       if (isValidPosition(prev.currentPiece, prev.board, 0, 1)) {
+        // Clear any active lock delay since piece can still move
+        if (prev.isLockDelayActive && lockDelayTimeoutRef.current) {
+          window.clearTimeout(lockDelayTimeoutRef.current);
+          lockDelayTimeoutRef.current = null;
+        }
+        
         return {
           ...prev,
           currentPiece: {
             ...prev.currentPiece,
             y: prev.currentPiece.y + 1
-          }
+          },
+          isLockDelayActive: false,
+          lockDelayStartTime: undefined
         };
       } else {
-        // Piece has landed - use the next piece in queue
-        const newBoard = placePiece(prev.currentPiece, prev.board);
-        
-        // Handle line clearing differently for speedrun mode
-        if (gameMode === 'speedrun' && prev.greyBlocks) {
-          const { 
-            newBoard: clearedBoard, 
-            clearedLines, 
-            clearedRows,
-            remainingGreyBlocks,
-            greyBlocksCleared 
-          } = clearLinesSpeedrun(newBoard, prev.greyBlocks);
+        // Piece has landed
+        if (isDownKeyHeld && !prev.isLockDelayActive) {
+          // Start lock delay when down key is held and piece lands
+          const now = Date.now();
           
-          const scoreIncrease = calculateScore(clearedLines, prev.level);
-          const newLinesCleared = prev.linesCleared + clearedLines;
-          const newLevel = Math.floor(newLinesCleared / 10) + 1;
-          const newDropTime = Math.max(100, baseDropSpeed - (newLevel - 1) * 100);
-          
-          // Current next piece becomes the current piece, generate new next piece  
-          const newCurrentPiece = prev.nextPiece || createPiece(getRandomPieceType(gameMode), BOARD_WIDTH);
-          const newNextPiece = createPiece(getRandomPieceType(gameMode), BOARD_WIDTH);
-          
-          // Progressive round system - track targets destroyed
-          let finalBoard = clearedBoard;
-          let finalGreyBlocks = remainingGreyBlocks;
-          let currentRound = prev.currentRound || 1;
-          let targetsDestroyedInRound = (prev.targetsDestroyedInRound || 0) + greyBlocksCleared;
-          let wavesCleared = prev.wavesCleared || 0;
-          
-          const targetsNeededForRound = getTargetsForRound(currentRound);
-          
-          // Check if round is completed (all targets destroyed)
-          if (targetsDestroyedInRound >= targetsNeededForRound) {
-            // Round completed! Move to next round
-            const previousRound = currentRound;
-            currentRound++;
-            console.log(`🎯 GAME LOGIC: Round ${previousRound} completed! Advanced to round ${currentRound} (destroyed ${targetsDestroyedInRound}/${targetsNeededForRound} targets)`);
-            targetsDestroyedInRound = 0;
-            wavesCleared++; // Keep track of completed rounds for scoring
-            
-            // Generate new targets for the next round
-            const newTargetsCount = getTargetsForRound(currentRound);
-            const newGreyBlocks = generateGreyBlocks(newTargetsCount);
-            finalBoard = placeGreyBlocksOnBoard(clearedBoard, newGreyBlocks);
-            finalGreyBlocks = newGreyBlocks;
-          } else {
-            // Place remaining grey blocks back on the board
-            finalBoard = placeGreyBlocksOnBoard(clearedBoard, remainingGreyBlocks);
+          // Set up the lock delay timeout
+          if (lockDelayTimeoutRef.current) {
+            window.clearTimeout(lockDelayTimeoutRef.current);
           }
           
-          // Check game over
-          const gameOver = !isValidPosition(newCurrentPiece, finalBoard);
-
+          lockDelayTimeoutRef.current = window.setTimeout(() => {
+            // Force lock the piece after 1 second
+            setGameState(currentState => {
+              if (!currentState.currentPiece || !currentState.isLockDelayActive) return currentState;
+              return lockPieceToBoard(currentState);
+            });
+          }, 1000);
+          
           return {
             ...prev,
-            board: finalBoard,
-            currentPiece: gameOver ? null : newCurrentPiece,
-            nextPiece: gameOver ? prev.nextPiece : newNextPiece,
-            score: prev.score + scoreIncrease,
-            level: newLevel,
-            linesCleared: newLinesCleared,
-            gameOver,
-            clearedRows,
-            dropTime: newDropTime,
-            holdUsed: false, // Reset hold usage after piece lands
-            greyBlocks: finalGreyBlocks,
-            wavesCleared,
-            currentRound,
-            targetsDestroyedInRound
+            isLockDelayActive: true,
+            lockDelayStartTime: now
           };
+        } else if (!isDownKeyHeld) {
+          // Lock immediately when down key is not held
+          return lockPieceToBoard(prev);
         } else {
-          // Regular mode line clearing
-          const { newBoard: clearedBoard, clearedLines, clearedRows } = clearLines(newBoard);
-          const scoreIncrease = calculateScore(clearedLines, prev.level);
-          const newLinesCleared = prev.linesCleared + clearedLines; 
-          const newLevel = Math.floor(newLinesCleared / 10) + 1;
-          const newDropTime = Math.max(100, baseDropSpeed - (newLevel - 1) * 100);
-          
-          // Current next piece becomes the current piece, generate new next piece  
-          const newCurrentPiece = prev.nextPiece || createPiece(getRandomPieceType(gameMode), BOARD_WIDTH);
-          const newNextPiece = createPiece(getRandomPieceType(gameMode), BOARD_WIDTH);
-          
-          // Check game over
-          const gameOver = !isValidPosition(newCurrentPiece, clearedBoard);
-
-          return {
-            ...prev,
-            board: clearedBoard,
-            currentPiece: gameOver ? null : newCurrentPiece,
-            nextPiece: gameOver ? prev.nextPiece : newNextPiece,
-            score: prev.score + scoreIncrease,
-            level: newLevel,
-            linesCleared: newLinesCleared,
-            gameOver,
-            clearedRows,
-            dropTime: newDropTime,
-            holdUsed: false // Reset hold usage after piece lands
-          };
+          // Lock delay is already active, keep waiting
+          return prev;
         }
       }
     });
-  }, [isValidPosition, placePiece, clearLines, clearLinesSpeedrun, calculateScore, gameMode, BOARD_WIDTH, generateGreyBlocks, placeGreyBlocksOnBoard, baseDropSpeed]);
+  }, [isValidPosition, isDownKeyHeld, lockPieceToBoard]);
 
   const hardDrop = useCallback(() => {
+    // Clear any active lock delay timeout
+    if (lockDelayTimeoutRef.current) {
+      window.clearTimeout(lockDelayTimeoutRef.current);
+      lockDelayTimeoutRef.current = null;
+    }
+    
     setGameState(prev => {
       if (!prev.currentPiece || prev.gameOver || !prev.gameStarted || prev.paused) return prev;
 
@@ -470,7 +535,9 @@ export const useTetrisLogic = (gameMode: 'regular' | 'extra' | 'speedrun' = 'reg
           gameOver,
           clearedRows,
           dropTime: Math.max(100, baseDropSpeed - (newLevel - 1) * 100),
-          holdUsed: false // Reset hold usage after piece lands
+          holdUsed: false, // Reset hold usage after piece lands
+          isLockDelayActive: false,
+          lockDelayStartTime: undefined
         };
       }
     });
@@ -718,6 +785,8 @@ export const useTetrisLogic = (gameMode: 'regular' | 'extra' | 'speedrun' = 'reg
     hardDrop,
     holdPieceAction: holdPiece,
     togglePause,
+    // Lock delay controls
+    setDownKeyHeld: setIsDownKeyHeld,
     // Speedrun mode specific
     greyBlocks: gameState.greyBlocks,
     wavesCleared: gameState.wavesCleared,

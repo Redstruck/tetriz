@@ -12,6 +12,8 @@ interface GameControlsProps {
   onSpeedUp?: () => void;
   onSpeedDown?: () => void;
   onSpeedReset?: () => void;
+  onDownKeyPress?: () => void;
+  onDownKeyRelease?: () => void;
   gameStarted: boolean;
 }
 
@@ -27,6 +29,8 @@ export const useGameControls = ({
   onSpeedUp,
   onSpeedDown,
   onSpeedReset,
+  onDownKeyPress,
+  onDownKeyRelease,
   gameStarted
 }: GameControlsProps) => {
   const keysPressed = useRef<Set<string>>(new Set());
@@ -144,6 +148,7 @@ export const useGameControls = ({
         break;
       case 'ArrowDown':
         onMoveDown();
+        onDownKeyPress?.();
         startKeyRepeat(key);
         break;
       case 'ArrowUp':
@@ -182,14 +187,18 @@ export const useGameControls = ({
         }
         break;
     }
-  }, [gameStarted, onMoveLeft, onMoveRight, onMoveDown, onRotate, onHardDrop, onHold, onPause, onResetConfirm, onSpeedUp, onSpeedDown, onSpeedReset, startKeyRepeat]);
+  }, [gameStarted, onMoveLeft, onMoveRight, onMoveDown, onRotate, onHardDrop, onHold, onPause, onResetConfirm, onSpeedUp, onSpeedDown, onSpeedReset, onDownKeyPress, startKeyRepeat]);
 
   const handleKeyUp = useCallback((event: KeyboardEvent) => {
     const key = event.key;
     
+    if (key === 'ArrowDown') {
+      onDownKeyRelease?.();
+    }
+    
     keysPressed.current.delete(key);
     stopKeyRepeat(key);
-  }, [stopKeyRepeat]);
+  }, [stopKeyRepeat, onDownKeyRelease]);
 
   useEffect(() => {
     window.addEventListener('keydown', handleKeyDown);

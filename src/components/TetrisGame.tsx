@@ -44,6 +44,7 @@ export const TetrisGame = ({ gameMode = 'regular', title, subtitle, titleColor =
     hardDrop,
     holdPieceAction,
     togglePause,
+    setDownKeyHeld,
     // Speedrun mode specific
     greyBlocks,
     wavesCleared,
@@ -126,8 +127,17 @@ export const TetrisGame = ({ gameMode = 'regular', title, subtitle, titleColor =
     onSpeedUp: () => setDropSpeed(Math.max(200, baseDropSpeed - 100)),
     onSpeedDown: () => setDropSpeed(Math.min(2000, baseDropSpeed + 100)),
     onSpeedReset: () => setDropSpeed(1000),
+    onDownKeyPress: () => setDownKeyHeld(true),
+    onDownKeyRelease: () => setDownKeyHeld(false),
     gameStarted
   });
+
+  // Reset down key state when game is not started
+  useEffect(() => {
+    if (!gameStarted) {
+      setDownKeyHeld(false);
+    }
+  }, [gameStarted, setDownKeyHeld]);
 
   return (      
     <div 
