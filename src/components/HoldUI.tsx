@@ -155,12 +155,6 @@ export const HoldUI = memo(({ holdPiece, holdUsed, gameMode = 'regular' }: HoldU
       <div className="min-h-16 flex items-center justify-center">
         {renderPiece()}
       </div>
-      
-      {holdUsed && (
-        <div className="text-xs text-muted-foreground text-center mt-2">
-          Used this turn
-        </div>
-      )}
     </div>
   );
 });
