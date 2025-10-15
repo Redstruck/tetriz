@@ -19,4 +19,18 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  build: {
+    // Ensure service worker and manifest are copied to dist
+    rollupOptions: {
+      input: {
+        main: path.resolve(__dirname, 'index.html'),
+      }
+    },
+    // Generate manifest for better caching
+    manifest: true,
+    // Ensure assets have consistent names for caching
+    assetsDir: 'assets',
+  },
+  // Ensure PWA assets are served correctly
+  publicDir: 'public',
 }));
