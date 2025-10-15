@@ -239,15 +239,32 @@ export const useTetrisLogic = (gameMode: 'regular' | 'extra' | 'speedrun' = 'reg
 
       const rotatedShape = rotatePiece(prev.currentPiece.shape);
       
-      if (isValidPosition(prev.currentPiece, prev.board, 0, 0, rotatedShape)) {
-        return {
-          ...prev,
-          currentPiece: {
-            ...prev.currentPiece,
-            shape: rotatedShape,
-            rotation: (prev.currentPiece.rotation + 1) % 4
-          }
-        };
+      // Try different wall kick positions
+      const wallKickOffsets = [
+        { dx: 0, dy: 0 },   // Original position
+        { dx: -1, dy: 0 },  // Move left
+        { dx: 1, dy: 0 },   // Move right
+        { dx: -2, dy: 0 },  // Move left more
+        { dx: 2, dy: 0 },   // Move right more
+        { dx: 0, dy: -1 },  // Move up
+        { dx: -1, dy: -1 }, // Move left and up
+        { dx: 1, dy: -1 },  // Move right and up
+      ];
+
+      // Try each wall kick offset until we find a valid position
+      for (const offset of wallKickOffsets) {
+        if (isValidPosition(prev.currentPiece, prev.board, offset.dx, offset.dy, rotatedShape)) {
+          return {
+            ...prev,
+            currentPiece: {
+              ...prev.currentPiece,
+              shape: rotatedShape,
+              rotation: (prev.currentPiece.rotation + 1) % 4,
+              x: prev.currentPiece.x + offset.dx,
+              y: prev.currentPiece.y + offset.dy
+            }
+          };
+        }
       }
 
       return prev;
