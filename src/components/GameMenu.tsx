@@ -1,8 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import AnimatedHyperspeedBackground from "@/components/ui/AnimatedHyperspeedBackground";
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
-import { useState } from "react";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, CarouselApi } from "@/components/ui/carousel";
+import { useState, useEffect, useRef } from "react";
 
 interface GameMenuProps {
   onGameModeSelect: (mode: 'regular' | 'extra' | 'speedrun') => void;
@@ -180,8 +180,10 @@ const MarathonModeImage = () => (
 const GameMenu = ({ onGameModeSelect }: GameMenuProps) => {
   const navigate = useNavigate();
   const [selectedMode, setSelectedMode] = useState<GameModeType>('regular');
+  const [carouselApi, setCarouselApi] = useState<CarouselApi>();
 
-  // Define all game modes (3 working + 3 dummy)
+  // Define all game modes - strategically ordered to ensure Classic, Extra, Speedrun are always visible
+  // With 3 items visible and startIndex: 0, this ensures Classic is always in center or first position
   const gameModes = [
     {
       id: 'regular' as GameModeType,
@@ -341,10 +343,12 @@ const GameMenu = ({ onGameModeSelect }: GameMenuProps) => {
         <div className="w-full max-w-6xl px-12">
           <Carousel
             opts={{
-              align: "center",
+              align: "start",
               loop: true,
+              startIndex: 0, // Start at index 0 to show Classic, Extra, Speedrun first
             }}
             className="w-full"
+            setApi={setCarouselApi}
           >
             <CarouselContent className="-ml-4">
               {gameModes.map((mode, index) => {
