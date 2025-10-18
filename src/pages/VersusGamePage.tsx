@@ -121,8 +121,7 @@ const VersusGamePage = () => {
   return (
     <div className="min-h-screen w-screen flex items-center justify-center overflow-hidden relative bg-black">
       {/* Background */}
-      <AnimatedHyperspeedBackground className="absolute inset-0 w-full h-full" />
-      <div className="absolute inset-0 bg-black/40" />
+      <div className="absolute inset-0 bg-black" />
 
       {/* Back Button */}
       <Button
