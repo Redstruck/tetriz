@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTetrisLogic } from '@/hooks/useTetrisLogic';
 import { useVersusControls } from '@/hooks/useVersusControls';
 import { GameBoard } from '@/components/GameBoard';
+import { HoldUI } from '@/components/HoldUI';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 
@@ -137,26 +138,11 @@ const VersusGamePage = () => {
               <div className="flex gap-3">
                 {/* Hold Piece */}
                 <div className="flex flex-col gap-2">
-                  <div className="bg-slate-800/50 rounded-lg p-2 w-20 h-20 flex items-center justify-center">
-                    {player2.holdPiece ? (
-                      <div className="scale-50">
-                        {player2.holdPiece.shape.map((row, y) => (
-                          <div key={y} className="flex">
-                            {row.map((cell, x) => (
-                              <div
-                                key={x}
-                                className={`w-4 h-4 ${
-                                  cell ? `bg-${player2.holdPiece!.type} border border-white/20` : ''
-                                }`}
-                              />
-                            ))}
-                          </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="text-xs text-slate-500 text-center">Hold<br/>(Q)</div>
-                    )}
-                  </div>
+                  <HoldUI 
+                    holdPiece={player2.holdPiece}
+                    holdUsed={player2.holdUsed}
+                    gameMode="regular"
+                  />
                 </div>
 
                 {/* Game Board - Scaled down for versus */}
@@ -248,26 +234,11 @@ const VersusGamePage = () => {
               <div className="flex gap-3">
                 {/* Hold Piece */}
                 <div className="flex flex-col gap-2">
-                  <div className="bg-slate-800/50 rounded-lg p-2 w-20 h-20 flex items-center justify-center">
-                    {player1.holdPiece ? (
-                      <div className="scale-50">
-                        {player1.holdPiece.shape.map((row, y) => (
-                          <div key={y} className="flex">
-                            {row.map((cell, x) => (
-                              <div
-                                key={x}
-                                className={`w-4 h-4 ${
-                                  cell ? `bg-${player1.holdPiece!.type} border border-white/20` : ''
-                                }`}
-                              />
-                            ))}
-                          </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="text-xs text-slate-500 text-center">Hold<br/>(C)</div>
-                    )}
-                  </div>
+                  <HoldUI 
+                    holdPiece={player1.holdPiece}
+                    holdUsed={player1.holdUsed}
+                    gameMode="regular"
+                  />
                 </div>
 
                 {/* Game Board - Scaled down for versus */}
