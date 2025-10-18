@@ -42,9 +42,9 @@ export const useVersusControls = ({ player1, player2, winner }: VersusControlsPr
     winnerRef.current = winner;
   });
 
-  // Constants for timing - optimized for fast, responsive gameplay
-  const INITIAL_DELAY = 100; // ms before auto-repeat starts
-  const REPEAT_DELAY = 35;   // ms between auto-repeats
+  // Constants for timing - slower for better control
+  const INITIAL_DELAY = 150; // ms before auto-repeat starts
+  const REPEAT_DELAY = 60;   // ms between auto-repeats
 
   // Animation frame loop for continuous key checking
   const gameLoop = useCallback(() => {
