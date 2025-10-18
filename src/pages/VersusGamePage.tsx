@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTetrisLogic } from '@/hooks/useTetrisLogic';
+import { useVersusControls } from '@/hooks/useVersusControls';
 import { GameBoard } from '@/components/GameBoard';
-import AnimatedHyperspeedBackground from '@/components/ui/AnimatedHyperspeedBackground';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 
@@ -16,84 +16,30 @@ const VersusGamePage = () => {
   // Player 2 (Left Grid) - Uses alternative controls  
   const player2 = useTetrisLogic('regular');
 
-  // Player 1 Controls (Arrow keys + Space + C)
-  useEffect(() => {
-    if (winner || !player1.gameStarted || player1.paused) return;
-
-    const handlePlayer1KeyDown = (e: KeyboardEvent) => {
-      if (e.repeat) return;
-      
-      switch (e.key) {
-        case 'ArrowLeft':
-          e.preventDefault();
-          player1.movePiece(-1, 0);
-          break;
-        case 'ArrowRight':
-          e.preventDefault();
-          player1.movePiece(1, 0);
-          break;
-        case 'ArrowDown':
-          e.preventDefault();
-          player1.dropPiece();
-          break;
-        case 'ArrowUp':
-          e.preventDefault();
-          player1.rotatePiece();
-          break;
-        case ' ':
-          e.preventDefault();
-          player1.hardDrop();
-          break;
-        case 'c':
-        case 'C':
-          e.preventDefault();
-          player1.holdPieceAction();
-          break;
-      }
-    };
-
-    window.addEventListener('keydown', handlePlayer1KeyDown);
-    return () => window.removeEventListener('keydown', handlePlayer1KeyDown);
-  }, [player1, winner]);
-
-  // Player 2 Controls (WASD + Shift + Q)
-  useEffect(() => {
-    if (winner || !player2.gameStarted || player2.paused) return;
-
-    const handlePlayer2KeyDown = (e: KeyboardEvent) => {
-      if (e.repeat) return;
-      
-      switch (e.key.toLowerCase()) {
-        case 'a':
-          e.preventDefault();
-          player2.movePiece(-1, 0);
-          break;
-        case 'd':
-          e.preventDefault();
-          player2.movePiece(1, 0);
-          break;
-        case 's':
-          e.preventDefault();
-          player2.dropPiece();
-          break;
-        case 'w':
-          e.preventDefault();
-          player2.rotatePiece();
-          break;
-        case 'shift':
-          e.preventDefault();
-          player2.hardDrop();
-          break;
-        case 'q':
-          e.preventDefault();
-          player2.holdPieceAction();
-          break;
-      }
-    };
-
-    window.addEventListener('keydown', handlePlayer2KeyDown);
-    return () => window.removeEventListener('keydown', handlePlayer2KeyDown);
-  }, [player2, winner]);
+  // Use the new versus controls hook for smooth key holding
+  useVersusControls({
+    player1: {
+      onMoveLeft: () => player1.movePiece(-1, 0),
+      onMoveRight: () => player1.movePiece(1, 0),
+      onMoveDown: () => player1.dropPiece(),
+      onRotate: () => player1.rotatePiece(),
+      onHardDrop: () => player1.hardDrop(),
+      onHold: () => player1.holdPieceAction(),
+      gameStarted: player1.gameStarted,
+      paused: player1.paused,
+    },
+    player2: {
+      onMoveLeft: () => player2.movePiece(-1, 0),
+      onMoveRight: () => player2.movePiece(1, 0),
+      onMoveDown: () => player2.dropPiece(),
+      onRotate: () => player2.rotatePiece(),
+      onHardDrop: () => player2.hardDrop(),
+      onHold: () => player2.holdPieceAction(),
+      gameStarted: player2.gameStarted,
+      paused: player2.paused,
+    },
+    winner,
+  });
 
   // Check for game over - determine winner
   useEffect(() => {
