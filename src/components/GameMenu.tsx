@@ -8,7 +8,7 @@ interface GameMenuProps {
   onGameModeSelect: (mode: 'regular' | 'extra' | 'speedrun') => void;
 }
 
-type GameModeType = 'regular' | 'extra' | 'speedrun' | 'survival' | 'puzzle' | 'marathon';
+type GameModeType = 'regular' | 'extra' | 'speedrun' | 'versus' | 'puzzle' | 'marathon';
 
 // Dummy image components for each game mode
 const RegularModeImage = () => (
@@ -123,6 +123,49 @@ const SurvivalModeImage = () => (
   </div>
 );
 
+const VersusModeImage = () => (
+  <div className="w-32 h-32 bg-gradient-to-br from-pink-400 via-purple-500 to-indigo-600 rounded-xl relative overflow-hidden shadow-2xl">
+    {/* Two side-by-side boards for versus mode */}
+    <div className="absolute inset-2 bg-black/20 rounded-lg flex gap-1 p-1">
+      {/* Left player board */}
+      <div className="flex-1 grid grid-cols-3 grid-rows-6 gap-0.5">
+        {Array.from({ length: 18 }, (_, i) => (
+          <div
+            key={i}
+            className={`rounded-sm ${
+              [0, 1, 3, 4, 6, 7, 12, 13, 14].includes(i)
+                ? 'bg-gradient-to-br from-pink-300 to-pink-600'
+                : 'bg-transparent'
+            }`}
+          />
+        ))}
+      </div>
+      {/* Divider */}
+      <div className="w-0.5 bg-white/30"></div>
+      {/* Right player board */}
+      <div className="flex-1 grid grid-cols-3 grid-rows-6 gap-0.5">
+        {Array.from({ length: 18 }, (_, i) => (
+          <div
+            key={i}
+            className={`rounded-sm ${
+              [2, 5, 8, 9, 10, 11, 15, 16, 17].includes(i)
+                ? 'bg-gradient-to-br from-purple-300 to-purple-600'
+                : 'bg-transparent'
+            }`}
+          />
+        ))}
+      </div>
+    </div>
+    <div className="absolute bottom-2 left-2 right-2 text-center">
+      <div className="text-xs font-bold text-white/90 bg-black/40 rounded px-1">VS MODE</div>
+    </div>
+    {/* VS icon */}
+    <div className="absolute top-2 right-2 w-5 h-5 bg-pink-400 rounded-full flex items-center justify-center text-[10px] font-bold text-black">
+      VS
+    </div>
+  </div>
+);
+
 const PuzzleModeImage = () => (
   <div className="w-32 h-32 bg-gradient-to-br from-violet-400 via-purple-500 to-indigo-600 rounded-xl relative overflow-hidden shadow-2xl">
     {/* Puzzle board with specific patterns */}
@@ -216,14 +259,14 @@ const GameMenu = ({ onGameModeSelect }: GameMenuProps) => {
       route: '/game/speedrun'
     },
     {
-      id: 'survival' as GameModeType,
-      title: 'SURVIVAL',
-      subtitle: 'Endless Endurance Test',
-      image: SurvivalModeImage,
-      color: 'red',
-      features: ['Increasing speed', 'No line clearing', 'Ultimate challenge'],
-      available: false,
-      route: null
+      id: 'versus' as GameModeType,
+      title: 'VERSUS',
+      subtitle: 'Head-to-Head Battle',
+      image: VersusModeImage,
+      color: 'pink',
+      features: ['Two-player mode', 'Compete side-by-side', 'First to top out loses'],
+      available: true,
+      route: '/game/versus'
     },
     {
       id: 'puzzle' as GameModeType,
@@ -255,8 +298,8 @@ const GameMenu = ({ onGameModeSelect }: GameMenuProps) => {
       return;
     }
 
-    if (mode === 'regular' || mode === 'extra' || mode === 'speedrun') {
-      onGameModeSelect(mode);
+    if (mode === 'regular' || mode === 'extra' || mode === 'speedrun' || mode === 'versus') {
+      onGameModeSelect(mode as 'regular' | 'extra' | 'speedrun');
       navigate(selectedGameMode.route!);
     }
   };
@@ -304,6 +347,13 @@ const GameMenu = ({ onGameModeSelect }: GameMenuProps) => {
         glow: 'hover:shadow-yellow-500/50',
         bg: 'from-yellow-500/10 via-transparent to-amber-600/5',
         hover: 'bg-yellow-500/40 text-yellow-300'
+      },
+      pink: {
+        border: 'border-pink-500/60 hover:border-pink-400/90',
+        text: 'text-pink-400 group-hover:text-pink-300',
+        glow: 'hover:shadow-pink-500/50',
+        bg: 'from-pink-500/10 via-transparent to-purple-600/5',
+        hover: 'bg-pink-500/40 text-pink-300'
       }
     };
     return colors[color] || colors.cyan;
@@ -329,8 +379,8 @@ const GameMenu = ({ onGameModeSelect }: GameMenuProps) => {
       </div>
 
       {/* Game Mode Selection Carousel */}
-      <div className="flex flex-col items-center gap-12 relative z-20">
-        <div className="text-center">
+      <div className="flex flex-col items-center gap-12 relative z-30">
+        <div className="text-center relative z-10">
           <h2 className="text-2xl font-game font-bold text-slate-200 tracking-wider mb-2">
             SELECT GAME MODE
           </h2>
@@ -340,17 +390,17 @@ const GameMenu = ({ onGameModeSelect }: GameMenuProps) => {
         </div>
         
         {/* Carousel Container */}
-        <div className="w-full max-w-6xl px-12">
+        <div className="w-full max-w-6xl px-12 carousel-container-overflow">
           <Carousel
             opts={{
               align: "start",
               loop: true,
               startIndex: 0, // Start at index 0 to show Classic, Extra, Speedrun first
             }}
-            className="w-full"
+            className="w-full carousel-container-overflow"
             setApi={setCarouselApi}
           >
-            <CarouselContent className="-ml-4">
+            <CarouselContent className="-ml-4 carousel-container-overflow">
               {gameModes.map((mode, index) => {
                 const colorClasses = getColorClasses(mode.color);
                 const ImageComponent = mode.image;

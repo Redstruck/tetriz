@@ -478,6 +478,12 @@
 
   .floating-element {
     animation: float 6s ease-in-out infinite;
+    position: relative;
+    z-index: 1;
+  }
+
+  .floating-element:hover {
+    z-index: 100;
   }
 
   .floating-element:nth-child(2) {
@@ -526,5 +532,39 @@
 
   .animate-ripple {
     animation: ripple 0.6s linear;
+  }
+
+  /* Carousel overflow fix for hovering cards */
+  .carousel-container-overflow {
+    overflow: visible !important;
+  }
+
+  .carousel-container-overflow [data-embla-viewport] {
+    overflow: visible !important;
+  }
+
+  .carousel-container-overflow [data-embla-container] {
+    overflow: visible !important;
+  }
+
+  /* Ensure carousel items don't clip hovered siblings */
+  .carousel-container-overflow .floating-element {
+    transform-style: preserve-3d;
+    isolation: isolate;
+  }
+
+  .carousel-container-overflow .floating-element:hover {
+    z-index: 100;
+    isolation: auto;
+  }
+
+  /* Ensure CarouselItem itself has proper z-index when child is hovered */
+  .carousel-container-overflow [data-embla-container] > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .carousel-container-overflow [data-embla-container] > *:has(.floating-element:hover) {
+    z-index: 100;
   }
 }

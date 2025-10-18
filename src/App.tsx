@@ -7,6 +7,7 @@ import Index from "./pages/Index";
 import GamePage from "./pages/GamePage";
 import ExtraGamePage from "./pages/ExtraGamePage";
 import SpeedrunGamePage from "./pages/SpeedrunGamePage";
+import VersusGamePage from "./pages/VersusGamePage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -22,6 +23,7 @@ const App = () => (
           <Route path="/game" element={<GamePage />} />
           <Route path="/game/extra" element={<ExtraGamePage />} />
           <Route path="/game/speedrun" element={<SpeedrunGamePage />} />
+          <Route path="/game/versus" element={<VersusGamePage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
