@@ -112,7 +112,7 @@ const VersusGamePage = () => {
         <div className="flex gap-16 justify-center items-start">
           {/* Player 2 - Left Grid */}
           <div className="flex-shrink-0 w-full max-w-lg">
-            <div className="bg-gradient-to-br from-pink-500/10 to-purple-600/10 rounded-2xl p-4 border border-pink-500/30">
+            <div className="bg-gradient-to-br from-pink-500/10 to-purple-600/10 rounded-lg py-2 px-3 border border-pink-500/30 max-w-[340px] w-full mx-auto">
               {/* Player 2 Header */}
               <div className="text-center mb-4">
                 <h2 className="text-2xl font-bold text-pink-400 mb-1">PLAYER 2</h2>
@@ -192,7 +192,7 @@ const VersusGamePage = () => {
 
           {/* Player 1 - Right Grid */}
           <div className="flex-shrink-0 w-full max-w-lg">
-            <div className="bg-gradient-to-br from-cyan-500/10 to-blue-600/10 rounded-2xl p-4 border border-cyan-500/30">
+            <div className="bg-gradient-to-br from-cyan-500/10 to-blue-600/10 rounded-lg py-2 px-3 border border-cyan-500/30 max-w-[340px] w-full mx-auto">
               {/* Player 1 Header */}
               <div className="text-center mb-4">
                 <h2 className="text-2xl font-bold text-cyan-400 mb-1">PLAYER 1</h2>
