@@ -164,6 +164,10 @@ const VersusGamePage = () => {
                   />
                 </div>
               </div>
+              {/* Player 2 Controls Help */}
+              <div className="mt-3 text-center text-xs text-slate-400 font-mono">
+                <span className="text-pink-400 font-bold">Player 2:</span> A/D = Move • W = Rotate • S = Soft Drop • Shift = Hard Drop • Q = Hold
+              </div>
             </div>
           </div>
 
@@ -244,18 +248,10 @@ const VersusGamePage = () => {
                   />
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Controls Help */}
-        <div className="mt-6 text-center text-xs text-slate-400 font-mono">
-          <div className="flex justify-center gap-8">
-            <div>
-              <span className="text-pink-400 font-bold">Player 2:</span> A/D = Move • W = Rotate • S = Soft Drop • Shift = Hard Drop • Q = Hold
-            </div>
-            <div>
-              <span className="text-cyan-400 font-bold">Player 1:</span> ←/→ = Move • ↑ = Rotate • ↓ = Soft Drop • Space = Hard Drop • C = Hold
+              {/* Player 1 Controls Help */}
+              <div className="mt-3 text-center text-xs text-slate-400 font-mono">
+                <span className="text-cyan-400 font-bold">Player 1:</span> ←/→ = Move • ↑ = Rotate • ↓ = Soft Drop • Space = Hard Drop • C = Hold
+              </div>
             </div>
           </div>
         </div>
