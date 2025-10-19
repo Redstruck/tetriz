@@ -85,7 +85,7 @@ const VersusGamePage = () => {
       <div className="relative z-10 w-full max-w-[1600px] px-8">
         {/* Title */}
         <div className="text-center mb-6">
-          <h1 className="text-4xl font-retro font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-400 via-purple-500 to-indigo-400 tracking-wider mb-2">
+          <h1 className="text-4xl font-retro font-bold text-pink-400 tracking-wider mb-2">
             VERSUS MODE
           </h1>
           <p className="text-sm text-slate-400 font-mono">Head-to-Head Battle</p>
