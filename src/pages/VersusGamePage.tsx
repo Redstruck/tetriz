@@ -4,6 +4,7 @@ import { useTetrisLogic } from '@/hooks/useTetrisLogic';
 import { useVersusControls } from '@/hooks/useVersusControls';
 import { GameBoard } from '@/components/GameBoard';
 import { HoldUI } from '@/components/HoldUI';
+import { NextUI } from '@/components/NextUI';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 
@@ -157,26 +158,10 @@ const VersusGamePage = () => {
 
                 {/* Next Piece */}
                 <div className="flex flex-col gap-2">
-                  <div className="bg-slate-800/50 rounded-lg p-2 w-20 h-20 flex items-center justify-center">
-                    {player2.nextPiece ? (
-                      <div className="scale-50">
-                        {player2.nextPiece.shape.map((row, y) => (
-                          <div key={y} className="flex">
-                            {row.map((cell, x) => (
-                              <div
-                                key={x}
-                                className={`w-4 h-4 ${
-                                  cell ? `bg-${player2.nextPiece!.type} border border-white/20` : ''
-                                }`}
-                              />
-                            ))}
-                          </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="text-xs text-slate-500 text-center">Next</div>
-                    )}
-                  </div>
+                  <NextUI 
+                    nextPiece={player2.nextPiece}
+                    gameMode="regular"
+                  />
                 </div>
               </div>
             </div>
@@ -253,26 +238,10 @@ const VersusGamePage = () => {
 
                 {/* Next Piece */}
                 <div className="flex flex-col gap-2">
-                  <div className="bg-slate-800/50 rounded-lg p-2 w-20 h-20 flex items-center justify-center">
-                    {player1.nextPiece ? (
-                      <div className="scale-50">
-                        {player1.nextPiece.shape.map((row, y) => (
-                          <div key={y} className="flex">
-                            {row.map((cell, x) => (
-                              <div
-                                key={x}
-                                className={`w-4 h-4 ${
-                                  cell ? `bg-${player1.nextPiece!.type} border border-white/20` : ''
-                                }`}
-                              />
-                            ))}
-                          </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="text-xs text-slate-500 text-center">Next</div>
-                    )}
-                  </div>
+                  <NextUI 
+                    nextPiece={player1.nextPiece}
+                    gameMode="regular"
+                  />
                 </div>
               </div>
             </div>
