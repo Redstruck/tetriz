@@ -82,7 +82,7 @@ const VersusGamePage = () => {
       </Button>
 
       {/* Main Content */}
-      <div className="relative z-10 w-full max-w-7xl px-4">
+      <div className="relative z-10 w-full max-w-[1600px] px-8">
         {/* Title */}
         <div className="text-center mb-6">
           <h1 className="text-4xl font-retro font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-400 via-purple-500 to-indigo-400 tracking-wider mb-2">
@@ -109,9 +109,9 @@ const VersusGamePage = () => {
         )}
 
         {/* Game Grids Container */}
-        <div className="flex gap-8 justify-center items-start">
+        <div className="flex gap-16 justify-center items-start">
           {/* Player 2 - Left Grid */}
-          <div className="flex-1 max-w-md">
+          <div className="flex-shrink-0 w-full max-w-lg">
             <div className="bg-gradient-to-br from-pink-500/10 to-purple-600/10 rounded-2xl p-4 border border-pink-500/30">
               {/* Player 2 Header */}
               <div className="text-center mb-4">
@@ -136,9 +136,9 @@ const VersusGamePage = () => {
               </div>
 
               {/* Player 2 Game Area */}
-              <div className="flex gap-3">
+              <div className="flex gap-6 items-start justify-center">
                 {/* Hold Piece */}
-                <div className="flex flex-col gap-2">
+                <div className="flex-shrink-0">
                   <HoldUI 
                     holdPiece={player2.holdPiece}
                     holdUsed={player2.holdUsed}
@@ -147,7 +147,7 @@ const VersusGamePage = () => {
                 </div>
 
                 {/* Game Board - Scaled down for versus */}
-                <div className="flex-1 scale-75 origin-top-left">
+                <div className="flex-shrink-0 transform scale-75 origin-top" style={{ marginLeft: '-30px', marginRight: '-30px' }}>
                   <GameBoard
                     board={player2.board}
                     currentPiece={player2.currentPiece}
@@ -157,7 +157,7 @@ const VersusGamePage = () => {
                 </div>
 
                 {/* Next Piece */}
-                <div className="flex flex-col gap-2">
+                <div className="flex-shrink-0">
                   <NextUI 
                     nextPiece={player2.nextPiece}
                     gameMode="regular"
@@ -168,7 +168,7 @@ const VersusGamePage = () => {
           </div>
 
           {/* VS Divider */}
-          <div className="flex flex-col items-center justify-center py-8">
+          <div className="flex-shrink-0 flex flex-col items-center justify-center py-8 mx-4">
             <div className="w-12 h-12 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center text-white font-bold text-xl shadow-lg mb-4">
               VS
             </div>
@@ -191,7 +191,7 @@ const VersusGamePage = () => {
           </div>
 
           {/* Player 1 - Right Grid */}
-          <div className="flex-1 max-w-md">
+          <div className="flex-shrink-0 w-full max-w-lg">
             <div className="bg-gradient-to-br from-cyan-500/10 to-blue-600/10 rounded-2xl p-4 border border-cyan-500/30">
               {/* Player 1 Header */}
               <div className="text-center mb-4">
@@ -216,9 +216,9 @@ const VersusGamePage = () => {
               </div>
 
               {/* Player 1 Game Area */}
-              <div className="flex gap-3">
+              <div className="flex gap-6 items-start justify-center">
                 {/* Hold Piece */}
-                <div className="flex flex-col gap-2">
+                <div className="flex-shrink-0">
                   <HoldUI 
                     holdPiece={player1.holdPiece}
                     holdUsed={player1.holdUsed}
@@ -227,7 +227,7 @@ const VersusGamePage = () => {
                 </div>
 
                 {/* Game Board - Scaled down for versus */}
-                <div className="flex-1 scale-75 origin-top-left">
+                <div className="flex-shrink-0 transform scale-75 origin-top" style={{ marginLeft: '-30px', marginRight: '-30px' }}>
                   <GameBoard
                     board={player1.board}
                     currentPiece={player1.currentPiece}
@@ -237,7 +237,7 @@ const VersusGamePage = () => {
                 </div>
 
                 {/* Next Piece */}
-                <div className="flex flex-col gap-2">
+                <div className="flex-shrink-0">
                   <NextUI 
                     nextPiece={player1.nextPiece}
                     gameMode="regular"
