@@ -143,6 +143,7 @@ const VersusGamePage = () => {
                     holdPiece={player2.holdPiece}
                     holdUsed={player2.holdUsed}
                     gameMode="regular"
+                    holdKey="Q"
                   />
                 </div>
 
@@ -227,6 +228,7 @@ const VersusGamePage = () => {
                     holdPiece={player1.holdPiece}
                     holdUsed={player1.holdUsed}
                     gameMode="regular"
+                    holdKey="C"
                   />
                 </div>
 

@@ -86,7 +86,7 @@ const getCellClasses = (cellType: string, isHoldUsed: boolean) => {
   }
 };
 
-export const HoldUI = memo(({ holdPiece, holdUsed, gameMode = 'regular' }: HoldUIProps) => {
+export const HoldUI = memo(({ holdPiece, holdUsed, gameMode = 'regular', holdKey }: HoldUIProps & { holdKey?: string }) => {
   const blockSize = 16; // Size of each block in pixels
   
   const renderPiece = () => {
@@ -150,8 +150,9 @@ export const HoldUI = memo(({ holdPiece, holdUsed, gameMode = 'regular' }: HoldU
   return (
     <div className="bg-card/95 backdrop-blur-sm border border-border/50 rounded-lg p-4 shadow-lg">
       <h3 className="text-lg font-retro font-bold text-foreground mb-2 text-center tracking-wider text-retro-glow">HOLD</h3>
-      <div className="text-xs text-muted-foreground text-center mb-2 font-mono">Press C</div>
-      
+      <div className="text-xs text-muted-foreground text-center mb-2 font-mono">
+        Press {holdKey ? holdKey : 'C'}
+      </div>
       <div className="min-h-16 flex items-center justify-center">
         {renderPiece()}
       </div>
