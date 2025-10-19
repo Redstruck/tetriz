@@ -147,7 +147,7 @@ const VersusGamePage = () => {
                 </div>
 
                 {/* Game Board - Scaled down for versus */}
-                <div className="flex-shrink-0 transform scale-75 origin-top" style={{ marginLeft: '-30px', marginRight: '-30px' }}>
+                <div className="flex-shrink-0 transform scale-100 origin-top" style={{ marginLeft: '-40px', marginRight: '-40px' }}>
                   <GameBoard
                     board={player2.board}
                     currentPiece={player2.currentPiece}
@@ -227,7 +227,7 @@ const VersusGamePage = () => {
                 </div>
 
                 {/* Game Board - Scaled down for versus */}
-                <div className="flex-shrink-0 transform scale-75 origin-top" style={{ marginLeft: '-30px', marginRight: '-30px' }}>
+                <div className="flex-shrink-0 transform scale-100 origin-top" style={{ marginLeft: '-40px', marginRight: '-40px' }}>
                   <GameBoard
                     board={player1.board}
                     currentPiece={player1.currentPiece}
