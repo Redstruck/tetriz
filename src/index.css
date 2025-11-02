@@ -118,6 +118,23 @@
     @apply bg-black text-foreground font-game;
     font-feature-settings: "liga" 0;
     text-rendering: optimizeLegibility;
+    overflow: hidden;
+  }
+
+  /* Hide scrollbar for all elements */
+  html, body {
+    overflow-y: hidden;
+    overflow-x: hidden;
+  }
+
+  /* Hide scrollbar in Chrome, Safari, Edge */
+  ::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Hide scrollbar in Firefox */
+  * {
+    scrollbar-width: none;
   }
 }
 
