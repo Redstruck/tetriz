@@ -1,4 +1,5 @@
 import { useEffect, useCallback, useRef } from 'react';
+import { useGameSettings } from '@/contexts/GameSettingsContext';
 
 interface GameControlsProps {
   onMoveLeft: () => void;
@@ -33,6 +34,7 @@ export const useGameControls = ({
   onDownKeyRelease,
   gameStarted
 }: GameControlsProps) => {
+  const { settings } = useGameSettings();
   const keysPressed = useRef<Set<string>>(new Set());
   const keyTimers = useRef<Map<string, { startTime: number; lastAction: number }>>(new Map());
   const animationFrameRef = useRef<number>();
@@ -49,6 +51,9 @@ export const useGameControls = ({
     keysPressed.current.forEach(key => {
       const timer = keyTimers.current.get(key);
       if (!timer) return;
+
+      // Only do auto-repeat if the setting is enabled
+      if (!settings.autoRepeat) return;
 
       // Check if initial delay has passed
       if (now - timer.startTime >= INITIAL_DELAY) {
@@ -77,7 +82,7 @@ export const useGameControls = ({
     if (keysPressed.current.size > 0) {
       animationFrameRef.current = requestAnimationFrame(gameLoop);
     }
-  }, [onMoveLeft, onMoveRight, onMoveDown]);
+  }, [onMoveLeft, onMoveRight, onMoveDown, settings.autoRepeat]);
 
   const startKeyRepeat = useCallback((key: string) => {
     const now = Date.now();
@@ -140,16 +145,22 @@ export const useGameControls = ({
     switch (key) {
       case 'ArrowLeft':
         onMoveLeft();
-        startKeyRepeat(key);
+        if (settings.autoRepeat) {
+          startKeyRepeat(key);
+        }
         break;
       case 'ArrowRight':
         onMoveRight();
-        startKeyRepeat(key);
+        if (settings.autoRepeat) {
+          startKeyRepeat(key);
+        }
         break;
       case 'ArrowDown':
         onMoveDown();
         onDownKeyPress?.();
-        startKeyRepeat(key);
+        if (settings.autoRepeat) {
+          startKeyRepeat(key);
+        }
         break;
       case 'ArrowUp':
         onRotate();
@@ -187,7 +198,7 @@ export const useGameControls = ({
         }
         break;
     }
-  }, [gameStarted, onMoveLeft, onMoveRight, onMoveDown, onRotate, onHardDrop, onHold, onPause, onResetConfirm, onSpeedUp, onSpeedDown, onSpeedReset, onDownKeyPress, startKeyRepeat]);
+  }, [gameStarted, onMoveLeft, onMoveRight, onMoveDown, onRotate, onHardDrop, onHold, onPause, onResetConfirm, onSpeedUp, onSpeedDown, onSpeedReset, onDownKeyPress, startKeyRepeat, settings.autoRepeat]);
 
   const handleKeyUp = useCallback((event: KeyboardEvent) => {
     const key = event.key;

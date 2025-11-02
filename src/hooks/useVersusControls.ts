@@ -1,4 +1,5 @@
 import { useEffect, useCallback, useRef } from 'react';
+import { useGameSettings } from '@/contexts/GameSettingsContext';
 
 interface VersusControlsProps {
   // Player 1 controls (Arrow keys)
@@ -27,6 +28,7 @@ interface VersusControlsProps {
 }
 
 export const useVersusControls = ({ player1, player2, winner }: VersusControlsProps) => {
+  const { settings } = useGameSettings();
   const keysPressed = useRef<Set<string>>(new Set());
   const keyTimers = useRef<Map<string, { startTime: number; lastAction: number }>>(new Map());
   const animationFrameRef = useRef<number>();
@@ -62,6 +64,8 @@ export const useVersusControls = ({ player1, player2, winner }: VersusControlsPr
       if (now - timer.startTime >= INITIAL_DELAY) {
         // Check if it's time for another repeat action
         if (now - timer.lastAction >= REPEAT_DELAY) {
+          // Only perform auto-repeat if setting is enabled
+          if (!settings.autoRepeat) return;
           // Perform the action based on the key - Player 1 (Arrow keys)
           if (p1.gameStarted && !p1.paused && !w) {
             switch (key) {
@@ -108,7 +112,7 @@ export const useVersusControls = ({ player1, player2, winner }: VersusControlsPr
     if (keysPressed.current.size > 0) {
       animationFrameRef.current = requestAnimationFrame(gameLoop);
     }
-  }, []);
+  }, [settings.autoRepeat]);
 
   // Handle key down
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
@@ -169,15 +173,21 @@ export const useVersusControls = ({ player1, player2, winner }: VersusControlsPr
       switch (key) {
         case 'ArrowLeft':
           p1.onMoveLeft();
-          keyTimers.current.set(key, { startTime: Date.now(), lastAction: Date.now() });
+          if (settings.autoRepeat) {
+            keyTimers.current.set(key, { startTime: Date.now(), lastAction: Date.now() });
+          }
           break;
         case 'ArrowRight':
           p1.onMoveRight();
-          keyTimers.current.set(key, { startTime: Date.now(), lastAction: Date.now() });
+          if (settings.autoRepeat) {
+            keyTimers.current.set(key, { startTime: Date.now(), lastAction: Date.now() });
+          }
           break;
         case 'ArrowDown':
           p1.onMoveDown();
-          keyTimers.current.set(key, { startTime: Date.now(), lastAction: Date.now() });
+          if (settings.autoRepeat) {
+            keyTimers.current.set(key, { startTime: Date.now(), lastAction: Date.now() });
+          }
           break;
       }
     }
@@ -188,17 +198,23 @@ export const useVersusControls = ({ player1, player2, winner }: VersusControlsPr
         case 'a':
         case 'A':
           p2.onMoveLeft();
-          keyTimers.current.set(key, { startTime: Date.now(), lastAction: Date.now() });
+          if (settings.autoRepeat) {
+            keyTimers.current.set(key, { startTime: Date.now(), lastAction: Date.now() });
+          }
           break;
         case 'd':
         case 'D':
           p2.onMoveRight();
-          keyTimers.current.set(key, { startTime: Date.now(), lastAction: Date.now() });
+          if (settings.autoRepeat) {
+            keyTimers.current.set(key, { startTime: Date.now(), lastAction: Date.now() });
+          }
           break;
         case 's':
         case 'S':
           p2.onMoveDown();
-          keyTimers.current.set(key, { startTime: Date.now(), lastAction: Date.now() });
+          if (settings.autoRepeat) {
+            keyTimers.current.set(key, { startTime: Date.now(), lastAction: Date.now() });
+          }
           break;
       }
     }

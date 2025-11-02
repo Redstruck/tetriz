@@ -5,32 +5,14 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Volume2, Music, Gamepad2, Eye, Zap } from "lucide-react";
-import { useState } from "react";
+import { useGameSettings } from "@/contexts/GameSettingsContext";
 
 interface SettingsPanelProps {
   onClose: () => void;
 }
 
 export const SettingsPanel = ({ onClose }: SettingsPanelProps) => {
-  const [soundVolume, setSoundVolume] = useState([70]);
-  const [musicVolume, setMusicVolume] = useState([50]);
-  const [enableSounds, setEnableSounds] = useState(true);
-  const [enableMusic, setEnableMusic] = useState(true);
-  const [showGhost, setShowGhost] = useState(true);
-  const [showGrid, setShowGrid] = useState(false);
-  const [enableParticles, setEnableParticles] = useState(true);
-  const [autoRepeat, setAutoRepeat] = useState(true);
-
-  const resetToDefaults = () => {
-    setSoundVolume([70]);
-    setMusicVolume([50]);
-    setEnableSounds(true);
-    setEnableMusic(true);
-    setShowGhost(true);
-    setShowGrid(false);
-    setEnableParticles(true);
-    setAutoRepeat(true);
-  };
+  const { settings, updateSetting, resetToDefaults } = useGameSettings();
 
   return (
     <div className="space-y-6 p-2">
@@ -49,16 +31,16 @@ export const SettingsPanel = ({ onClose }: SettingsPanelProps) => {
               </Label>
               <Switch
                 id="enable-sounds"
-                checked={enableSounds}
-                onCheckedChange={setEnableSounds}
+                checked={settings.enableSounds}
+                onCheckedChange={(checked) => updateSetting('enableSounds', checked)}
               />
             </div>
-            {enableSounds && (
+            {settings.enableSounds && (
               <div className="space-y-2">
-                <Label className="text-xs text-muted-foreground">Volume: {soundVolume[0]}%</Label>
+                <Label className="text-xs text-muted-foreground">Volume: {settings.soundVolume}%</Label>
                 <Slider
-                  value={soundVolume}
-                  onValueChange={setSoundVolume}
+                  value={[settings.soundVolume]}
+                  onValueChange={(value) => updateSetting('soundVolume', value[0])}
                   max={100}
                   step={5}
                   className="w-full"
@@ -77,16 +59,16 @@ export const SettingsPanel = ({ onClose }: SettingsPanelProps) => {
               </Label>
               <Switch
                 id="enable-music"
-                checked={enableMusic}
-                onCheckedChange={setEnableMusic}
+                checked={settings.enableMusic}
+                onCheckedChange={(checked) => updateSetting('enableMusic', checked)}
               />
             </div>
-            {enableMusic && (
+            {settings.enableMusic && (
               <div className="space-y-2">
-                <Label className="text-xs text-muted-foreground">Volume: {musicVolume[0]}%</Label>
+                <Label className="text-xs text-muted-foreground">Volume: {settings.musicVolume}%</Label>
                 <Slider
-                  value={musicVolume}
-                  onValueChange={setMusicVolume}
+                  value={[settings.musicVolume]}
+                  onValueChange={(value) => updateSetting('musicVolume', value[0])}
                   max={100}
                   step={5}
                   className="w-full"
@@ -111,8 +93,8 @@ export const SettingsPanel = ({ onClose }: SettingsPanelProps) => {
             </Label>
             <Switch
               id="auto-repeat"
-              checked={autoRepeat}
-              onCheckedChange={setAutoRepeat}
+              checked={settings.autoRepeat}
+              onCheckedChange={(checked) => updateSetting('autoRepeat', checked)}
             />
           </div>
         </div>
@@ -132,8 +114,8 @@ export const SettingsPanel = ({ onClose }: SettingsPanelProps) => {
             </Label>
             <Switch
               id="show-ghost"
-              checked={showGhost}
-              onCheckedChange={setShowGhost}
+              checked={settings.showGhost}
+              onCheckedChange={(checked) => updateSetting('showGhost', checked)}
             />
           </div>
 
@@ -143,8 +125,8 @@ export const SettingsPanel = ({ onClose }: SettingsPanelProps) => {
             </Label>
             <Switch
               id="show-grid"
-              checked={showGrid}
-              onCheckedChange={setShowGrid}
+              checked={settings.showGrid}
+              onCheckedChange={(checked) => updateSetting('showGrid', checked)}
             />
           </div>
 
@@ -155,8 +137,8 @@ export const SettingsPanel = ({ onClose }: SettingsPanelProps) => {
             </Label>
             <Switch
               id="enable-particles"
-              checked={enableParticles}
-              onCheckedChange={setEnableParticles}
+              checked={settings.enableParticles}
+              onCheckedChange={(checked) => updateSetting('enableParticles', checked)}
             />
           </div>
         </div>

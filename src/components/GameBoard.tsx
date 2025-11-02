@@ -2,6 +2,7 @@ import { memo, useMemo } from 'react';
 import { Board, Piece } from '../types/tetris';
 import { cn } from '../lib/utils';
 import { Button } from './ui/button';
+import { useGameSettings } from '@/contexts/GameSettingsContext';
 
 interface GameBoardProps {
   board: Board;
@@ -16,6 +17,7 @@ interface GameBoardProps {
 }
 
 export const GameBoard = memo(({ board, currentPiece, ghostPiece, clearedRows, paused, gameMode = 'regular', showResetConfirm, onResetYes, onResetNo }: GameBoardProps) => {
+  const { settings } = useGameSettings();
   // Board dimensions based on game mode
   const boardWidth = gameMode === 'extra' ? 12 : 10;
   
@@ -24,8 +26,8 @@ export const GameBoard = memo(({ board, currentPiece, ghostPiece, clearedRows, p
     const displayBoard = board.map(row => [...row]);
     const ghostBoard = board.map(row => [...row]);
     
-    // Add ghost piece to ghost board (only if not overlapping with current piece)
-    if (ghostPiece && currentPiece && ghostPiece.y !== currentPiece.y) {
+    // Add ghost piece to ghost board (only if not overlapping with current piece and if setting is enabled)
+    if (settings.showGhost && ghostPiece && currentPiece && ghostPiece.y !== currentPiece.y) {
       ghostPiece.shape.forEach((row, y) => {
         row.forEach((cell, x) => {
           if (cell) {
@@ -55,7 +57,7 @@ export const GameBoard = memo(({ board, currentPiece, ghostPiece, clearedRows, p
     }
     
     return { displayBoard, ghostBoard };
-  }, [board, currentPiece, ghostPiece, boardWidth]);
+  }, [board, currentPiece, ghostPiece, boardWidth, settings.showGhost]);
 
   const getCellClasses = (cellType: string, isGhost: boolean = false, isClearing: boolean = false) => {
     const baseClasses = "aspect-square rounded-sm piece-transition relative overflow-hidden gpu-accelerated";
@@ -64,7 +66,7 @@ export const GameBoard = memo(({ board, currentPiece, ghostPiece, clearedRows, p
       return `${baseClasses} bg-transparent border-2 border-dashed border-gray-400/40`;
     }
     
-    const clearingClass = isClearing ? " animate-line-clear" : "";
+    const clearingClass = (isClearing && settings.enableParticles) ? " animate-line-clear" : "";
     
     switch (cellType) {
       // Regular pieces
@@ -100,7 +102,7 @@ export const GameBoard = memo(({ board, currentPiece, ghostPiece, clearedRows, p
       <div className="p-3 bg-game-board rounded-lg shadow-2xl">
         {/* Board grid */}
         <div 
-          className="grid gap-[2px] bg-game-grid/50 p-2 rounded"
+          className={cn("grid gap-[2px] bg-game-grid/50 p-2 rounded", settings.showGrid && "gap-0.5 border border-slate-600/50")}
           style={{ gridTemplateColumns: `repeat(${boardWidth}, 1fr)` }}
         >
           {displayBoard.map((row, y) =>
@@ -124,7 +126,7 @@ export const GameBoard = memo(({ board, currentPiece, ghostPiece, clearedRows, p
                   }}
                 >
                   {/* Special effects for clearing animation */}
-                  {isClearing && (
+                  {isClearing && settings.enableParticles && (
                     <>
                       {/* Neon explosion effect for target destruction */}
                       {displayCell === 'grey-target' && (
