@@ -6,11 +6,20 @@ import { GameBoard } from '@/components/GameBoard';
 import { HoldUI } from '@/components/HoldUI';
 import { NextUI } from '@/components/NextUI';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Settings } from 'lucide-react';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import { SettingsPanel } from '@/components/SettingsPanel';
 
 const VersusGamePage = () => {
   const navigate = useNavigate();
   const [winner, setWinner] = useState<'player1' | 'player2' | null>(null);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   // Player 1 (Right Grid) - Uses normal controls
   const player1 = useTetrisLogic('regular');
@@ -80,6 +89,27 @@ const VersusGamePage = () => {
         <ArrowLeft className="w-4 h-4 mr-2" />
         Menu
       </Button>
+
+      {/* Settings Button */}
+      <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
+        <DialogTrigger asChild>
+          <Button
+            variant="gameOutline"
+            size="icon"
+            className="absolute top-4 right-4 z-50 hover:scale-105 transition-transform duration-200"
+          >
+            <Settings className="w-6 h-6" />
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="bg-card/95 backdrop-blur-sm border border-border/50 max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-game-text text-center text-xl font-retro tracking-wider">
+              ⚙️ GAME SETTINGS
+            </DialogTitle>
+          </DialogHeader>
+          <SettingsPanel onClose={() => setIsSettingsOpen(false)} />
+        </DialogContent>
+      </Dialog>
 
       {/* Main Content */}
       <div className="relative z-10 w-full max-w-[1600px] px-8">
