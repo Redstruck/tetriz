@@ -459,16 +459,6 @@ const GameMenu = ({ onGameModeSelect }: GameMenuProps) => {
           </Carousel>
         </div>
         
-        {/* Mode counter indicator */}
-        <div className="flex items-center gap-2">
-          {gameModes.map((_, index) => (
-            <div 
-              key={index} 
-              className="w-2 h-2 rounded-full bg-slate-600 transition-all duration-300"
-            />
-          ))}
-        </div>
-
         {/* Footer information */}
         <div className="mt-12 text-center relative z-20">
           <div className="flex items-center justify-center gap-6 text-xs text-slate-300 font-mono drop-shadow-lg">
