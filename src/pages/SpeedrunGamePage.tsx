@@ -60,6 +60,7 @@ const SpeedrunGamePage = () => {
           title="SPEEDRUN MODE"
           subtitle="Clear Grey Target Blocks as Fast as Possible"
           titleColor="text-orange-400"
+          externalPaused={isSettingsOpen}
         />
       </div>
     </div>

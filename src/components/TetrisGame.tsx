@@ -13,9 +13,10 @@ interface TetrisGameProps {
   title?: string;
   subtitle?: string;
   titleColor?: string;
+  externalPaused?: boolean;
 }
 
-export const TetrisGame = ({ gameMode = 'regular', title, subtitle, titleColor = 'text-white' }: TetrisGameProps) => {
+export const TetrisGame = ({ gameMode = 'regular', title, subtitle, titleColor = 'text-white', externalPaused = false }: TetrisGameProps) => {
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [wasAlreadyPaused, setWasAlreadyPaused] = useState(false);
   const [hasCheckedHighScore, setHasCheckedHighScore] = useState(false);
@@ -44,6 +45,7 @@ export const TetrisGame = ({ gameMode = 'regular', title, subtitle, titleColor =
     hardDrop,
     holdPieceAction,
     togglePause,
+    setPaused,
     setDownKeyHeld,
     // Speedrun mode specific
     greyBlocks,
@@ -138,6 +140,13 @@ export const TetrisGame = ({ gameMode = 'regular', title, subtitle, titleColor =
       setDownKeyHeld(false);
     }
   }, [gameStarted, setDownKeyHeld]);
+
+  // Handle external pause state (e.g., when settings dialog opens)
+  useEffect(() => {
+    if (gameStarted && !gameOver) {
+      setPaused(externalPaused);
+    }
+  }, [externalPaused, gameStarted, gameOver, setPaused]);
 
   return (      
     <div 

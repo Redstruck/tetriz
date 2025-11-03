@@ -60,6 +60,7 @@ const ExtraGamePage = () => {
           title="EXTRA MODE"
           subtitle="Enhanced Experience with New Pieces & Challenges"
           titleColor="!text-emerald-400"
+          externalPaused={isSettingsOpen}
         />
       </div>
     </div>

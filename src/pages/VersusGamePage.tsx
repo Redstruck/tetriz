@@ -27,6 +27,17 @@ const VersusGamePage = () => {
   // Player 2 (Left Grid) - Uses alternative controls  
   const player2 = useTetrisLogic('regular');
 
+  // Auto-pause both players when settings dialog opens
+  useEffect(() => {
+    if (isSettingsOpen) {
+      player1.setPaused(true);
+      player2.setPaused(true);
+    } else {
+      player1.setPaused(false);
+      player2.setPaused(false);
+    }
+  }, [isSettingsOpen, player1, player2]);
+
   // Use the new versus controls hook for smooth key holding
   useVersusControls({
     player1: {

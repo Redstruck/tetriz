@@ -60,6 +60,7 @@ const GamePage = () => {
           title="CLASSIC MODE"
           subtitle="Traditional Tetris with Progressive Difficulty"
           titleColor="text-cyan-400"
+          externalPaused={isSettingsOpen}
         />
       </div>
     </div>

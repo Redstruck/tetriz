@@ -737,6 +737,20 @@ export const useTetrisLogic = (gameMode: 'regular' | 'extra' | 'speedrun' = 'reg
     });
   }, []);
 
+  const setPaused = useCallback((paused: boolean) => {
+    setGameState(prev => {
+      if (!prev.gameStarted || prev.gameOver) {
+        return prev;
+      }
+      
+      return {
+        ...prev,
+        paused,
+        lastDrop: !paused ? Date.now() : prev.lastDrop // Reset drop timer when unpausing
+      };
+    });
+  }, []);
+
   const setDropSpeed = useCallback((speed: number) => {
     setBaseDropSpeed(speed);
     // Update current drop time regardless of game state
@@ -802,6 +816,7 @@ export const useTetrisLogic = (gameMode: 'regular' | 'extra' | 'speedrun' = 'reg
     hardDrop,
     holdPieceAction: holdPiece,
     togglePause,
+    setPaused,
     // Lock delay controls
     setDownKeyHeld: setIsDownKeyHeld,
     // Speedrun mode specific
