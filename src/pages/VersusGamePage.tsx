@@ -144,11 +144,12 @@ const VersusGamePage = () => {
       {/* Back Button */}
       <Button
         onClick={() => navigate('/')}
-        className="absolute top-4 left-4 z-50 bg-slate-800/80 hover:bg-slate-700/90 backdrop-blur-sm"
+        variant="gameOutline"
         size="sm"
+        className="absolute top-4 left-4 z-50 flex items-center gap-2 hover:scale-105 transition-transform duration-200"
       >
-        <ArrowLeft className="w-4 h-4 mr-2" />
-        Menu
+        <ArrowLeft className="w-4 h-4" />
+        Back to Menu
       </Button>
 
       {/* Settings Button */}
