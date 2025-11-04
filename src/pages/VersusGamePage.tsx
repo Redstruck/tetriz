@@ -6,7 +6,12 @@ import { GameBoard } from '@/components/GameBoard';
 import { HoldUI } from '@/components/HoldUI';
 import { NextUI } from '@/components/NextUI';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Settings } from 'lucide-react';
+import { ArrowLeft, Settings, Play } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import {
+  RippleButton,
+  RippleButtonRipples,
+} from '@/components/animate-ui/primitives/buttons/ripple';
 import {
   Dialog,
   DialogContent,
@@ -15,6 +20,38 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { SettingsPanel } from '@/components/SettingsPanel';
+
+// Custom Pause icon with perfectly balanced lines
+const PauseIcon = ({ className }: { className?: string }) => (
+  <svg
+    className={className}
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    viewBox="0 0 24 24"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <rect width="4" height="16" x="6" y="4" rx="1" />
+    <rect width="4" height="16" x="14" y="4" rx="1" />
+  </svg>
+);
+
+// Custom Reset icon with circular arrow
+const ResetIcon = ({ className }: { className?: string }) => (
+  <svg
+    className={className}
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    viewBox="0 0 24 24"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
+    <path d="M21 3v5h-5" />
+    <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" />
+    <path d="M3 21v-5h5" />
+  </svg>
+);
 
 const VersusGamePage = () => {
   const navigate = useNavigate();
@@ -36,7 +73,8 @@ const VersusGamePage = () => {
       player1.setPaused(false);
       player2.setPaused(false);
     }
-  }, [isSettingsOpen, player1, player2]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isSettingsOpen]);
 
   // Use the new versus controls hook for smooth key holding
   useVersusControls({
@@ -84,6 +122,18 @@ const VersusGamePage = () => {
     player1.resetGame();
     player2.resetGame();
     setWinner(null);
+  }, [player1, player2]);
+
+  // Toggle pause for both players
+  const toggleBothPause = useCallback(() => {
+    player1.togglePause();
+    player2.togglePause();
+  }, [player1, player2]);
+
+  // Change speed for both players
+  const changeBothSpeeds = useCallback((speed: number) => {
+    player1.setDropSpeed(speed);
+    player2.setDropSpeed(speed);
   }, [player1, player2]);
 
   return (
@@ -213,27 +263,90 @@ const VersusGamePage = () => {
             </div>
           </div>
 
-          {/* VS Divider */}
-          <div className="flex-shrink-0 flex flex-col items-center justify-center py-8 mx-4">
-            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center text-white font-bold text-xl shadow-lg mb-4">
+          {/* VS Divider & Game Controls */}
+          <div className="flex-shrink-0 flex flex-col items-center justify-center py-8 mx-4 min-w-[200px]">
+            {/* VS Badge */}
+            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center text-white font-bold text-xl shadow-lg mb-6">
               VS
             </div>
-            {!player1.gameStarted && !player2.gameStarted ? (
-              <Button
-                onClick={startBothGames}
-                className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 font-bold px-6 py-3"
-              >
-                Start Battle
-              </Button>
-            ) : (
-              <Button
-                onClick={resetBothGames}
-                variant="outline"
-                className="border-slate-600 bg-slate-800/50 hover:bg-slate-700/70"
-              >
-                Reset
-              </Button>
-            )}
+
+            {/* Speed Editor */}
+            <div className="bg-slate-800/80 border border-slate-700 rounded-lg p-4 mb-4 w-full backdrop-blur-sm">
+              <h2 className="text-sm font-retro font-bold text-purple-400 mb-3 tracking-wider text-center">SPEED</h2>
+              <div className="grid grid-cols-3 gap-2">
+                {[
+                  { label: 'Slow', value: 1500 },
+                  { label: 'Normal', value: 1000 },
+                  { label: 'Fast', value: 500 }
+                ].map(({ label, value }) => (
+                  <RippleButton
+                    key={label}
+                    hoverScale={1.05}
+                    tapScale={0.95}
+                    onClick={() => changeBothSpeeds(value)}
+                    disabled={(player1.gameStarted && !player1.gameOver && !player1.paused) || (player2.gameStarted && !player2.gameOver && !player2.paused)}
+                    className={cn(
+                      'text-xs h-8 font-game font-medium relative overflow-hidden tracking-wide transition-all duration-200',
+                      player1.baseDropSpeed === value
+                        ? 'bg-purple-500 text-white border border-purple-400 hover:bg-purple-400 hover:shadow-lg hover:shadow-purple-500/40 hover:brightness-110 [--ripple-button-ripple-color:rgba(0,0,0,0.3)]'
+                        : 'border border-slate-600/50 text-slate-300 bg-transparent hover:bg-slate-700/60 hover:border-purple-500/50 hover:text-purple-400 hover:shadow-md hover:shadow-purple-500/20 [--ripple-button-ripple-color:rgba(168,85,247,0.6)]'
+                    )}
+                  >
+                    <span className="relative z-10 font-game tracking-wider">{label}</span>
+                    {player1.baseDropSpeed === value && (
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-pulse" />
+                    )}
+                    <RippleButtonRipples />
+                  </RippleButton>
+                ))}
+              </div>
+            </div>
+
+            {/* Game Control Buttons */}
+            <div className="space-y-3 w-full">
+              {!player1.gameStarted && !player2.gameStarted ? (
+                <Button
+                  onClick={startBothGames}
+                  className="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 font-bold px-6 py-3 button-ripple hover-lift relative overflow-hidden group"
+                >
+                  <span className="relative z-10 flex items-center justify-center gap-2 font-retro tracking-wider">
+                    START BATTLE
+                  </span>
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 group-hover:translate-x-full transition-transform duration-700 ease-out" />
+                </Button>
+              ) : (
+                <>
+                  {/* Pause/Resume Button */}
+                  {player1.gameStarted && !player1.gameOver && (
+                    <Button 
+                      onClick={toggleBothPause}
+                      variant="outline"
+                      size="lg"
+                      className="w-full font-bold border-slate-600 bg-slate-800/50 hover:bg-slate-700/70 button-ripple hover-lift relative overflow-hidden group"
+                    >
+                      <span className="relative z-10 flex items-center justify-center gap-2 font-game tracking-wider">
+                        {player1.paused ? <Play className="w-4 h-4" /> : <PauseIcon className="w-4 h-4" />}
+                        {player1.paused ? 'RESUME' : 'PAUSE'}
+                      </span>
+                      <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 via-purple-500/20 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    </Button>
+                  )}
+                  
+                  {/* Reset Button */}
+                  <Button
+                    onClick={resetBothGames}
+                    variant="outline"
+                    className="w-full border-slate-600 bg-slate-800/50 hover:bg-slate-700/70 button-ripple hover-lift relative overflow-hidden group"
+                  >
+                    <span className="relative z-10 flex items-center justify-center gap-2 font-game tracking-wider">
+                      <ResetIcon className="w-4 h-4" />
+                      RESET
+                    </span>
+                    <div className="absolute inset-0 bg-gradient-to-r from-red-500/10 via-red-500/20 to-red-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  </Button>
+                </>
+              )}
+            </div>
           </div>
 
           {/* Player 1 - Right Grid */}
