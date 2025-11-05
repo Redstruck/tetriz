@@ -308,9 +308,11 @@ const VersusGamePage = () => {
               {!player1.gameStarted && !player2.gameStarted ? (
                 <Button
                   onClick={startBothGames}
-                  className="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 font-bold px-6 py-3 button-ripple hover-lift relative overflow-hidden group"
+                  variant="gameAccent"
+                  size="lg"
+                  className="w-full game-button-glow button-pulse button-ripple hover-lift focus-ring-enhanced relative overflow-hidden group"
                 >
-                  <span className="relative z-10 flex items-center justify-center gap-2 font-retro tracking-wider">
+                  <span className="relative z-10 flex items-center gap-2 font-retro tracking-wider">
                     START BATTLE
                   </span>
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 group-hover:translate-x-full transition-transform duration-700 ease-out" />
