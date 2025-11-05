@@ -272,8 +272,8 @@ const VersusGamePage = () => {
             </div>
 
             {/* Speed Editor */}
-            <div className="bg-slate-800/80 border border-slate-700 rounded-lg p-4 mb-4 w-full backdrop-blur-sm">
-              <h2 className="text-sm font-retro font-bold text-purple-400 mb-3 tracking-wider text-center">SPEED</h2>
+            <div className="bg-game-board border border-game-border rounded-lg p-4 mb-4 w-full">
+              <h2 className="text-sm font-retro font-bold text-game-accent mb-3 tracking-wider text-center text-retro-glow">SPEED</h2>
               <div className="grid grid-cols-3 gap-2">
                 {[
                   { label: 'Slow', value: 1500 },
@@ -289,8 +289,8 @@ const VersusGamePage = () => {
                     className={cn(
                       'text-xs h-8 font-game font-medium relative overflow-hidden tracking-wide transition-all duration-200',
                       player1.baseDropSpeed === value
-                        ? 'bg-purple-500 text-white border border-purple-400 hover:bg-purple-400 hover:shadow-lg hover:shadow-purple-500/40 hover:brightness-110 [--ripple-button-ripple-color:rgba(0,0,0,0.3)]'
-                        : 'border border-slate-600/50 text-slate-300 bg-transparent hover:bg-slate-700/60 hover:border-purple-500/50 hover:text-purple-400 hover:shadow-md hover:shadow-purple-500/20 [--ripple-button-ripple-color:rgba(168,85,247,0.6)]'
+                        ? 'bg-game-accent text-background border border-game-accent hover:bg-game-accent/90 hover:shadow-lg hover:shadow-game-accent/40 hover:brightness-110 [--ripple-button-ripple-color:rgba(0,0,0,0.3)]'
+                        : 'border border-game-border/50 text-game-text bg-transparent hover:bg-game-grid/60 hover:border-game-accent/50 hover:text-game-accent hover:shadow-md hover:shadow-game-accent/20 [--ripple-button-ripple-color:rgba(0,255,255,0.6)]'
                     )}
                   >
                     <span className="relative z-10 font-game tracking-wider">{label}</span>
