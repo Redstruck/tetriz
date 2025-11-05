@@ -323,29 +323,29 @@ const VersusGamePage = () => {
                   {player1.gameStarted && !player1.gameOver && (
                     <Button 
                       onClick={toggleBothPause}
-                      variant="outline"
+                      variant="gameOutline"
                       size="lg"
-                      className="w-full font-bold border-slate-600 bg-slate-800/50 hover:bg-slate-700/70 button-ripple hover-lift relative overflow-hidden group"
+                      className="w-full font-bold button-ripple hover-lift focus-ring-enhanced relative overflow-hidden group"
                     >
-                      <span className="relative z-10 flex items-center justify-center gap-2 font-game tracking-wider">
+                      <span className="relative z-10 flex items-center gap-2 font-game tracking-wider">
                         {player1.paused ? <Play className="w-4 h-4" /> : <PauseIcon className="w-4 h-4" />}
                         {player1.paused ? 'RESUME' : 'PAUSE'}
                       </span>
-                      <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 via-purple-500/20 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                      <div className="absolute inset-0 bg-gradient-to-r from-game-accent/10 via-game-accent/20 to-game-accent/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                     </Button>
                   )}
                   
                   {/* Reset Button */}
                   <Button
                     onClick={resetBothGames}
-                    variant="outline"
-                    className="w-full border-slate-600 bg-slate-800/50 hover:bg-slate-700/70 button-ripple hover-lift relative overflow-hidden group"
+                    variant="gameOutline"
+                    className="w-full button-ripple hover-lift focus-ring-enhanced relative overflow-hidden group"
                   >
-                    <span className="relative z-10 flex items-center justify-center gap-2 font-game tracking-wider">
+                    <span className="relative z-10 flex items-center gap-2 font-game tracking-wider">
                       <ResetIcon className="w-4 h-4" />
                       RESET
                     </span>
-                    <div className="absolute inset-0 bg-gradient-to-r from-red-500/10 via-red-500/20 to-red-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    <div className="absolute inset-0 bg-gradient-to-r from-destructive/10 via-destructive/20 to-destructive/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   </Button>
                 </>
               )}
