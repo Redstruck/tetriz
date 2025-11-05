@@ -203,10 +203,31 @@
   
   .game-button-glow:hover {
     box-shadow: 
-      0 0 20px hsl(var(--game-accent) / 0.4),
-      0 0 30px hsl(var(--game-accent) / 0.2),
-      0 6px 12px rgba(0, 0, 0, 0.4),
+      0 0 20px hsl(var(--game-accent) / 0.6),
+      0 0 40px hsl(var(--game-accent) / 0.4),
+      0 0 60px hsl(var(--game-accent) / 0.2),
+      0 8px 16px rgba(0, 0, 0, 0.5),
       inset 0 1px 3px rgba(255, 255, 255, 0.2);
+    animation: button-glow-pulse 1.5s ease-in-out infinite;
+  }
+
+  @keyframes button-glow-pulse {
+    0%, 100% {
+      box-shadow: 
+        0 0 20px hsl(var(--game-accent) / 0.6),
+        0 0 40px hsl(var(--game-accent) / 0.4),
+        0 0 60px hsl(var(--game-accent) / 0.2),
+        0 8px 16px rgba(0, 0, 0, 0.5),
+        inset 0 1px 3px rgba(255, 255, 255, 0.2);
+    }
+    50% {
+      box-shadow: 
+        0 0 30px hsl(var(--game-accent) / 0.8),
+        0 0 60px hsl(var(--game-accent) / 0.6),
+        0 0 80px hsl(var(--game-accent) / 0.3),
+        0 8px 16px rgba(0, 0, 0, 0.5),
+        inset 0 1px 3px rgba(255, 255, 255, 0.3);
+    }
   }
   
   .speed-button-active {
