@@ -147,7 +147,7 @@ export const setHighScore = (gameMode: 'regular' | 'extra' | 'speedrun', score: 
       // Trigger background sync if available (for offline support)
       if ('serviceWorker' in navigator && 'sync' in window.ServiceWorkerRegistration.prototype) {
         navigator.serviceWorker.ready.then(registration => {
-          return registration.sync.register('high-score-sync');
+          return (registration as ServiceWorkerRegistration & { sync: { register: (tag: string) => Promise<void> } }).sync.register('high-score-sync');
         }).catch(error => {
           console.log('[HighScore] Background sync registration failed:', error);
         });
