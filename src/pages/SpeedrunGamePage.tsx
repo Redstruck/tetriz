@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { TetrisGame } from "@/components/TetrisGame";
 import PWAInstallButton from "@/components/PWAInstallButton";
+import { SEO } from "@/components/SEO";
 import { ArrowLeft, Settings } from "lucide-react";
 import {
   Dialog,
@@ -19,6 +20,11 @@ const SpeedrunGamePage = () => {
 
   return (
     <div className="h-screen w-screen bg-black relative overflow-hidden">
+      <SEO
+        title="Speedrun Mode — Retro Tetris"
+        description="Race the clock in Retro Tetris Speedrun mode. Clear grey target blocks as fast as possible and set your best time."
+        path="/game/speedrun"
+      />
       <PWAInstallButton />
       
       {/* Floating Back Button */}
@@ -54,7 +60,7 @@ const SpeedrunGamePage = () => {
       </Dialog>
 
       {/* Game Area */}
-      <div className="h-full flex items-center justify-center p-2">
+      <main className="h-full flex items-center justify-center p-2">
         <TetrisGame 
           gameMode="speedrun" 
           title="SPEEDRUN MODE"
@@ -62,7 +68,7 @@ const SpeedrunGamePage = () => {
           titleColor="text-orange-400"
           externalPaused={isSettingsOpen}
         />
-      </div>
+      </main>
     </div>
   );
 };

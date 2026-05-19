@@ -1,5 +1,6 @@
 import { TetrisGame } from "../components/TetrisGame";
 import PWAInstallButton from "@/components/PWAInstallButton";
+import { SEO } from "@/components/SEO";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Settings } from "lucide-react";
@@ -19,6 +20,11 @@ const ExtraGamePage = () => {
 
   return (
     <div className="h-screen w-screen bg-black relative overflow-hidden">
+      <SEO
+        title="Extra Mode — Retro Tetris"
+        description="Play Extra Mode in Retro Tetris with new pieces, expanded mechanics and fresh challenges beyond classic Tetris."
+        path="/game/extra"
+      />
       <PWAInstallButton />
       
       {/* Floating Back Button */}
@@ -54,7 +60,7 @@ const ExtraGamePage = () => {
       </Dialog>
 
       {/* Game Area */}
-      <div className="h-full flex items-center justify-center p-2">
+      <main className="h-full flex items-center justify-center p-2">
         <TetrisGame 
           gameMode="extra" 
           title="EXTRA MODE"
@@ -62,7 +68,7 @@ const ExtraGamePage = () => {
           titleColor="!text-emerald-400"
           externalPaused={isSettingsOpen}
         />
-      </div>
+      </main>
     </div>
   );
 };
