@@ -1,0 +1,13 @@
+# Retro Tetris
+
+> A free retro-style Tetris game playable in any modern browser, with multiple game modes and installable as a PWA.
+
+Retro Tetris offers Classic, Extra, Speedrun and Versus game modes, smooth keyboard controls, a hold-piece slot, ghost piece, progressive difficulty and a high-score system. Built with React, TypeScript and Vite.
+
+## Pages
+
+- [Home](/): Main menu — choose a game mode and configure settings.
+- [Classic Mode](/game): Traditional Tetris with progressive difficulty.
+- [Extra Mode](/game/extra): Enhanced experience with extra pieces and challenges.
+- [Speedrun Mode](/game/speedrun): Clear grey target blocks as fast as possible.
+- [Versus Mode](/game/versus): Local head-to-head two-player battle.
