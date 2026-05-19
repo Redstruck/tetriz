@@ -1,5 +1,6 @@
 import { TetrisGame } from "../components/TetrisGame";
 import PWAInstallButton from "@/components/PWAInstallButton";
+import { SEO } from "@/components/SEO";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Settings } from "lucide-react";
@@ -19,6 +20,11 @@ const GamePage = () => {
 
   return (
     <div className="h-screen w-screen bg-black relative overflow-hidden">
+      <SEO
+        title="Classic Tetris Mode — Retro Tetris"
+        description="Play classic Tetris in your browser. Traditional rules, progressive difficulty, hold piece and smooth keyboard controls."
+        path="/game"
+      />
       <PWAInstallButton />
       
       {/* Floating Back Button */}
@@ -54,7 +60,7 @@ const GamePage = () => {
       </Dialog>
 
       {/* Game Area */}
-      <div className="h-full flex items-center justify-center p-2">
+      <main className="h-full flex items-center justify-center p-2">
         <TetrisGame 
           gameMode="regular" 
           title="CLASSIC MODE"
@@ -62,7 +68,7 @@ const GamePage = () => {
           titleColor="text-cyan-400"
           externalPaused={isSettingsOpen}
         />
-      </div>
+      </main>
     </div>
   );
 };
