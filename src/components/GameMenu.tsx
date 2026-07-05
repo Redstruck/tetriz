@@ -370,7 +370,7 @@ const GameMenu = ({ onGameModeSelect }: GameMenuProps) => {
       {/* Menu Title */}
       <div className="mb-16 text-center relative z-20">
         <h1 className="text-5xl lg:text-7xl font-retro font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-purple-500 to-emerald-400 tracking-wider retro-title mb-6 drop-shadow-2xl">
-          TETRIS
+          TETRIZ
         </h1>
         <div className="text-sm font-mono text-slate-200 tracking-widest mb-4 drop-shadow-lg">
           CLASSIC RETRO EDITION
