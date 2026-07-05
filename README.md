@@ -3,7 +3,7 @@
 A modern, browser-based Tetris-inspired game built with React and TypeScript.  
 Designed as an exploratory project to learn real-time game logic, UI systems, and iterative feature development.
 
-🔗 **Live Demo:** https://tetris-eight-lyart.vercel.app/
+🔗 **Live Demo:** https://tetriz-one.vercel.app/
 
 ---
 
