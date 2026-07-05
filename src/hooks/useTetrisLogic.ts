@@ -625,7 +625,8 @@ export const useTetrisLogic = (gameMode: 'regular' | 'extra' | 'speedrun' = 'reg
       currentRound: gameMode === 'speedrun' ? 1 : undefined,
       targetsDestroyedInRound: gameMode === 'speedrun' ? 0 : undefined,
       waveStartTime: undefined,
-      totalTime: gameMode === 'speedrun' ? 0 : undefined
+      totalTime: gameMode === 'speedrun' ? 0 : undefined,
+      isLockDelayActive: false
     });
   }, [baseDropSpeed, BOARD_WIDTH, gameMode, generateGreyBlocks, placeGreyBlocksOnBoard]);
 

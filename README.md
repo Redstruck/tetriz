@@ -1,73 +1,83 @@
-# Welcome to your Lovable project
+# Tetriz
 
-## Project info
+A modern, browser-based Tetris-inspired game built with React and TypeScript.  
+Designed as an exploratory project to learn real-time game logic, UI systems, and iterative feature development.
 
-**URL**: https://lovable.dev/projects/3398a09c-f7f8-4fed-bc8b-ef16d56cba9f
+🔗 **Live Demo:** https://tetris-eight-lyart.vercel.app/
 
-## How can I edit this code?
+---
 
-There are several ways of editing your application.
+## Overview
 
-**Use Lovable**
+Tetriz is a fully playable Tetris-style game that runs entirely in the browser.  
+It started as a simple clone and evolved organically into a multi-mode game with settings, speed controls, visual effects, and competitive mechanics.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/3398a09c-f7f8-4fed-bc8b-ef16d56cba9f) and start prompting.
+The project was built iteratively: features were added, tested, refined, and sometimes removed based on gameplay feel rather than strict upfront planning.
 
-Changes made via Lovable will be committed automatically to this repo.
+---
 
-**Use your preferred IDE**
+## Key Features
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+- Classic Tetris core mechanics (movement, rotation, line clearing)
+- Multiple game modes including Classic, Extra, Speedrun, Versus
+- Customizable gameplay settings (speed, visuals, controls)
+- High score tracking
+- Responsive UI with animated backgrounds
+- Progressive difficulty and target systems
+- PWA support for offline play
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+---
 
-Follow these steps:
+## Tech Stack
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+- **React** + **TypeScript** — application logic and UI
+- **Vite** — development and build tooling
+- **Tailwind CSS** — styling
+- **shadcn/ui** — UI components
+- **PWA** — caching and offline support
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+---
 
-# Step 3: Install the necessary dependencies.
-npm i
+## Project Structure
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+This repository includes extensive internal documentation created during development, including:
+
+- Feature implementation summaries
+- Architecture and layout notes
+- Performance and UI optimization reports
+- Game mode and settings guides
+
+These files reflect the incremental development process and decision-making behind the project.
+
+If you want a starting point, see:
+- `00_START_HERE.md`
+- `DOCUMENTATION_INDEX.md`
+- `ARCHITECTURE_DIAGRAM.md`
+
+---
+
+## Development Philosophy
+
+This project was intentionally **vibe-coded** in the best sense:
+
+- Features were prototyped quickly
+- Gameplay feel guided technical decisions
+- Systems were refined through testing and iteration
+- Documentation was written alongside implementation
+
+The focus was learning by building rather than achieving a perfectly planned architecture.
+
+---
+
+## Running Locally
+
+### Prerequisites
+- Node.js
+- npm
+
+### Setup
+```bash
+git clone https://github.com/Redstruck/tetriz.git
+cd tetriz
+npm install
 npm run dev
-```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/3398a09c-f7f8-4fed-bc8b-ef16d56cba9f) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)

@@ -20,6 +20,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { SettingsPanel } from '@/components/SettingsPanel';
+import { SEO } from '@/components/SEO';
 
 // Custom Pause icon with perfectly balanced lines
 const PauseIcon = ({ className }: { className?: string }) => (
@@ -138,6 +139,11 @@ const VersusGamePage = () => {
 
   return (
     <div className="min-h-screen w-screen flex items-center justify-center overflow-hidden relative bg-black">
+      <SEO
+        title="Versus Mode — Retro Tetris"
+        description="Battle a friend locally in Retro Tetris Versus mode. Two-player head-to-head Tetris with shared keyboard controls."
+        path="/game/versus"
+      />
       {/* Background */}
       <div className="absolute inset-0 bg-black" />
 
@@ -174,7 +180,7 @@ const VersusGamePage = () => {
       </Dialog>
 
       {/* Main Content */}
-      <div className="relative z-10 w-full max-w-[1600px] px-8">
+      <main className="relative z-10 w-full max-w-[1600px] px-8">
         {/* Title */}
         <div className="text-center mb-6">
           <h1 className="text-4xl font-retro font-bold text-pink-400 tracking-wider mb-2">
@@ -414,7 +420,7 @@ const VersusGamePage = () => {
             </div>
           </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 };
